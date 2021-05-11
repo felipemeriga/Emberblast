@@ -11,7 +11,6 @@ class Map:
 
 
 class MapFactory:
-
     def create_map(self):
         game_map = Map('test', 'wind', 3)
         game_map.graph.init_graph()
