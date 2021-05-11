@@ -1,0 +1,51 @@
+classes:
+  Knight:
+    health_points: 10
+    magic_points: 0
+    move_speed: 1
+    strength: 5
+    intelligence: 0
+    accuracy: 2
+    armour: 4
+    magic_resist: 0
+    will: 1
+  Wizard:
+    health_points: 3
+    magic_points: 10
+    move_speed: 1
+    strength: 0
+    intelligence: 5
+    accuracy: 2
+    armour: 1
+    magic_resist: 5
+    will: 1
+  Rogue:
+    health_points: 6
+    magic_points: 5
+    move_speed: 4
+    strength: 2
+    intelligence: 1
+    accuracy: 3
+    armour: 2
+    magic_resist: 2
+    will: 3
+  Archer:
+    health_points: 6
+    magic_points: 5
+    move_speed: 3
+    strength: 3
+    intelligence: 1
+    accuracy: 4
+    armour: 2
+    magic_resist: 3
+    will: 2
+  Priest:
+    health_points: 5
+    magic_points: 10
+    move_speed: 2
+    strength: 1
+    intelligence: 4
+    accuracy: 2
+    armour: 3
+    magic_resist: 3
+    will: 4

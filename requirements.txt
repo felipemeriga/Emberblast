@@ -2,3 +2,4 @@ timg>=1.1.5
 InquirerPy>=0.2.0
 emoji>=1.2.0
 colorama>=0.4.4
+PyYAML>=5.4.1
