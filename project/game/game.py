@@ -1,3 +1,6 @@
+from InquirerPy import prompt
+from project.game.questions import BEGIN_GAME_QUESTIONS
+
 class Game:
 
     def __init__(self, type, name):
@@ -14,3 +17,8 @@ class Deathmatch(Game):
         pass
 
 
+
+
+class GameFactory:
+    def new_game(self):
+        result = prompt(BEGIN_GAME_QUESTIONS)
