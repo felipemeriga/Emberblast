@@ -1,4 +1,4 @@
-classes:
+jobs:
   Knight:
     health_points: 10
     magic_points: 0
