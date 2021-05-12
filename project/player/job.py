@@ -1,6 +1,8 @@
 from project.conf.conf import get_configuration
 
 
+# TODO - Refactor to enable creating dynamic jobs, so the game configuration can be extended
+
 class JobMeta(type):
     def __init__(self, clsname, superclasses, attributedict):
         super_class = superclasses[0]
