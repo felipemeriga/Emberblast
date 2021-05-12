@@ -4,7 +4,7 @@ from project.conf.conf import get_configuration
 class JobMeta(type):
     def __init__(self, clsname, superclasses, attributedict):
         super_class = superclasses[0]
-        class_attributes = get_configuration('jobs').get(clsname)
+        class_attributes = get_configuration('jobs').get(clsname, {})
         super_class.__init__(self, class_attributes.get('health_points', 0),
                              class_attributes.get('magic_points', 0),
                              class_attributes.get('move_speed', 0),
