@@ -49,3 +49,54 @@ jobs:
     armour: 3
     magic_resist: 3
     will: 4
+races:
+    Human:
+      health_points: 1
+      magic_points: 1
+      move_speed: 1
+      strength: 1
+      intelligence: 1
+      accuracy: 1
+      armour: 1
+      magic_resist: 1
+      will: 1
+    Dwarf:
+      health_points: 1
+      magic_points: 1
+      move_speed: 0
+      strength: 2
+      intelligence: 1
+      accuracy: 0
+      armour: 1
+      magic_resist: 1
+      will: 0
+    Elf:
+      health_points: 1
+      magic_points: 1
+      move_speed: 1
+      strength: 1
+      intelligence: 2
+      accuracy: 2
+      armour: 0
+      magic_resist: 0
+      will: 1
+    Orc:
+      health_points: 1
+      magic_points: 1
+      move_speed: 0
+      strength: 2
+      intelligence: 0
+      accuracy: 2
+      armour: 2
+      magic_resist: 0
+      will: 0
+    Halflings:
+      health_points: 1
+      magic_points: 1
+      move_speed: 2
+      strength: 1
+      intelligence: 0
+      accuracy: 3
+      armour: 0
+      magic_resist: 0
+      will: 1
