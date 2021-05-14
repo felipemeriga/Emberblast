@@ -14,10 +14,7 @@ def run_project(args):
 
 if __name__ == '__main__':
     try:
-        knight = Knight()
-        print(2)
-        # run_project(sys.argv)
-        print(2)
+        run_project(sys.argv)
     except Exception as err:
         print(Fore.RED + "System shutdown with unexpected error")
         exit()

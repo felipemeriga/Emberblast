@@ -10,16 +10,16 @@ class JobMeta(type):
         if clsname == 'Job':
             return
         super_class = superclasses[0]
-        class_attributes = get_configuration('jobs').get(clsname, {})
-        super_class.__init__(self, class_attributes.get('health_points', 0),
-                             class_attributes.get('magic_points', 0),
-                             class_attributes.get('move_speed', 0),
-                             class_attributes.get('strength', 0),
-                             class_attributes.get('intelligence', 0),
-                             class_attributes.get('accuracy', 0),
-                             class_attributes.get('armour', 0),
-                             class_attributes.get('magic_resist', 0),
-                             class_attributes.get('will', 0)
+        jobs_attributes = get_configuration('jobs').get(clsname, {})
+        super_class.__init__(self, jobs_attributes.get('health_points', 0),
+                             jobs_attributes.get('magic_points', 0),
+                             jobs_attributes.get('move_speed', 0),
+                             jobs_attributes.get('strength', 0),
+                             jobs_attributes.get('intelligence', 0),
+                             jobs_attributes.get('accuracy', 0),
+                             jobs_attributes.get('armour', 0),
+                             jobs_attributes.get('magic_resist', 0),
+                             jobs_attributes.get('will', 0)
                              )
 
 
