@@ -2,7 +2,6 @@ import sys
 
 from colorama import Fore
 from project.game.game import GameFactory
-from project.player.job import Knight
 from project.utils.utils import print_greetings
 
 

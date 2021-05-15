@@ -23,8 +23,9 @@ class Deathmatch(Game):
 
 class GameFactory:
     def new_game(self):
-        result = prompt(BEGIN_GAME_QUESTIONS)
-        if result[0] == "Deathmatch":
+        game_question_result = prompt(BEGIN_GAME_QUESTIONS)
+
+        if game_question_result[0] == "Deathmatch":
 
             game = Deathmatch("Deathmatch")
             return game

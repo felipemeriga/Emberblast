@@ -1,4 +1,5 @@
 game:
+  max_number_bots: 8
   jobs:
     Knight:
       health_points: 10

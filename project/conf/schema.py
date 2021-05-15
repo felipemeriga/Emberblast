@@ -13,7 +13,13 @@ game_section_configuration_schema = {
     'races': {
         'required': True,
         'type': 'dict'
-    }
+    },
+    'max_number_bots': {
+        'required': True,
+        'type': 'number',
+        'min': 1,
+        'max': 100
+    },
 }
 
 job_section_configuration_schema = {
