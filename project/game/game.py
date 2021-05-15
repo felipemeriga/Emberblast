@@ -1,6 +1,7 @@
 from InquirerPy import prompt
 from project.game.questions import BEGIN_GAME_QUESTIONS
 from project.map.map import MapFactory
+from project.utils.constants import GAME_SECTION
 
 
 class Game:
@@ -22,12 +23,14 @@ class Deathmatch(Game):
 
 
 class GameFactory:
+    def __init__(self):
+        self.begin_question_results = None
+
+
     def new_game(self):
-        game_question_result = prompt(BEGIN_GAME_QUESTIONS)
-
-        if game_question_result[0] == "Deathmatch":
-
-            game = Deathmatch("Deathmatch")
+        self.begin_question_results = prompt(BEGIN_GAME_QUESTIONS)
+        if self.begin_question_results.get('game') == 'Deathmatch"':
+            game = Deathmatch('Deathmatch')
             return game
 
     def init_map(self):

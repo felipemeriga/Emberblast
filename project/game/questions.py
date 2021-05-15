@@ -1,7 +1,8 @@
+import emoji
 from prompt_toolkit.validation import Validator, ValidationError
 
 from project.conf.conf import get_configuration
-from project.utils.constants import GAME_SECTION
+from project.utils.constants import GAME_SECTION, RACES_SECTION, JOBS_SECTION
 
 
 class MaxBotsInputValidator(Validator):
@@ -24,22 +25,41 @@ class MaxBotsInputValidator(Validator):
 BEGIN_GAME_QUESTIONS = [
     {
         "type": "list",
-        "message": "Select the Game Type",
+        "message": emoji.emojize(':video_game: Select the Game Type '),
         "choices": ["Deathmatch", "Clan"],
         "name": "game"
     },
     {
         "type": "list",
-        "message": "Select the map",
+        "message": emoji.emojize(':sunrise: Select the map '),
         "choices": ["Millstone Plains", "Firebend Vulcan", "Lerwick Mountains"],
         "name": "map"
     },
     {
         "type": "input",
-        "message": "How many bots are you playing against? ",
+        "message": emoji.emojize(':computer: How many bots are you playing against '),
         "validate": MaxBotsInputValidator(),
         "invalid_message": "Input should be number.",
         "default": "4",
         "name": "bots_number"
+    },
+    {
+        "type": "input",
+        "message": emoji.emojize(':man: Please enter your character name '),
+        "validate": lambda input: 0 < len(input) < 20,
+        "invalid_message": "minimum of 1 letters, max of 20 letters",
+        "name": "nickname"
+    },
+    {
+        "type": "list",
+        "message": emoji.emojize(':skull: Please enter your character race? '),
+        "choices": get_configuration(RACES_SECTION).keys(),
+        "name": "race"
+    },
+    {
+        "type": "list",
+        "message": emoji.emojize(':name_badge: Please enter your character job? '),
+        "choices": get_configuration(JOBS_SECTION).keys(),
+        "name": "job"
     },
 ]

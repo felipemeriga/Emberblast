@@ -1,4 +1,3 @@
-from project.player.job import Job, Knight
 
 
 class Player:
@@ -37,5 +36,7 @@ class ControlledPlayer(Player):
 
 
 class BotPlayer(Player):
-    def __init__(self, name, job, race):
+    def __init__(self, job, race, name=None):
         super().__init__(name, job, race)
+
+
