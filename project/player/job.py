@@ -1,7 +1,7 @@
 from project.conf.conf import get_configuration
 
 # TODO - Refactor to enable creating dynamic jobs, so the game configuration can be extended
-from project.conf.constants import JOBS_SECTION
+from project.utils.constants import JOBS_SECTION
 
 
 class JobMeta(type):

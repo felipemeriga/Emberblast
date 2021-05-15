@@ -2,11 +2,11 @@ import yaml
 from yaml.scanner import ScannerError
 from cerberus import Validator, SchemaError
 
-from project.conf.constants import JOBS_SECTION, GAME_SECTION, RACES_SECTION
 from project.conf.logger import get_logger
 from project.conf.schema import job_section_configuration_schema, race_section_configuration_schema, \
     game_section_configuration_schema
 from project.exception.exception import ConfigFileError
+from project.utils.constants import GAME_SECTION, JOBS_SECTION, RACES_SECTION
 from project.utils.utils import get_project_root, deep_get
 
 
