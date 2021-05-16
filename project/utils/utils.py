@@ -5,7 +5,6 @@ import emoji
 import timg
 from colorama import Fore
 from pathlib import Path
-from project.utils.constants import ROOT_DIR
 
 
 def get_project_root() -> Path:
@@ -33,8 +32,9 @@ def deep_get(dictionary, *keys):
     return reduce(lambda d, key: d.get(key) if d else None, keys, dictionary)
 
 
-def find_key_recursivelly(obj, key):
-    if key in obj: return obj[key]
+def find_key_recursively(obj, key):
+    if key in obj:
+        return obj[key]
     for k, v in obj.items():
         if isinstance(v, dict):
-            return find_key_recursivelly(v, key)
+            return find_key_recursively(v, key)
