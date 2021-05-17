@@ -5,6 +5,8 @@ from project.utils.constants import RACES_SECTION
 
 class RaceMeta(type):
     def __init__(self, clsname, superclasses, attributedict):
+        if clsname == 'Race':
+            return
         super_class = superclasses[0]
         race_attributes = get_configuration('races').get(clsname, {})
         super_class.__init__(self, race_attributes.get('health_points', 0),

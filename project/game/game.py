@@ -9,8 +9,10 @@ from project.utils.constants import GAME_SECTION
 
 class Game:
 
-    def __init__(self, type):
-        self.type = type
+    def __init__(self, main_player, bots, game_map):
+        self.main_player = main_player
+        self.bots = bots
+        self.game_map = game_map
 
     def init_game(self):
         raise NotImplementedError('Game::to_string() should be implemented!')
@@ -18,8 +20,8 @@ class Game:
 
 class Deathmatch(Game):
 
-    def __init__(self, type):
-        super(type)
+    def __init__(self, main_player, bots, game_map):
+        super(Deathmatch, self).__init__(main_player, bots, game_map)
 
     def init_game(self):
         pass
@@ -31,17 +33,23 @@ class GameFactory:
 
     def new_game(self):
         self.begin_question_results = prompt(BEGIN_GAME_QUESTIONS)
-        main_player = ControlledPlayer(self.begin_question_results.get('name'),
-                                       dynamic_jobs_classes[self.begin_question_results.get('job')](),
-                                       dynamic_races_classes[self.begin_question_results.get('race')]())
+        main_player = self.init_players()
 
-        bots = bot_factory(self.begin_question_results.get('bots_number'))
+        bots = self.init_bots()
+
+        game_map = self.init_map()
+
         if self.begin_question_results.get('game') == 'Deathmatch"':
-            game = Deathmatch('Deathmatch')
+            game = Deathmatch(main_player, bots, game_map)
             return game
 
     def init_map(self):
-        pass
+        return MapFactory().create_map()
 
     def init_players(self):
-        pass
+        return ControlledPlayer(self.begin_question_results.get('name'),
+                                dynamic_jobs_classes[self.begin_question_results.get('job')](),
+                                dynamic_races_classes[self.begin_question_results.get('race')]())
+
+    def init_bots(self):
+        return bot_factory(self.begin_question_results.get('bots_number'))

@@ -7,7 +7,7 @@ NAME_GENERATOR_PATH = '{root}/utils/name_generator'.format(root=get_project_root
 
 def generate_name():
     try:
-        with open(NAME_GENERATOR_PATH + '/first_namasde.txt') as names_file:
+        with open(NAME_GENERATOR_PATH + '/first_name.txt') as names_file:
             names = names_file.read().splitlines()
             with open(NAME_GENERATOR_PATH + '/last_name.txt') as last_names_files:
                 last_names = last_names_files.read().splitlines()
