@@ -1,11 +1,8 @@
-
-
 class Player:
-    def __init__(self, name, gender, job, race):
+    def __init__(self, name, job, race):
         self.job = job
         self.race = race
         self.name = name
-        self.gender = gender
         self.health_points = 10
         self.magic_points = 10
         self.move_speed = 2
@@ -32,14 +29,14 @@ class Player:
 
 
 class ControlledPlayer(Player):
-    def __init__(self, name, gender, job, race):
-        super().__init__(name, gender, job, race)
+    def __init__(self, name, job, race):
+        super().__init__(name, job, race)
 
 
 class BotPlayer(Player):
     def __init__(self, job, race, name=None):
         super().__init__(name, job, race)
 
+
 def bot_factory(number_of_bots):
     bots = []
-

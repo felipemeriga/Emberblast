@@ -1,38 +1,17 @@
 from random import randrange
 
+from project.utils.utils import get_project_root
 
-def line_appender(file_path, target):
-    file = open(file_path, "r")
-    splitfile = file.read().splitlines()
-    for line in splitfile:
-        target.append(line)
+NAME_GENERATOR_PATH = '{root}/utils/name_generator'.format(root=get_project_root())
 
 
-def name_selector(target_list):
-    selected = target_list[randrange(len(target_list))]
-    return selected
-
-
-def name_builder(first_name_list_path):
-    first_name_list = []
-    last_name_list = []
-    last_name_list_path = 'last_name.txt'
-
-    line_appender(first_name_list_path, first_name_list)
-    line_appender(last_name_list_path, last_name_list)
-
-    first_name_selected = name_selector(first_name_list)
-    last_name_selected = name_selector(last_name_list)
-
-    name = first_name_selected + " " + last_name_selected
-    return name
-
-
-def generate_name(gender):
-    first_name_list_path = ''
-    if gender == 'Female':
-        first_name_list_path = 'first_name_female.txt'
-    else:
-        first_name_list_path = 'first_name_male.txt'
-    return name_builder(first_name_list_path)
-
+def generate_name():
+    try:
+        with open(NAME_GENERATOR_PATH + '/first_namasde.txt') as names_file:
+            names = names_file.read().splitlines()
+            with open(NAME_GENERATOR_PATH + '/last_name.txt') as last_names_files:
+                last_names = last_names_files.read().splitlines()
+                return '{first_name} {last_name}'.format(first_name=names[randrange(len(names))],
+                                                         last_name=last_names[randrange(len(last_names))])
+    except OSError as err:
+        return ''
