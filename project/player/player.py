@@ -1,3 +1,10 @@
+from random import randrange
+
+from project.conf.conf import get_configuration
+from project.utils.constants import JOBS_SECTION, RACES_SECTION
+from project.utils.name_generator.fantasy_name_generator import generate_name
+
+
 class Player:
     def __init__(self, name, job, race):
         self.job = job
@@ -40,3 +47,11 @@ class BotPlayer(Player):
 
 def bot_factory(number_of_bots):
     bots = []
+    jobs = get_configuration(JOBS_SECTION)
+    races = get_configuration(RACES_SECTION)
+    for n in number_of_bots:
+        name = generate_name()
+        job = jobs[randrange(len(jobs))]
+        races = races[randrange(len(races))]
+
+

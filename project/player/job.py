@@ -1,6 +1,4 @@
 from project.conf.conf import get_configuration
-
-# TODO - Refactor to enable creating dynamic jobs, so the game configuration can be extended
 from project.utils.constants import JOBS_SECTION
 
 
@@ -60,10 +58,6 @@ def class_method(cls, arg):
     print(arg)
 
 
-# TODO - Check a way of adding metaclass to this
-# creating class dynamically
-
-
 def create_dynamic_jobs():
     jobs_dynamic_classes = {}
     job_from_config = get_configuration(JOBS_SECTION)
@@ -81,31 +75,4 @@ def create_dynamic_jobs():
     return jobs_dynamic_classes
 
 
-class Knight(Job, metaclass=JobMeta):
-
-    def __init__(self):
-        pass
-
-#
-# class Wizard(Job, metaclass=JobMeta):
-#
-#     def __init__(self):
-#         pass
-#
-#
-# class Rogue(Job, metaclass=JobMeta):
-#
-#     def __init__(self):
-#         pass
-#
-#
-# class Archer(Job, metaclass=JobMeta):
-#
-#     def __init__(self):
-#         pass
-#
-#
-# class Priest(Job, metaclass=JobMeta):
-#
-#     def __init__(self):
-#         pass
+dynamic_jobs_classes = create_dynamic_jobs()

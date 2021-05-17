@@ -19,6 +19,8 @@ class Configuration(object):
         self.game = {}
         self.jobs = {}
         self.races = {}
+        self.custom_jobs = {}
+        self.custom_races = {}
         try:
             a_yaml_file = open(str(get_project_root()) + '/conf/conf.yaml')
             self.parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)

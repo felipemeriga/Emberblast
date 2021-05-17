@@ -1,6 +1,8 @@
 from project.conf.conf import get_configuration
 
-# TODO - Refactor to enable creating dynamic races, so the game configuration can be extended
+from project.utils.constants import RACES_SECTION
+
+
 class RaceMeta(type):
     def __init__(self, clsname, superclasses, attributedict):
         super_class = superclasses[0]
@@ -15,6 +17,7 @@ class RaceMeta(type):
                              race_attributes.get('magic_resist', 0),
                              race_attributes.get('will', 0)
                              )
+
 
 class Race(metaclass=RaceMeta):
     def __init__(self, health_points,
@@ -37,27 +40,37 @@ class Race(metaclass=RaceMeta):
         self.will = will
 
 
-class Human(Race, metaclass=RaceMeta):
+# dynamic constructor
+def constructor(self):
+    pass
 
-    def __init__(self):
-        pass
 
-class Dwarf(Race, metaclass=RaceMeta):
+# dynamic example method
+def display_method(self, arg):
+    print(arg)
 
-    def __init__(self):
-        pass
 
-class Elf(Race, metaclass=RaceMeta):
+# dynamic class method
+@classmethod
+def class_method(cls, arg):
+    print(arg)
 
-    def __init__(self):
-        pass
 
-class Orc(Race, metaclass=RaceMeta):
+def create_dynamic_races():
+    races_dynamic_classes = {}
+    race_from_config = get_configuration(RACES_SECTION)
+    for race in race_from_config:
+        custom_race = type(race, (Race,), {
+            # constructor
+            "__init__": constructor,
 
-    def __init__(self):
-        pass
+            # member functions
+            "func_arg": display_method,
+            "class_func": class_method
+        })
+        races_dynamic_classes[race] = custom_race
 
-class Halflings(Race, metaclass=RaceMeta):
+    return races_dynamic_classes
 
-    def __init__(self):
-        pass
+
+dynamic_races_classes = create_dynamic_races()
