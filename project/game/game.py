@@ -1,4 +1,8 @@
+from random import randrange
+
 from InquirerPy import prompt
+
+from project.conf.conf import get_configuration
 from project.game.questions import BEGIN_GAME_QUESTIONS
 from project.map.map import MapFactory
 from project.player.job import dynamic_jobs_classes
@@ -13,6 +17,25 @@ class Game:
         self.main_player = main_player
         self.bots = bots
         self.game_map = game_map
+        self.turns = {1: []}
+
+    # The turn order is calculated based on the will of the character, the players are sorted
+    #  based on the following equation: (will/10) * (dice result), the number of the dice sides
+    #  can be configured in the main configuration file
+    def calculate_turn_order(self):
+        players = []
+        turn = 0
+        if not self.turns:
+            turn = 1
+            self.turns[turn] = []
+        else:
+            turn = list(self.turns)[-1] + 1
+            self.turns[turn] = []
+        players.extend(self.bots)
+        players.append(self.main_player)
+        players.sort(key=lambda x: (x.will / 10) * randrange(get_configuration(GAME_SECTION).get('dice_sides', 6)),
+                     reverse=True)
+        self.turns[turn] = players
 
     def init_game(self):
         raise NotImplementedError('Game::to_string() should be implemented!')
@@ -39,8 +62,9 @@ class GameFactory:
 
         game_map = self.init_map()
 
-        if self.begin_question_results.get('game') == 'Deathmatch"':
+        if self.begin_question_results.get('game') == 'Deathmatch':
             game = Deathmatch(main_player, bots, game_map)
+            game.calculate_turn_order()
             return game
 
     def init_map(self):

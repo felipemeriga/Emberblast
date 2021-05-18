@@ -1,4 +1,5 @@
 game:
+  dice_sides: 20
   max_number_bots: 8
   jobs:
     Knight:

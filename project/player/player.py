@@ -51,7 +51,7 @@ def bot_factory(number_of_bots):
     bots = []
     jobs = list(get_configuration(JOBS_SECTION).keys())
     races = list(get_configuration(RACES_SECTION).keys())
-    for n in number_of_bots:
+    for n in range(int(number_of_bots)):
         name = generate_name()
         chosen_job = jobs[randrange(len(jobs))]
         chosen_race = races[randrange(len(races))]

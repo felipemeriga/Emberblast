@@ -20,6 +20,12 @@ game_section_configuration_schema = {
         'min': 1,
         'max': 100
     },
+    'dice_sides': {
+        'required': True,
+        'type': 'number',
+        'min': 2,
+        'max': 50
+    },
 }
 
 job_section_configuration_schema = {
