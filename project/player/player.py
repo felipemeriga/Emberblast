@@ -1,5 +1,4 @@
 from random import randrange
-
 from project.conf.conf import get_configuration
 from project.player.job import dynamic_jobs_classes
 from project.player.race import dynamic_races_classes
@@ -22,6 +21,8 @@ class Player:
         self.magic_resist = 2
         self.will = 2
         self.level = 1
+        self.experience = 0
+
         self.add_attributes(self.job)
         self.add_attributes(self.race)
 
@@ -36,16 +37,30 @@ class Player:
         self.magic_resist += attributes.magic_resist
         self.will += attributes.will
 
+    def level_up(self):
+        raise NotImplementedError('Player::to_string() should be implemented!')
+
+    def earn_xp(self, experience):
+        self.experience = self.experience + experience
+        if self.experience >= 100:
+            self.experience = self.experience - 100
+            self.level_up()
+
 
 class ControlledPlayer(Player):
     def __init__(self, name, job, race):
         super().__init__(name, job, race)
+
+    def level_up(self):
+        pass
 
 
 class BotPlayer(Player):
     def __init__(self, job, race, name=None):
         super().__init__(name, job, race)
 
+    def level_up(self):
+        pass
 
 def bot_factory(number_of_bots):
     bots = []
@@ -60,4 +75,3 @@ def bot_factory(number_of_bots):
         bots.append(BotPlayer(job, race, name))
 
     return bots
-

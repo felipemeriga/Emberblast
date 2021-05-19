@@ -3,7 +3,7 @@ from random import randrange
 from InquirerPy import prompt
 
 from project.conf.conf import get_configuration
-from project.game.questions import BEGIN_GAME_QUESTIONS
+from project.questions.new_game import BEGIN_GAME_QUESTIONS
 from project.map.map import MapFactory
 from project.player.job import dynamic_jobs_classes
 from project.player.player import ControlledPlayer, bot_factory
