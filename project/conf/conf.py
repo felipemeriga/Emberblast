@@ -70,16 +70,16 @@ class Configuration(object):
     def validate_jobs_attributes(self):
         self.jobs = deep_get(self.game, JOBS_SECTION)
         v = Validator(job_section_configuration_schema)
-        for value in self.jobs.values():
+        for key, value in self.jobs.items():
             if not v.validate(value, job_section_configuration_schema):
-                self.error_handler(v.errors)
+                self.error_handler(v.errors, key)
 
     def validate_races_attributes(self):
         self.races = deep_get(self.game, RACES_SECTION)
         v = Validator(race_section_configuration_schema)
-        for value in self.races.values():
+        for key, value in self.races.items():
             if not v.validate(value, race_section_configuration_schema):
-                self.error_handler(v.errors)
+                self.error_handler(v.errors, key)
 
 
 @Configuration

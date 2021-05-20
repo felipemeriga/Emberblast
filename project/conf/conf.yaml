@@ -1,6 +1,16 @@
 game:
   dice_sides: 20
   max_number_bots: 8
+  level_up_attributes_increment:
+    health_points: 5
+    magic_points: 5
+    move_speed: 1
+    strength: 3
+    intelligence: 3
+    accuracy: 1
+    armour: 3
+    magic_resist: 3
+    will: 1
   jobs:
     Knight:
       health_points: 10
