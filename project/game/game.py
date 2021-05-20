@@ -57,6 +57,7 @@ class GameFactory:
     def new_game(self):
         self.begin_question_results = prompt(BEGIN_GAME_QUESTIONS)
         main_player = self.init_players()
+        main_player.earn_xp(100)
 
         bots = self.init_bots()
 

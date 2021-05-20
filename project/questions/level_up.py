@@ -1,5 +1,4 @@
 from InquirerPy import prompt
-from InquirerPy.separator import Separator
 import emojis
 
 
@@ -95,4 +94,4 @@ def ask_attributes_to_improve():
     ]
 
     result = prompt(questions=level_up_questions)
-    return result
+    return result[0]

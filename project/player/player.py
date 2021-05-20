@@ -2,6 +2,7 @@ from random import randrange
 from project.conf.conf import get_configuration
 from project.player.job import dynamic_jobs_classes
 from project.player.race import dynamic_races_classes
+from project.questions.level_up import ask_attributes_to_improve
 from project.utils.constants import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator.fantasy_name_generator import generate_name
 
@@ -37,30 +38,35 @@ class Player:
         self.magic_resist += attributes.magic_resist
         self.will += attributes.will
 
-    def level_up(self):
+    def _level_up(self):
         raise NotImplementedError('Player::to_string() should be implemented!')
 
     def earn_xp(self, experience):
         self.experience = self.experience + experience
         if self.experience >= 100:
             self.experience = self.experience - 100
-            self.level_up()
+            self._level_up()
 
 
 class ControlledPlayer(Player):
     def __init__(self, name, job, race):
         super().__init__(name, job, race)
 
-    def level_up(self):
-        pass
+    def _level_up(self):
+        improvements = ask_attributes_to_improve()
+        for improvement in improvements:
+            attribute = improvement.get('attribute', 'health_points')
+            points = improvement.get('value', 0)
+            self.__setattr__(attribute, points + self.__getattribute__(attribute))
 
 
 class BotPlayer(Player):
     def __init__(self, job, race, name=None):
         super().__init__(name, job, race)
 
-    def level_up(self):
+    def _level_up(self):
         pass
+
 
 def bot_factory(number_of_bots):
     bots = []
