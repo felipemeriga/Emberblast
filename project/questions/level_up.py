@@ -1,6 +1,6 @@
-import emoji
 from InquirerPy import prompt
 from InquirerPy.separator import Separator
+import emojis
 
 
 def ask_attributes_to_improve():
@@ -22,63 +22,63 @@ def ask_attributes_to_improve():
             "message": "Select an action:",
             "choices": [
                 {
-                    "name": "+{points} Health Points".format(points=health_points),
+                    "name": emojis.encode("+{points} Health Points :green_heart:".format(points=health_points)),
                     "value": {
                         "attribute": "health_points",
                         "value": health_points
                     }
                 },
                 {
-                    "name": "+{points} Magic Points".format(points=magic_points),
+                    "name": emojis.encode("+{points} Magic Points :blue_heart:".format(points=magic_points)),
                     "value": {
                         "attribute": "magic_points",
                         "value": magic_points
                     }
                 },
                 {
-                    "name": "+{points} Move Speed".format(points=move_speed),
+                    "name": emojis.encode("+{points} Move Speed :runner:".format(points=move_speed)),
                     "value": {
                         "attribute": "move_speed",
                         "value": move_speed
                     }
                 },
                 {
-                    "name": "+{points} Strength".format(points=strength),
+                    "name": emojis.encode("+{points} Strength :punch:".format(points=strength)),
                     "value": {
                         "attribute": "strength",
                         "value": strength
                     }
                 },
                 {
-                    "name": "+{points} Intelligence".format(points=intelligence),
+                    "name": emojis.encode("+{points} Intelligence :books:".format(points=intelligence)),
                     "value": {
                         "attribute": "intelligence",
                         "value": intelligence
                     }
                 },
                 {
-                    "name": "+{points} Accuracy".format(points=accuracy),
+                    "name": emojis.encode("+{points} Accuracy :dart:".format(points=accuracy)),
                     "value": {
                         "attribute": "accuracy",
                         "value": accuracy
                     }
                 },
                 {
-                    "name": "+{points} Accuracy".format(points=armour),
+                    "name": emojis.encode("+{points} Armour :anger:".format(points=armour)),
                     "value": {
                         "attribute": "armour",
                         "value": armour
                     }
                 },
                 {
-                    "name": "+{points} Magic Resist".format(points=magic_resist),
+                    "name": emojis.encode("+{points} Magic Resist :cyclone:".format(points=magic_resist)),
                     "value": {
                         "attribute": "magic_resist",
                         "value": magic_resist
                     }
                 },
                 {
-                    "name": "+{points} Will".format(points=will),
+                    "name": emojis.encode("+{points} Will :pray:".format(points=will)),
                     "value": {
                         "attribute": "will",
                         "value": will
