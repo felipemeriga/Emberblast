@@ -58,6 +58,10 @@ def class_method(cls, arg):
     print(arg)
 
 
+def get_name(self):
+    return self.__class__.__name__
+
+
 def create_dynamic_jobs():
     jobs_dynamic_classes = {}
     job_from_config = get_configuration(JOBS_SECTION)
@@ -68,7 +72,8 @@ def create_dynamic_jobs():
 
             # member functions
             "func_arg": display_method,
-            "class_func": class_method
+            "class_func": class_method,
+            "get_name": get_name
         })
         jobs_dynamic_classes[job] = custom_job
 

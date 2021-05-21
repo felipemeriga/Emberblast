@@ -58,6 +58,10 @@ def class_method(cls, arg):
     print(arg)
 
 
+def get_name(self):
+    return self.__class__.__name__
+
+
 def create_dynamic_races():
     races_dynamic_classes = {}
     race_from_config = get_configuration(RACES_SECTION)
@@ -68,7 +72,8 @@ def create_dynamic_races():
 
             # member functions
             "func_arg": display_method,
-            "class_func": class_method
+            "class_func": class_method,
+            "get_name": get_name
         })
         races_dynamic_classes[race] = custom_race
 
