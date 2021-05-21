@@ -4,9 +4,9 @@ from cerberus import Validator, SchemaError
 
 from project.conf.logger import get_logger
 from project.conf.schema import job_section_configuration_schema, race_section_configuration_schema, \
-    game_section_configuration_schema
+    game_section_configuration_schema, level_up_attributes_configuration_schema
 from project.exception.exception import ConfigFileError
-from project.utils.constants import GAME_SECTION, JOBS_SECTION, RACES_SECTION
+from project.utils.constants import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT
 from project.utils.utils import get_project_root, deep_get
 
 
@@ -19,6 +19,7 @@ class Configuration(object):
         self.game = {}
         self.jobs = {}
         self.races = {}
+        self.level_up_attributes_increment = {}
         self.custom_jobs = {}
         self.custom_races = {}
         try:
@@ -40,6 +41,7 @@ class Configuration(object):
             self.validate_game_config()
             self.validate_jobs_attributes()
             self.validate_races_attributes()
+            self.validate_level_up_increment_attributes()
         except ConfigFileError as err:
             raise SystemExit(str(err))
         except SchemaError as err:
@@ -80,6 +82,12 @@ class Configuration(object):
         for key, value in self.races.items():
             if not v.validate(value, race_section_configuration_schema):
                 self.error_handler(v.errors, key)
+
+    def validate_level_up_increment_attributes(self):
+        self.level_up_attributes_increment = deep_get(self.game, LEVEL_UP_INCREMENT)
+        v = Validator(level_up_attributes_configuration_schema)
+        if not v.validate(self.level_up_attributes_increment, level_up_attributes_configuration_schema):
+            self.error_handler(v.errors, LEVEL_UP_INCREMENT)
 
 
 @Configuration
