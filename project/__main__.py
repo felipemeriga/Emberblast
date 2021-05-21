@@ -7,8 +7,9 @@ from project.utils.utils import print_greetings
 
 def run_project(args):
     print_greetings()
-    game = GameFactory()
-    game.new_game()
+    game_factory = GameFactory()
+    game = game_factory.new_game()
+    game.init_game()
 
 
 if __name__ == '__main__':

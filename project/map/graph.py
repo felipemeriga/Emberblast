@@ -32,13 +32,9 @@ class Graph:
         self.graph_dict[vertex_id].append(edge)
 
     def init_graph(self):
-        print('Initing it')
         visited = generate_visited_default_matrix(self.size)
         self.matrix = generate_random_adjacent_matrix(self.size)
-
         self._dfs_traverse(self.matrix, 0, 0, visited)
-        print('graph created')
-        print(self.matrix)
 
     def _dfs_traverse(self, matrix, row, column, visited):
         if row >= self.size or column >= self.size or visited[row][column]:
