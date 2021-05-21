@@ -60,8 +60,6 @@ class GameFactory:
 
         bots = self.init_bots()
 
-        bots[0].earn_xp(100)
-
         game_map = self.init_map()
 
         if self.begin_question_results.get('game') == 'Deathmatch':
