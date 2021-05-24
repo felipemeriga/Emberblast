@@ -1,8 +1,20 @@
-class Action:
+class SingletonAction(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(SingletonAction, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class Action(metaclass=SingletonAction):
     def __init__(self):
         pass
 
     def act(self):
+        pass
+
+    def compute_analytics(self):
         pass
 
 
@@ -26,7 +38,7 @@ class Search(Action):
         pass
 
 
-class Atack(Action):
+class Attack(Action):
     def __init__(self):
         pass
 
