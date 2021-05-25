@@ -2,8 +2,6 @@ from os import system
 from random import randrange
 
 from InquirerPy import prompt
-from colorama import Fore
-import emojis
 
 from project.conf.conf import get_configuration
 from project.questions.new_game import BEGIN_GAME_QUESTIONS
@@ -17,7 +15,6 @@ from project.utils.constants import GAME_SECTION
 class Game:
 
     def __init__(self, main_player, bots, game_map):
-        self.clear = lambda: system('clear')
         self.main_player = main_player
         self.bots = bots
         self.game_map = game_map
@@ -41,29 +38,11 @@ class Game:
                      reverse=True)
         self.turns[turn] = players
 
-    def init_game(self):
-        raise NotImplementedError('Game::to_string() should be implemented!')
-
 
 class Deathmatch(Game):
 
     def __init__(self, main_player, bots, game_map):
         super(Deathmatch, self).__init__(main_player, bots, game_map)
-
-    def init_game(self):
-        try:
-            turn_list = list(self.turns.copy().keys())
-            for turn in turn_list:
-                self.clear()
-                print(Fore.GREEN + emojis.encode(
-                    ':fire: Starting Turn {turn}! Embrace Yourselves! :fire: \n\n'.format(turn=turn)))
-                for player in self.turns.get(turn):
-                    print(emojis.encode(
-                        '::man:: {name} Time! \n\n'.format(name=player.name)))
-                self.calculate_turn_order()
-                turn_list.append(turn+1)
-        except Exception as err:
-            print(err)
 
 
 class GameFactory:
