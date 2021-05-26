@@ -2,9 +2,9 @@ import yaml
 from yaml.scanner import ScannerError
 from cerberus import Validator, SchemaError
 
-from project.conf.schema import race_section_configuration_schema, game_section_configuration_schema, \
+from .schema import race_section_configuration_schema, game_section_configuration_schema, \
     job_section_configuration_schema, level_up_attributes_configuration_schema
-from project.conf.logger import get_logger
+from .logger import get_logger
 from project.exception.exception import ConfigFileError
 from project.utils.constants import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT
 from project.utils.utils import get_project_root, deep_get
