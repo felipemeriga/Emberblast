@@ -9,7 +9,7 @@ from project.map.map import MapFactory
 from project.player.job import dynamic_jobs_classes
 from project.player.player import ControlledPlayer, bot_factory
 from project.player.race import dynamic_races_classes
-from project.utils.constants import GAME_SECTION
+from project.utils import GAME_SECTION
 
 
 class Game:

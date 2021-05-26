@@ -4,8 +4,8 @@ from copy import copy
 from InquirerPy import prompt
 import emojis
 
-from project.conf.conf import get_configuration
-from project.utils.constants import LEVEL_UP_INCREMENT, JOBS_SECTION, RACES_SECTION
+from project.conf import get_configuration
+from project.utils import LEVEL_UP_INCREMENT, JOBS_SECTION, RACES_SECTION
 
 
 # This method can be used by bots and humans, and it will randomly pick 2 attributes to upgrade

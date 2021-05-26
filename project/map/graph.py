@@ -1,4 +1,4 @@
-from project.utils.utils import generate_random_adjacent_matrix, generate_visited_default_matrix
+from project.utils import generate_random_adjacent_matrix, generate_visited_default_matrix
 
 
 class Edge:

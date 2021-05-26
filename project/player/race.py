@@ -1,6 +1,6 @@
-from project.conf.conf import get_configuration
+from project.conf import get_configuration
 
-from project.utils.constants import RACES_SECTION
+from project.utils import RACES_SECTION
 
 
 class RaceMeta(type):

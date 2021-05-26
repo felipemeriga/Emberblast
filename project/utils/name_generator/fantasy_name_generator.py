@@ -1,6 +1,6 @@
 from random import randrange
 
-from project.utils.utils import get_project_root
+from ..utils import get_project_root
 
 NAME_GENERATOR_PATH = '{root}/utils/name_generator'.format(root=get_project_root())
 

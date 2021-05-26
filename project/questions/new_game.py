@@ -1,8 +1,8 @@
 import emojis
 from prompt_toolkit.validation import Validator, ValidationError
 
-from project.conf.conf import get_configuration
-from project.utils.constants import GAME_SECTION, RACES_SECTION, JOBS_SECTION
+from project.conf import get_configuration
+from project.utils import GAME_SECTION, RACES_SECTION, JOBS_SECTION
 
 
 class MaxBotsInputValidator(Validator):

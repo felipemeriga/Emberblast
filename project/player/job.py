@@ -1,5 +1,5 @@
-from project.conf.conf import get_configuration
-from project.utils.constants import JOBS_SECTION
+from project.conf import get_configuration
+from project.utils import JOBS_SECTION
 
 
 class JobMeta(type):
