@@ -3,7 +3,7 @@ from random import randrange
 
 from InquirerPy import prompt
 
-from project.conf.conf import get_configuration
+from project.conf import get_configuration
 from project.questions.new_game import BEGIN_GAME_QUESTIONS
 from project.map.map import MapFactory
 from project.player.job import dynamic_jobs_classes
@@ -39,10 +39,10 @@ class Game:
         self.turns[turn] = players
 
 
-class Deathmatch(Game):
+class DeathMatch(Game):
 
     def __init__(self, main_player, bots, game_map):
-        super(Deathmatch, self).__init__(main_player, bots, game_map)
+        super(DeathMatch, self).__init__(main_player, bots, game_map)
 
 
 class GameFactory:
@@ -58,7 +58,7 @@ class GameFactory:
         game_map = self.init_map()
 
         if self.begin_question_results.get('game') == 'Deathmatch':
-            game = Deathmatch(main_player, bots, game_map)
+            game = DeathMatch(main_player, bots, game_map)
             game.calculate_turn_order()
             return game
 

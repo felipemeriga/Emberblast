@@ -2,15 +2,15 @@ import sys
 
 from colorama import Fore
 
-from project.game.game import GameFactory
+from project.game import GameFactory
 from project.utils.utils import print_greetings
 
 
 def run_project(args):
     print_greetings()
     game_factory = GameFactory()
-    game = game_factory.new_game()
-    game.init_game()
+    game_orchestrator = game_factory.new_game()
+    game_orchestrator.init_game()
 
 
 if __name__ == '__main__':

@@ -23,6 +23,9 @@ class Player:
         self.will = 2
         self.level = 1
         self.experience = 0
+        self.buffs = []
+        self.debuffs = []
+        self._alive = True
 
         self.add_attributes(self.job)
         self.add_attributes(self.race)
@@ -46,6 +49,17 @@ class Player:
         if self.experience >= 100:
             self.experience = self.experience - 100
             self._level_up()
+
+    def suffer_damage(self, damage: float) -> None:
+        self.health_points = self.health_points - damage
+        if self.health_points <= 0:
+            self.die()
+
+    def die(self) -> None:
+        self._alive = False
+
+    def is_alive(self) -> bool:
+        return self._alive
 
 
 class ControlledPlayer(Player):

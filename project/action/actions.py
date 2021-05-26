@@ -25,47 +25,64 @@ class SingletonAction(type):
 
 
 class Action(metaclass=SingletonAction):
-    def __init__(self):
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        """
+        Constructor of the Base Class for Actions.
+
+        :param bool independent: If it's True, the execution of this action will not block others in the same turn.
+        :param bool repeatable: If it's True, can be performed many times in a single turn.
+        :rtype: None
+        """
+        self.independent = independent
+        self.repeatable = repeatable
+
+    def act(self) -> None:
         pass
 
-    def act(self):
-        pass
-
-    def compute_analytics(self):
+    def compute_analytics(self) -> None:
         pass
 
 
 class Move(Action):
-    def __init__(self):
-        pass
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Move, self).__init__(independent, repeatable)
 
 
 class Defend(Action):
-    def __init__(self):
-        pass
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Defend, self).__init__(independent, repeatable)
 
 
 class Hide(Action):
-    def __init__(self):
-        pass
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Hide, self).__init__(independent, repeatable)
 
 
 class Search(Action):
-    def __init__(self):
-        pass
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Search, self).__init__(independent, repeatable)
 
 
 class Attack(Action):
-    def __init__(self):
-        pass
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Attack, self).__init__(independent, repeatable)
 
 
 class Skill(Action):
-    def __init__(self):
-        pass
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Skill, self).__init__(independent, repeatable)
 
 
 class Item(Action):
-    def __init__(self):
-        pass
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Item, self).__init__(independent, repeatable)
 
+
+class Check(Action):
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Check, self).__init__(independent, repeatable)
+
+
+class Pass(Action):
+    def __init__(self, independent: bool, repeatable: bool) -> None:
+        super(Pass, self).__init__(independent, repeatable)

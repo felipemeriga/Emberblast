@@ -6,52 +6,31 @@ def ask_actions_questions(actions_available):
     base_actions = {
         'move': {
             'name': emojis.encode('Move: :runner:'),
-            'value': {
-                'attribute': 'health_points',
-                'value': 'move'
-            }
+            'value': 'move'
         },
         'attack': {
             'name': emojis.encode('Attack: :crossed_swords:'),
-            'value': {
-                'attribute': 'health_points',
-                'value': 'attack'
-            }
+            'value': 'attack'
         },
         'skill': {
             'name': emojis.encode('Skill: :fire:'),
-            'value': {
-                'attribute': 'health_points',
-                'value': 'attack'
-            }
+            'value': 'skill'
         },
         'defend': {
             'name': emojis.encode('Defend: :shield:'),
-            'value': {
-                'attribute': 'health_points',
-                'value': 'attack'
-            }
+            'value': 'defend'
         },
         'hide': {
             'name': emojis.encode('Hide: :ninja:'),
-            'value': {
-                'attribute': 'health_points',
-                'value': 'attack'
-            }
+            'value': 'hide'
         },
         'search': {
             'name': emojis.encode('Search: :eye:'),
-            'value': {
-                'attribute': 'health_points',
-                'value': 'attack'
-            }
+            'value': 'search'
         },
         'item': {
             'name': emojis.encode('Item: :test_tube:'),
-            'value': {
-                'attribute': 'health_points',
-                'value': 'attack'
-            }
+            'value': 'item'
         },
     }
 
