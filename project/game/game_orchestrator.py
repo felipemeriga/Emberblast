@@ -3,8 +3,8 @@ from os import system
 import emojis
 from colorama import Fore
 
-from project.action.actions import Move, Defend, Hide, Search, Attack, Skill, Item, Action
-from project.game.game import Game
+from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Action
+from project.game import Game
 from project.player import ControlledPlayer, BotPlayer
 from project.questions import ask_actions_questions
 
