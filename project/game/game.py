@@ -5,7 +5,7 @@ from InquirerPy import prompt
 
 from project.conf import get_configuration
 from project.map import MapFactory
-from project.questions.new_game import BEGIN_GAME_QUESTIONS
+from project.questions import BEGIN_GAME_QUESTIONS
 from project.player import dynamic_jobs_classes
 from project.player import ControlledPlayer, bot_factory
 from project.player import dynamic_races_classes
