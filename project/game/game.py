@@ -4,8 +4,8 @@ from random import randrange
 from InquirerPy import prompt
 
 from project.conf import get_configuration
+from project.map import MapFactory
 from project.questions.new_game import BEGIN_GAME_QUESTIONS
-from project.map.map import MapFactory
 from project.player.job import dynamic_jobs_classes
 from project.player.player import ControlledPlayer, bot_factory
 from project.player.race import dynamic_races_classes

@@ -1,4 +1,4 @@
-from project.map.graph import Graph
+from .graph import Graph
 
 
 class Map:
