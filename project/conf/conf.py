@@ -5,9 +5,9 @@ from cerberus import Validator, SchemaError
 from .schema import race_section_configuration_schema, game_section_configuration_schema, \
     job_section_configuration_schema, level_up_attributes_configuration_schema
 from .logger import get_logger
-from project.exception.exception import ConfigFileError
 from project.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT
 from project.utils import get_project_root, deep_get
+from project.exception import ConfigFileError
 
 
 class Configuration(object):
