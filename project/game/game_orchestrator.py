@@ -5,7 +5,7 @@ from colorama import Fore
 
 from project.action.actions import Move, Defend, Hide, Search, Attack, Skill, Item, Action
 from project.game.game import Game
-from project.player.player import ControlledPlayer, BotPlayer
+from project.player import ControlledPlayer, BotPlayer
 from project.questions.actions import ask_actions_questions
 
 

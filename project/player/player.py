@@ -1,7 +1,7 @@
 from random import randrange
 from project.conf import get_configuration
-from project.player.job import dynamic_jobs_classes
-from project.player.race import dynamic_races_classes
+from .job import dynamic_jobs_classes
+from .race import dynamic_races_classes
 from project.questions.level_up import ask_attributes_to_improve, improve_attributes_automatically
 from project.utils import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator import generate_name
