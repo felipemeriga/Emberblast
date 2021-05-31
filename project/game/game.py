@@ -33,7 +33,7 @@ class Game:
             self.turns[turn] = []
         players.extend(self.bots)
         players.append(self.main_player)
-        players.sort(key=lambda x: (x.will / 10) * randrange(get_configuration(GAME_SECTION).get('dice_sides', 6)),
+        players.sort(key=lambda x: (x.will / 5) * randrange(get_configuration(GAME_SECTION).get('dice_sides', 6)),
                      reverse=True)
         self.turns[turn] = players
 
