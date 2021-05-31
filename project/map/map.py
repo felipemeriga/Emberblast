@@ -3,7 +3,7 @@ from .graph import Graph
 
 class Map:
 
-    def __init__(self, name, map_type, size):
+    def __init__(self, name: str, map_type: str, size: int) -> None:
         self.name = name
         self.type = map_type
         self.size = size
@@ -11,7 +11,7 @@ class Map:
 
 
 class MapFactory:
-    def create_map(self):
-        game_map = Map('test', 'wind', 3)
+    def create_map(self, map_size: int) -> Map:
+        game_map = Map('test', 'wind', map_size)
         game_map.graph.init_graph()
         return game_map

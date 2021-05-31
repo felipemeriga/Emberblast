@@ -18,7 +18,7 @@ class GameFactory:
 
         bots = self.init_bots()
 
-        game_map = self.init_map()
+        game_map = self.init_map(len(bots) + 1)
 
         if self.begin_question_results.get('game') == 'Deathmatch':
             game = DeathMatch(main_player, bots, game_map)
@@ -26,8 +26,8 @@ class GameFactory:
             orchestrator = DeathMatchOrchestrator(game)
             return orchestrator
 
-    def init_map(self) -> Map:
-        return MapFactory().create_map()
+    def init_map(self, map_size: int) -> Map:
+        return MapFactory().create_map(map_size)
 
     def init_players(self) -> ControlledPlayer:
         return ControlledPlayer(self.begin_question_results.get('nickname'),
