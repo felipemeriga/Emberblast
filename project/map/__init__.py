@@ -1,3 +1,3 @@
-from .map import MapFactory
+from .map import MapFactory, Map
 
-__all__ = ['MapFactory']
+__all__ = ['MapFactory', 'Map']

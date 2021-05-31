@@ -7,6 +7,7 @@ from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Acti
 from project.game import Game
 from project.player import ControlledPlayer, BotPlayer
 from project.questions import ask_actions_questions
+from project.utils import PASS_ACTION_NAME
 
 
 class GameOrchestrator:
@@ -64,9 +65,10 @@ class DeathMatchOrchestrator(GameOrchestrator):
         self.actions_left = list(self.actions.keys())
         last_action = ''
 
-        while len(self.actions_left) > 2 and last_action != 'pass':
+        while len(self.actions_left) > 2 and last_action != PASS_ACTION_NAME:
             chosen_action_string = ask_actions_questions(self.actions_left)
-            action = self.actions[chosen_action_string].act()
+            action = self.actions[chosen_action_string]
+            action.act()
             self.compute_player_decisions(action, chosen_action_string)
 
     def compute_player_decisions(self, action: Action, action_string: str) -> None:
