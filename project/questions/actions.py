@@ -33,11 +33,11 @@ def ask_actions_questions(actions_available):
             'value': 'item'
         },
         'check': {
-            'name': emojis.encode('Check: :test_tube:'),
+            'name': emojis.encode('Check: :eyes:'),
             'value': 'check'
         },
         'pass': {
-            'name': emojis.encode('Pass: :test_tube:'),
+            'name': emojis.encode('Pass: :wave:'),
             'value': 'pass'
         },
     }
@@ -53,7 +53,7 @@ def ask_actions_questions(actions_available):
             'default': 'Defend',
             'invalid_message': 'You need to select at least one action to execute!',
             'show_cursor': True,
-            'max_height': '50'
+            'max_height': '100'
         }
     ]
     result = prompt(questions=actions_questions)

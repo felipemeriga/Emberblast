@@ -3,7 +3,7 @@ from os import system
 import emojis
 from colorama import Fore
 
-from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Action
+from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Action, Check, Pass
 from project.game import Game
 from project.player import ControlledPlayer, BotPlayer
 from project.questions import ask_actions_questions
@@ -27,8 +27,8 @@ class GameOrchestrator:
         self.actions['attack'] = Attack(False, False)
         self.actions['skill'] = Skill(False, False)
         self.actions['item'] = Item(False, False)
-        self.actions['check'] = Item(True, True)
-        self.actions['pass'] = Item(False, False)
+        self.actions['check'] = Check(True, True)
+        self.actions['pass'] = Pass(True, False)
 
     def init_game(self):
         raise NotImplementedError('Game::to_string() should be implemented!')
@@ -65,18 +65,20 @@ class DeathMatchOrchestrator(GameOrchestrator):
         self.actions_left = list(self.actions.keys())
         last_action = ''
 
-        while len(self.actions_left) > 2 and last_action != PASS_ACTION_NAME:
+        while len(self.actions_left) > 2:
             chosen_action_string = ask_actions_questions(self.actions_left)
             action = self.actions[chosen_action_string]
             action.act()
             self.compute_player_decisions(action, chosen_action_string)
 
     def compute_player_decisions(self, action: Action, action_string: str) -> None:
-        if action.repeatable:
+        if action_string == PASS_ACTION_NAME:
+            self.actions_left.clear()
+        elif action.repeatable:
             return
-        if action.independent:
+        elif action.independent:
             self.actions_left.remove(action_string)
         else:
-            for key, value in self.actions.values():
+            for key, value in self.actions.items():
                 if not value.independent:
                     self.actions_left.remove(key)
