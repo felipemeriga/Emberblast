@@ -20,7 +20,7 @@ class Game:
         self.turns = {}
 
     # The turn order is calculated based on the will of the character, the players are sorted
-    #  based on the following equation: (will/10) * (dice result), the number of the dice sides
+    #  based on the following equation: (will/5) * (dice result), the number of the dice sides
     #  can be configured in the main configuration file
     def calculate_turn_order(self):
         players = []
