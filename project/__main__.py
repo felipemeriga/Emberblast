@@ -1,3 +1,4 @@
+import random
 import sys
 
 import matplotlib
@@ -15,6 +16,7 @@ def run_project(args):
     game_factory = GameFactory()
     game_orchestrator = game_factory.new_game()
     game_orchestrator.init_game()
+
 
 # This function is an example of how to use Networkx
 # def draw_graph(graph, labels=None, graph_layout='shell',
@@ -61,9 +63,15 @@ def run_project(args):
 #     plt.show()
 
 
+
+
 if __name__ == '__main__':
     try:
-        run_project(sys.argv)
+        # run_project(sys.argv)
+        matrix = generate_random_adjacent_matrix(5)
+        print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+                         for row in matrix]))
+        # printMatrix(matrix)
 
     except Exception as err:
         print(Fore.RED + "System shutdown with unexpected error")

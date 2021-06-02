@@ -21,7 +21,8 @@ def print_greetings():
 
 
 def generate_random_adjacent_matrix(size):
-    return [[random.randint(0, 1) for x in range(size)] for y in range(size)]
+    choices = [0] * 30 + [1] * 70
+    return [[random.choice(choices) for x in range(size)] for y in range(size)]
 
 
 def generate_visited_default_matrix(size):
