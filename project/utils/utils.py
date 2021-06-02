@@ -21,7 +21,7 @@ def print_greetings():
 
 
 def generate_random_adjacent_matrix(size):
-    choices = [0] * 30 + [1] * 70
+    choices = [0] * 25 + [1] * 75
     return [[random.choice(choices) for x in range(size)] for y in range(size)]
 
 
@@ -39,3 +39,7 @@ def find_key_recursively(obj, key):
     for k, v in obj.items():
         if isinstance(v, dict):
             return find_key_recursively(v, key)
+
+
+def convert_letter_to_number(letter: str) -> int:
+    return [ord(char) - 96 for char in "b".lower()][0] - 1

@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from project.game import GameFactory
 from project.map import MapFactory
+from project.map.graph import Graph
 from project.utils import print_greetings, generate_random_adjacent_matrix
 
 
@@ -63,15 +64,9 @@ def run_project(args):
 #     plt.show()
 
 
-
-
 if __name__ == '__main__':
     try:
-        # run_project(sys.argv)
-        matrix = generate_random_adjacent_matrix(5)
-        print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-                         for row in matrix]))
-        # printMatrix(matrix)
+        run_project(sys.argv)
 
     except Exception as err:
         print(Fore.RED + "System shutdown with unexpected error")
