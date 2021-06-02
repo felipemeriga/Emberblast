@@ -17,7 +17,8 @@ class JobMeta(type):
                              jobs_attributes.get('accuracy', 0),
                              jobs_attributes.get('armour', 0),
                              jobs_attributes.get('magic_resist', 0),
-                             jobs_attributes.get('will', 0)
+                             jobs_attributes.get('will', 0),
+                             jobs_attributes.get('attack_type', None),
                              )
 
 
@@ -30,7 +31,8 @@ class Job(metaclass=JobMeta):
                  accuracy,
                  armour,
                  magic_resist,
-                 will):
+                 will,
+                 attack_type):
         self.health_points = health_points
         self.magic_points = magic_points
         self.move_speed = move_speed
@@ -40,6 +42,7 @@ class Job(metaclass=JobMeta):
         self.armour = armour
         self.magic_resist = magic_resist
         self.will = will
+        self.attack_type = attack_type
 
 
 # dynamic constructor

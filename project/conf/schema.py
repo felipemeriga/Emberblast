@@ -90,7 +90,11 @@ attribute_section_schema = {
 }
 
 job_section_configuration_schema = {
-    **attribute_section_schema
+    **attribute_section_schema,
+    'attack_type': {
+        'required': True,
+        'type': 'string',
+    },
 }
 
 race_section_configuration_schema = {

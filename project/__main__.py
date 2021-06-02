@@ -1,5 +1,6 @@
 import sys
 
+import matplotlib
 from colorama import Fore
 import networkx as nx
 import numpy as np
@@ -14,7 +15,6 @@ def run_project(args):
     game_factory = GameFactory()
     game_orchestrator = game_factory.new_game()
     game_orchestrator.init_game()
-
 
 def draw_graph(graph, labels=None, graph_layout='shell',
                node_size=1600, node_color='blue', node_alpha=0.3,
@@ -54,18 +54,20 @@ def draw_graph(graph, labels=None, graph_layout='shell',
     edge_labels = dict(zip(graph, labels))
     nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels,
                                  label_pos=edge_text_pos)
-
+    plt.rcParams["figure.figsize"] = (100, 3)
+    plt.box(False)
     # show graph
     plt.show()
 
 
 if __name__ == '__main__':
     try:
-        # run_project(sys.argv)
+        run_project(sys.argv)
 
-        map = MapFactory().create_map()
-        graph = [(20, 21), (21, 22), (22, 23), (23, 24), (24, 25), (25, 20)]
-        draw_graph(graph, labels=[1, 1, 1, 1, 1, 1])
+        # map = MapFactory().create_map(6)
+        # edges = map.graph.get_edges_as_array_of_tuples()
+        # nodes = map.graph.get_list_of_nodes()
+        # draw_graph(edges, labels=[1, 1, 1, 1, 1, 1])
 
     except Exception as err:
         print(Fore.RED + "System shutdown with unexpected error")

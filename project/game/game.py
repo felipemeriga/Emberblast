@@ -1,11 +1,12 @@
 from random import randrange
+from typing import List
 
 from InquirerPy import prompt
 
 from project.conf import get_configuration
 from project.map import MapFactory
 from project.questions import BEGIN_GAME_QUESTIONS
-from project.player import dynamic_jobs_classes
+from project.player import dynamic_jobs_classes, Player
 from project.player import ControlledPlayer, bot_factory
 from project.player import dynamic_races_classes
 from project.utils import GAME_SECTION
@@ -36,6 +37,12 @@ class Game:
         players.sort(key=lambda x: (x.will / 5) * randrange(get_configuration(GAME_SECTION).get('dice_sides', 6)),
                      reverse=True)
         self.turns[turn] = players
+
+    def get_all_players(self) -> List[Player]:
+        players = []
+        players.extend(self.main_player)
+        players.extend(self.bots)
+        return players
 
 
 class DeathMatch(Game):

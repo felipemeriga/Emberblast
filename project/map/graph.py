@@ -51,5 +51,9 @@ class Graph:
     def get_edges_as_array_of_tuples(self) -> List[Tuple[int, int]]:
         edges = []
         for value in self.graph_dict.values():
-            edges.append((value.source, value.destination))
+            for edge in value:
+                edges.append((edge.source, edge.destination))
         return edges
+
+    def get_list_of_nodes(self) -> List[int]:
+        return list(self.graph_dict.keys())

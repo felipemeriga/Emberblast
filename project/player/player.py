@@ -26,6 +26,7 @@ class Player:
         self.buffs = []
         self.debuffs = []
         self._alive = True
+        self.location = 0
 
         self.add_attributes(self.job)
         self.add_attributes(self.race)

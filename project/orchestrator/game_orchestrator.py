@@ -20,15 +20,15 @@ class GameOrchestrator:
         self.actions_left = []
 
     def init_actions(self) -> None:
-        self.actions['move'] = Move(True, False)
-        self.actions['defend'] = Defend(False, False)
-        self.actions['hide'] = Hide(False, False)
-        self.actions['search'] = Search(False, False)
-        self.actions['attack'] = Attack(False, False)
-        self.actions['skill'] = Skill(False, False)
-        self.actions['item'] = Item(False, False)
-        self.actions['check'] = Check(True, True)
-        self.actions['pass'] = Pass(True, False)
+        self.actions['move'] = Move(True, False, self.game)
+        self.actions['defend'] = Defend(False, False, self.game)
+        self.actions['hide'] = Hide(False, False, self.game)
+        self.actions['search'] = Search(False, False, self.game)
+        self.actions['attack'] = Attack(False, False, self.game)
+        self.actions['skill'] = Skill(False, False, self.game)
+        self.actions['item'] = Item(False, False, self.game)
+        self.actions['check'] = Check(True, True, self.game)
+        self.actions['pass'] = Pass(True, False, self.game)
 
     def init_game(self):
         raise NotImplementedError('Game::to_string() should be implemented!')
