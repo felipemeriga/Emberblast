@@ -11,8 +11,9 @@ class Edge:
 
 
 class Vertex:
-    def __init__(self, vertex_id: str, value: int) -> None:
+    def __init__(self, vertex_id: str, value: int, position: dict) -> None:
         self.vertex_id = vertex_id
+        self.position = position
         self.edges = []
         self.value = value
 
@@ -48,6 +49,7 @@ class Graph:
             return
         visited[row][column] = True
         vertex_id = "n" + str(row) + str(column)
+
         vertex = Vertex(vertex_id, matrix[row][column])
         if vertex.value == 1:
             self._compute_vertical_edges(vertex, row, column, matrix)

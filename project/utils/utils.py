@@ -42,4 +42,8 @@ def find_key_recursively(obj, key):
 
 
 def convert_letter_to_number(letter: str) -> int:
-    return [ord(char) - 96 for char in "b".lower()][0] - 1
+    return [ord(char) - 96 for char in letter.lower()][0] - 1
+
+
+def convert_number_to_letter(number: int) -> str:
+    return chr(ord('@') + number + 1)
