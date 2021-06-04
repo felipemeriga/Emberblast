@@ -18,11 +18,12 @@ class GameFactory:
 
         bots = self.init_bots()
 
-        game_map = self.init_map(len(bots) + 1)
+        game_map = self.init_map(len(bots) + 3)
 
         if self.begin_question_results.get('game') == 'Deathmatch':
             game = DeathMatch(main_player, bots, game_map)
             game.calculate_turn_order()
+            game.game_map.define_player_initial_position_random(game.get_all_players())
             orchestrator = DeathMatchOrchestrator(game)
             return orchestrator
 

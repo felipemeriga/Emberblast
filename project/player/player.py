@@ -26,7 +26,7 @@ class Player:
         self.buffs = []
         self.debuffs = []
         self._alive = True
-        self.location = 0
+        self.position = 0
 
         self.add_attributes(self.job)
         self.add_attributes(self.race)
@@ -61,6 +61,9 @@ class Player:
 
     def is_alive(self) -> bool:
         return self._alive
+
+    def set_position(self, position: str) -> None:
+        self.position = position
 
 
 class ControlledPlayer(Player):

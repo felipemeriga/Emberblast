@@ -39,8 +39,7 @@ class Game:
         self.turns[turn] = players
 
     def get_all_players(self) -> List[Player]:
-        players = []
-        players.extend(self.main_player)
+        players = [self.main_player]
         players.extend(self.bots)
         return players
 

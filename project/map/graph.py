@@ -114,7 +114,7 @@ class Graph:
 
     def print_plain_map(self) -> None:
         # Print the columns first
-        print(' '*4, end="")
+        print(' ' * 4, end="")
         for column in range(self.size):
             print('{:4}'.format(column), end="")
         print('\n')
@@ -123,3 +123,8 @@ class Graph:
             for column in range(self.size):
                 print('{:4}'.format('*' if self.matrix[row][column] == 1 else ' '), end="")
             print('')
+
+    def is_vertex_valid(self, row: int, column: int) -> bool:
+        letter = convert_number_to_letter(row)
+        vertex = self.graph_dict.get(letter + str(column))
+        return True if vertex.value == 1 else False
