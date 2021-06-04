@@ -16,11 +16,9 @@ functionalities
 import math
 from typing import List
 
-import sqlparse
-
 from project.game import Game
-from project.map import Map
 from project.player import Player
+from project.questions import ask_check_action
 
 
 class SingletonAction(type):
@@ -112,7 +110,7 @@ class Attack(Action):
 
     def act(self, player: Player) -> None:
         players = self.get_remaining_players(player)
-        possible_foes = self.get_attack_possibilities()
+        # possible_foes = self.get_attack_possibilities()
 
 
 class Skill(Action):
@@ -128,6 +126,15 @@ class Item(Action):
 class Check(Action):
     def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
         super().__init__(independent, repeatable, game)
+
+    def act(self, player: Player) -> None:
+        check_option = ask_check_action()
+        if check_option == 'status':
+            player.print_stats()
+        elif check_option == 'map':
+            self.game.game_map.graph.print_plain_map()
+        else:
+            return
 
 
 class Pass(Action):

@@ -1,4 +1,7 @@
 from random import randrange
+
+from emojis import emojis
+
 from project.conf import get_configuration
 from .job import dynamic_jobs_classes
 from .race import dynamic_races_classes
@@ -64,6 +67,30 @@ class Player:
 
     def set_position(self, position: str) -> None:
         self.position = position
+
+    def print_stats(self):
+        print(emojis.encode(
+            ':man: {name} Stats: \n\n'.format(name=self.name)))
+        print(emojis.encode(
+            ':bar_chart: Level: {level} \n'
+            ':green_heart: Health Points: {health} \n'
+            ':blue_heart: Magic Points: {magic} \n'
+            ':runner: Move Speed: {move} \n'
+            ':books: Intelligence: {intelligence} \n'
+            ':dart: Accuracy: {accuracy} \n'
+            ':punch: Strength: {attack} \n'
+            ':shield: Armour: {armour} \n'
+            ':cyclone: Magic Resist: {resist} \n'
+            ':pray: Will: {will} \n'.format(level=self.level,
+                                            health=self.health_points,
+                                            magic=self.magic_points,
+                                            move=self.move_speed,
+                                            intelligence=self.intelligence,
+                                            accuracy=self.accuracy,
+                                            attack=self.strength,
+                                            armour=self.armour,
+                                            resist=self.magic_resist,
+                                            will=self.will)))
 
 
 class ControlledPlayer(Player):

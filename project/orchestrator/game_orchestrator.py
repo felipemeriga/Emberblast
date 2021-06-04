@@ -48,7 +48,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
                     ':fire: Starting Turn {turn}! Embrace Yourselves! :fire: \n\n'.format(turn=turn)))
                 for player in self.game.turns.get(turn):
                     print(emojis.encode(
-                        '::man:: {name} Time! \n\n'.format(name=player.name)))
+                        ':man: {name} Time! \n\n'.format(name=player.name)))
                     if isinstance(player, ControlledPlayer):
                         self.controlled_decisioning(player)
                     else:
@@ -68,7 +68,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         while len(self.actions_left) > 2:
             chosen_action_string = ask_actions_questions(self.actions_left)
             action = self.actions[chosen_action_string]
-            action.act()
+            action.act(player)
             self.compute_player_decisions(action, chosen_action_string)
 
     def compute_player_decisions(self, action: Action, action_string: str) -> None:

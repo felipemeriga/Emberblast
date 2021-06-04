@@ -4,9 +4,9 @@ from typing import List
 from InquirerPy import prompt
 
 from project.conf import get_configuration
-from project.map import MapFactory
+from project.map import MapFactory, Map
 from project.questions import BEGIN_GAME_QUESTIONS
-from project.player import dynamic_jobs_classes, Player
+from project.player import dynamic_jobs_classes, Player, BotPlayer
 from project.player import ControlledPlayer, bot_factory
 from project.player import dynamic_races_classes
 from project.utils import GAME_SECTION
@@ -14,7 +14,7 @@ from project.utils import GAME_SECTION
 
 class Game:
 
-    def __init__(self, main_player, bots, game_map):
+    def __init__(self, main_player: ControlledPlayer, bots: List[BotPlayer], game_map: Map):
         self.main_player = main_player
         self.bots = bots
         self.game_map = game_map

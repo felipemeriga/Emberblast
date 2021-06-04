@@ -1,6 +1,9 @@
 import sys
 
+import colorama
 from colorama import Fore
+from termcolor import colored
+
 from project.game import GameFactory
 from project.utils import print_greetings
 
@@ -15,6 +18,7 @@ def run_project(args):
 if __name__ == '__main__':
     try:
         run_project(sys.argv)
+
     except Exception as err:
         print(Fore.RED + "System shutdown with unexpected error")
         exit()

@@ -2,6 +2,35 @@ import emojis
 from InquirerPy import prompt
 
 
+def ask_check_action():
+    questions = [
+        {
+            'type': 'list',
+            'message': 'Check: ',
+            'choices': [
+                {
+                    'name': emojis.encode('Map and Enemies :city_sunset: '),
+                    'value': 'map'
+                },
+                {
+                    'name': emojis.encode('My Status: :bar_chart: '),
+                    'value': 'status'
+                },
+                {
+                    'name': emojis.encode('Cancel: :x: '),
+                    'value': 'cancel'
+                }
+            ],
+            'default': 'map',
+            'invalid_message': 'You need to select at least one check to execute!',
+            'show_cursor': True,
+            'max_height': '100'
+        }
+    ]
+    result = prompt(questions=questions)
+    return result[0]
+
+
 def ask_actions_questions(actions_available):
     base_actions = {
         'move': {
@@ -50,7 +79,7 @@ def ask_actions_questions(actions_available):
             'type': 'list',
             'message': 'Select an action:',
             'choices': authorized_actions,
-            'default': 'Defend',
+            'default': 'defend',
             'invalid_message': 'You need to select at least one action to execute!',
             'show_cursor': True,
             'max_height': '100'
