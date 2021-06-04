@@ -29,22 +29,12 @@ class Graph:
         self.graph_dict = graph_dict
         self.matrix = [[]]
 
-    def _add_to_graph(self, vertex_id: int, source: int, destination: int) -> None:
-        if vertex_id not in self.graph_dict:
-            self.graph_dict[vertex_id] = []
-        edge = Edge(source, destination)
-        self.graph_dict[vertex_id].append(edge)
-
-    def print_plain_matrix(self):
-        print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-                         for row in self.matrix]))
-
     def init_graph(self) -> None:
         visited = generate_visited_default_matrix(self.size)
         self.matrix = generate_random_adjacent_matrix(self.size)
-        self._dfs_traverse(self.matrix, 0, 0, visited)
+        self._create_matrix_dfs_traverse(self.matrix, 0, 0, visited)
 
-    def _dfs_traverse(self, matrix: List[List[int]], row: int, column: int, visited: List[List[bool]]):
+    def _create_matrix_dfs_traverse(self, matrix: List[List[int]], row: int, column: int, visited: List[List[bool]]):
         if row >= self.size or column >= self.size or visited[row][column]:
             return
         visited[row][column] = True
@@ -61,8 +51,8 @@ class Graph:
             self._compute_diagonal_edges(vertex, row, column, matrix)
         self.graph_dict[vertex_id] = vertex
 
-        self._dfs_traverse(matrix, row + 1, column, visited)
-        self._dfs_traverse(matrix, row, column + 1, visited)
+        self._create_matrix_dfs_traverse(matrix, row + 1, column, visited)
+        self._create_matrix_dfs_traverse(matrix, row, column + 1, visited)
 
     def _compute_vertical_edges(self, vertex: Vertex, row: int, column: int, matrix: List[List[int]]):
         # upper edge
@@ -118,15 +108,18 @@ class Graph:
     def get_list_of_nodes(self) -> List[int]:
         return list(self.graph_dict.keys())
 
-    """
-        0     1     2     3
-    
-    A   *           *     *
-    
-    B   *     *     *     *
-    
-    C   *     *           *
-    
-    D   *     *     *      
-    
-    """
+    def print_plain_matrix(self) -> None:
+        print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+                         for row in self.matrix]))
+
+    def print_plain_map(self) -> None:
+        # Print the columns first
+        print(' '*4, end="")
+        for column in range(self.size):
+            print('{:4}'.format(column), end="")
+        print('\n')
+        for row in range(self.size):
+            print('{:7}'.format(convert_number_to_letter(row)), end="")
+            for column in range(self.size):
+                print('{:4}'.format('*' if self.matrix[row][column] == 1 else ' '), end="")
+            print('')
