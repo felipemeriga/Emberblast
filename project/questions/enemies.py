@@ -7,7 +7,8 @@ def ask_enemy_to_check(enemies):
     choices = []
     for enemy in enemies:
         choices.append({
-            'name': enemy.name,
+            'name': '{enemy} ({job})'.format(enemy=enemy.name,
+                                             job=enemy.job.get_name()),
             'value': enemy
         })
     enemies_questions = [

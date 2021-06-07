@@ -19,7 +19,7 @@ from typing import List
 from project.game import Game
 from project.player import Player
 from project.questions import ask_check_action, ask_enemy_to_check
-from project.message import print_player_stats
+from project.message import print_player_stats, print_enemy_status
 
 
 class SingletonAction(type):
@@ -133,7 +133,7 @@ class Check(Action):
         elif check_option == 'enemy':
             enemies = self.game.get_remaining_players(player, include_hidden=True)
             enemy = ask_enemy_to_check(enemies)
-            self.game.print_enemy_status(enemy)
+            print_enemy_status(enemy)
         else:
             return
 

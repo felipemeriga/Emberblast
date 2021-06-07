@@ -1,7 +1,5 @@
 from random import randrange
 
-from emojis import emojis
-
 from project.conf import get_configuration
 from .job import dynamic_jobs_classes
 from .race import dynamic_races_classes

@@ -49,33 +49,6 @@ class Game:
                                                , players)]
         return remaining_players
 
-    def print_enemy_status(self, enemy: Player) -> None:
-        print(emojis.encode(colored('Enemy {name}({job}) is currently at position: {position} \n'
-                                    ':bar_chart: Level: {level} \n'
-                                    ':green_heart: Health Points: {health} \n'
-                                    ':blue_heart: Magic Points: {magic} \n'
-                                    ':runner: Move Speed: {move} \n'
-                                    ':books: Intelligence: {intelligence} \n'
-                                    ':dart: Accuracy: {accuracy} \n'
-                                    ':punch: Strength: {attack} \n'
-                                    ':shield: Armour: {armour} \n'
-                                    ':cyclone: Magic Resist: {resist} \n'
-                                    ':pray: Will: {will} \n'.format(name=enemy.name,
-                                                                    job=enemy.job.get_name(),
-                                                                    position=enemy.position,
-                                                                    level=enemy.level,
-                                                                    health=enemy.health_points,
-                                                                    magic=enemy.magic_points,
-                                                                    move=enemy.move_speed,
-                                                                    intelligence=enemy.intelligence,
-                                                                    accuracy=enemy.accuracy,
-                                                                    attack=enemy.strength,
-                                                                    armour=enemy.armour,
-                                                                    resist=enemy.magic_resist,
-                                                                    will=enemy.will
-                                                                    ),
-                                    'red')))
-
 
 class DeathMatch(Game):
 
