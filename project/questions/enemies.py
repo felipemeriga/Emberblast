@@ -2,8 +2,10 @@ from typing import List, Union
 
 from InquirerPy import prompt
 
+from project.player import Player
 
-def ask_enemy_to_check(enemies):
+
+def ask_enemy_to_check(enemies: List[Player]) -> Union[str, bool, list, Player]:
     choices = []
     for enemy in enemies:
         choices.append({

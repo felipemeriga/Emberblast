@@ -2,8 +2,8 @@ import random
 from typing import List
 
 from .graph import Graph
-from ..player import Player
-from ..utils import convert_number_to_letter
+from project.player import Player
+from project.utils import convert_number_to_letter
 
 
 class Map:

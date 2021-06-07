@@ -1,8 +1,6 @@
 from random import randrange
 from typing import List
 
-from emojis import emojis
-from termcolor import colored
 
 from project.conf import get_configuration
 from project.map import Map
