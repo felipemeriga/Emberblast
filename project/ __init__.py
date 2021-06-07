@@ -5,3 +5,4 @@ from project.utils import *
 from project.exception import *
 from project.questions import *
 from project.map import *
+from project.message import *

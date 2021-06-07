@@ -1,11 +1,9 @@
 import sys
 
-import colorama
 from colorama import Fore
-from termcolor import colored
 
 from project.game import GameFactory
-from project.utils import print_greetings
+from project.message import print_greetings
 
 
 def run_project(args):
