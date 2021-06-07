@@ -19,7 +19,7 @@ from typing import List
 from project.game import Game
 from project.player import Player
 from project.questions import ask_check_action, ask_enemy_to_check
-from project.message import print_player_stats, print_enemy_status
+from project.message import print_player_stats, print_enemy_status, print_map_info
 
 
 class SingletonAction(type):
@@ -129,7 +129,7 @@ class Check(Action):
             print_player_stats(player)
         elif check_option == 'map':
             unhidden_foes = self.game.get_remaining_players(player, include_hidden=True)
-            self.game.game_map.graph.print_map_info(player, unhidden_foes)
+            print_map_info(player, unhidden_foes, self.game.game_map.size, self.game.game_map.graph)
         elif check_option == 'enemy':
             enemies = self.game.get_remaining_players(player, include_hidden=True)
             enemy = ask_enemy_to_check(enemies)

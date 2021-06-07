@@ -84,3 +84,40 @@ def print_plain_map(matrix, size) -> None:
         for column in range(size):
             print('{:4}'.format('*' if matrix[row][column] == 1 else ' '), end="")
         print('')
+
+
+def print_map_info(player, players, size, matrix) -> None:
+    foes_positions = []
+    print(colored('{name} is currently at position: {position}, '
+                  'with {health_points} HP'.format(name=player.name,
+                                                   position=player.position,
+                                                   health_points=player.health_points),
+                  'green'))
+
+    for opponent in players:
+        foes_positions.append(opponent.position)
+        print(colored('Enemy {name}({job}) is currently at position: {position}, '
+                      'with {health_points} HP'.format(name=opponent.name,
+                                                       job=opponent.job.get_name(),
+                                                       position=opponent.position,
+                                                       health_points=opponent.health_points),
+                      'red'))
+
+    print(' ' * 4, end="")
+    for column in range(size):
+        print('{:4}'.format(column), end="")
+    print('\n')
+    for row in range(size):
+        print('{:7}'.format(convert_number_to_letter(row)), end="")
+        for column in range(size):
+            color = 'white'
+            attrs = ['bold']
+            position = convert_number_to_letter(row) + str(column)
+
+            if player.position == position:
+                color = 'green'
+                attrs.append('blink')
+            elif position in foes_positions:
+                color = 'red'
+            print(colored('{:4}'.format('*' if matrix[row][column] == 1 else ' '), color, attrs=attrs), end="")
+        print('')
