@@ -111,22 +111,6 @@ class Graph:
     def get_list_of_nodes(self) -> List[int]:
         return list(self.graph_dict.keys())
 
-    def print_plain_matrix(self) -> None:
-        print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-                         for row in self.matrix]))
-
-    def print_plain_map(self) -> None:
-        # Print the columns first
-        print(' ' * 4, end="")
-        for column in range(self.size):
-            print('{:4}'.format(column), end="")
-        print('\n')
-        for row in range(self.size):
-            print('{:7}'.format(convert_number_to_letter(row)), end="")
-            for column in range(self.size):
-                print('{:4}'.format('*' if self.matrix[row][column] == 1 else ' '), end="")
-            print('')
-
     def print_map_info(self, player: Player, players: List[Player]) -> None:
         foes_positions = []
         print(colored('{name} is currently at position: {position}, '

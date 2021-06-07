@@ -3,8 +3,7 @@ from colorama import Fore
 from emojis import emojis
 from termcolor import colored
 
-from project.player import Player
-from project.utils import get_project_root
+from project.utils import get_project_root, convert_number_to_letter
 
 
 def print_greetings():
@@ -16,7 +15,7 @@ def print_greetings():
     print(Fore.RED + emojis.encode(':fire: Welcome to Emberblast! :fire: \n\n'))
 
 
-def print_player_stats(player: Player):
+def print_player_stats(player):
     print(emojis.encode(
         ':man: {name} Stats: \n\n'.format(name=player.name)))
     print(emojis.encode(
@@ -41,7 +40,7 @@ def print_player_stats(player: Player):
                                         will=player.will)))
 
 
-def print_enemy_status(enemy: Player) -> None:
+def print_enemy_status(enemy) -> None:
     print(emojis.encode(colored('Enemy {name}({job}) is currently at position: {position} \n'
                                 ':bar_chart: Level: {level} \n'
                                 ':green_heart: Health Points: {health} \n'
@@ -67,3 +66,21 @@ def print_enemy_status(enemy: Player) -> None:
                                                                 will=enemy.will
                                                                 ),
                                 'red')))
+
+
+def print_plain_matrix(matrix) -> None:
+    print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+                     for row in matrix.matrix]))
+
+
+def print_plain_map(matrix, size) -> None:
+    # Print the columns first
+    print(' ' * 4, end="")
+    for column in range(size):
+        print('{:4}'.format(column), end="")
+    print('\n')
+    for row in range(size):
+        print('{:7}'.format(convert_number_to_letter(row)), end="")
+        for column in range(size):
+            print('{:4}'.format('*' if matrix[row][column] == 1 else ' '), end="")
+        print('')
