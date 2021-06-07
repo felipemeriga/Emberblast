@@ -1,8 +1,10 @@
+from typing import List
+
 import emojis
 from InquirerPy import prompt
 
 
-def ask_check_action():
+def ask_check_action() -> str:
     questions = [
         {
             'type': 'list',
@@ -35,7 +37,7 @@ def ask_check_action():
     return result[0]
 
 
-def ask_actions_questions(actions_available):
+def ask_actions_questions(actions_available: List[str]) -> str:
     base_actions = {
         'move': {
             'name': emojis.encode('Move: :runner:'),
