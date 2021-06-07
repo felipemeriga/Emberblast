@@ -18,6 +18,7 @@ def run_project(args):
 if __name__ == '__main__':
     try:
         run_project(sys.argv)
+        # print(colored('*', 'white', attrs=['blink', 'bold']))
 
     except Exception as err:
         print(Fore.RED + "System shutdown with unexpected error")

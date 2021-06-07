@@ -17,6 +17,10 @@ def ask_check_action():
                     'value': 'status'
                 },
                 {
+                    'name': emojis.encode('Single Enemy: :skull: '),
+                    'value': 'enemy'
+                },
+                {
                     'name': emojis.encode('Cancel: :x: '),
                     'value': 'cancel'
                 }

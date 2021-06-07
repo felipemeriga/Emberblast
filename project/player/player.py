@@ -30,6 +30,7 @@ class Player:
         self.debuffs = []
         self._alive = True
         self.position = 0
+        self._hidden = False
 
         self.add_attributes(self.job)
         self.add_attributes(self.race)
@@ -67,6 +68,12 @@ class Player:
 
     def set_position(self, position: str) -> None:
         self.position = position
+
+    def set_hidden(self, state: bool) -> None:
+        self._hidden = state
+
+    def is_hidden(self) -> bool:
+        return self._hidden
 
     def print_stats(self):
         print(emojis.encode(

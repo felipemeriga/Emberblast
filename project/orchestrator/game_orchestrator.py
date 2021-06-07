@@ -68,6 +68,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         while len(self.actions_left) > 2:
             chosen_action_string = ask_actions_questions(self.actions_left)
             action = self.actions[chosen_action_string]
+            self.clear()
             action.act(player)
             self.compute_player_decisions(action, chosen_action_string)
 

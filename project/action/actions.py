@@ -18,7 +18,7 @@ from typing import List
 
 from project.game import Game
 from project.player import Player
-from project.questions import ask_check_action
+from project.questions import ask_check_action, ask_enemy_to_check
 
 
 class SingletonAction(type):
@@ -52,11 +52,6 @@ class Action(metaclass=SingletonAction):
         :rtype: None
         """
         pass
-
-    def get_remaining_players(self, player: Player) -> List[Player]:
-        players = self.game.get_all_players()
-        remaining_players = [x for x in filter(lambda a: a.is_alive() and a.name != player.name, players)]
-        return remaining_players
 
     def compute_analytics(self) -> None:
         pass
@@ -109,7 +104,7 @@ class Attack(Action):
         return possible_foes
 
     def act(self, player: Player) -> None:
-        players = self.get_remaining_players(player)
+        players = self.game.get_remaining_players(player)
         # possible_foes = self.get_attack_possibilities()
 
 
@@ -132,7 +127,12 @@ class Check(Action):
         if check_option == 'status':
             player.print_stats()
         elif check_option == 'map':
-            self.game.game_map.graph.print_plain_map()
+            unhidden_foes = self.game.get_remaining_players(player, include_hidden=True)
+            self.game.game_map.graph.print_map_info(player, unhidden_foes)
+        elif check_option == 'enemy':
+            enemies = self.game.get_remaining_players(player, include_hidden=True)
+            enemy = ask_enemy_to_check(enemies)
+            self.game.print_enemy_status(enemy)
         else:
             return
 
