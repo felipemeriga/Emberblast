@@ -1,3 +1,5 @@
+from typing import List
+
 import timg
 from colorama import Fore
 from emojis import emojis
@@ -119,5 +121,27 @@ def print_map_info(player, players, size, matrix) -> None:
                 attrs.append('blink')
             elif position in foes_positions:
                 color = 'red'
+            print(colored('{:4}'.format('*' if matrix[row][column] == 1 else ' '), color, attrs=attrs), end="")
+        print('')
+
+
+def print_moving_possibilities(player_position: str, possibilities: List[str], matrix: List[List[int]],
+                               size: int) -> None:
+    for column in range(size):
+        print('{:4}'.format(column), end="")
+    print('\n')
+    for row in range(size):
+        print('{:7}'.format(convert_number_to_letter(row)), end="")
+        for column in range(size):
+            color = 'white'
+            attrs = ['bold']
+            position = convert_number_to_letter(row) + str(column)
+
+            if position in possibilities:
+                color = 'green'
+                attrs.append('blink')
+            elif player_position == position:
+                color = 'yellow'
+                attrs.append('blink')
             print(colored('{:4}'.format('*' if matrix[row][column] == 1 else ' '), color, attrs=attrs), end="")
         print('')

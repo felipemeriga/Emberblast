@@ -62,6 +62,9 @@ class Move(Action):
     def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
         super().__init__(independent, repeatable, game)
 
+    def act(self, player: Player) -> None:
+        possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position, player.move_speed)
+
 
 class Defend(Action):
     def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
