@@ -70,7 +70,7 @@ def print_enemy_status(enemy) -> None:
 
 def print_plain_matrix(matrix) -> None:
     print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-                     for row in matrix.matrix]))
+                     for row in matrix]))
 
 
 def print_plain_map(matrix, size) -> None:

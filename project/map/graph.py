@@ -1,5 +1,4 @@
-from typing import List, Tuple
-
+from typing import List, Tuple, Set
 
 from project.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, convert_number_to_letter
 
@@ -113,3 +112,24 @@ class Graph:
         letter = convert_number_to_letter(row)
         vertex = self.graph_dict.get(letter + str(column))
         return True if vertex.value == 1 else False
+
+    def compute_recursive_range_edges(self, vertex: Vertex, reach: float, available_nodes: Set[str], origin_node: str):
+        for edge in vertex.edges:
+            if reach >= edge.weight:
+                if edge.destination == origin_node:
+                    continue
+                remaining_reach = reach - edge.weight
+                reached_vertex = self.graph_dict.get(edge.destination)
+                available_nodes.add(reached_vertex.vertex_id)
+                if remaining_reach >= 1:
+                    self.compute_recursive_range_edges(reached_vertex, remaining_reach,
+                                                       available_nodes, vertex.vertex_id)
+        return
+
+    def get_available_nodes_in_range(self, position: str, radius: int) -> List[str]:
+        start_vertex = self.graph_dict.get(position)
+        available_nodes_set = set()
+        self.compute_recursive_range_edges(start_vertex, radius, available_nodes_set, position)
+        available_nodes_list = list(available_nodes_set)
+        available_nodes_list.remove(position)
+        return available_nodes_list
