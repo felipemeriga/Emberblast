@@ -14,7 +14,10 @@ multiplayer, considering that it's ideal to use the same game class structure, t
 functionalities
 """
 import math
+import random
 from typing import List
+
+from numpy.random import choice
 
 from project.game import Game
 from project.player import Player
@@ -78,6 +81,11 @@ class Defend(Action):
 class Hide(Action):
     def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
         super().__init__(independent, repeatable, game)
+
+    def act(self, player: Player) -> None:
+        result = self.game.chose_probability(additional=[0.7])
+        # TODO - Print hide result on print.py
+        player.set_hidden(result)
 
 
 class Search(Action):
