@@ -38,7 +38,7 @@ game:
       attack_type: melee
       health_points: 6
       magic_points: 5
-      move_speed: 4
+      move_speed: 2
       strength: 2
       intelligence: 1
       accuracy: 3
@@ -49,7 +49,7 @@ game:
       attack_type: ranged
       health_points: 6
       magic_points: 5
-      move_speed: 3
+      move_speed: 1
       strength: 3
       intelligence: 1
       accuracy: 4

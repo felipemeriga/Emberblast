@@ -18,8 +18,8 @@ from typing import List
 
 from project.game import Game
 from project.player import Player
-from project.questions import ask_check_action, ask_enemy_to_check
-from project.message import print_player_stats, print_enemy_status, print_map_info
+from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move
+from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities
 
 
 class SingletonAction(type):
@@ -64,6 +64,9 @@ class Move(Action):
 
     def act(self, player: Player) -> None:
         possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position, player.move_speed)
+        print_moving_possibilities(player.position, possibilities, self.game.game_map.graph.matrix,
+                                   self.game.game_map.size)
+        selected_place = ask_where_to_move(possibilities)
 
 
 class Defend(Action):
@@ -91,7 +94,7 @@ class Attack(Action):
 
         if attacker_combat_type == 'melee':
             for foe in players:
-                if player.location == foe.location:
+                if player.position == foe.position:
                     possible_foes.append(foe)
         elif attacker_combat_type == 'ranged':
             # TODO - implement the foes possibilities to ranged attacks
@@ -132,7 +135,7 @@ class Check(Action):
             print_player_stats(player)
         elif check_option == 'map':
             unhidden_foes = self.game.get_remaining_players(player, include_hidden=True)
-            print_map_info(player, unhidden_foes, self.game.game_map.size, self.game.game_map.graph)
+            print_map_info(player, unhidden_foes, self.game.game_map.size, self.game.game_map.graph.matrix)
         elif check_option == 'enemy':
             enemies = self.game.get_remaining_players(player, include_hidden=True)
             enemy = ask_enemy_to_check(enemies)

@@ -10,7 +10,7 @@ def run_project(args):
     print_greetings()
     game_factory = GameFactory()
     game_orchestrator = game_factory.new_game()
-    # game_orchestrator.init_game()
+    game_orchestrator.init_game()
 
 
 if __name__ == '__main__':

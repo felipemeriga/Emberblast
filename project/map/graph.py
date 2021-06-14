@@ -131,5 +131,7 @@ class Graph:
         available_nodes_set = set()
         self.compute_recursive_range_edges(start_vertex, radius, available_nodes_set, position)
         available_nodes_list = list(available_nodes_set)
-        available_nodes_list.remove(position)
+
+        if position in available_nodes_list:
+            available_nodes_list.remove(position)
         return available_nodes_list

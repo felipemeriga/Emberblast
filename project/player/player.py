@@ -5,10 +5,10 @@ class Player:
         self.name = name
         self.health_points = 10
         self.magic_points = 10
-        self.move_speed = 2
+        self.move_speed = 0
         self.strength = 2
         self.intelligence = 2
-        self.accuracy = 4
+        self.accuracy = 2
         self.armour = 2
         self.magic_resist = 2
         self.will = 2

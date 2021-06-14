@@ -127,6 +127,10 @@ def print_map_info(player, players, size, matrix) -> None:
 
 def print_moving_possibilities(player_position: str, possibilities: List[str], matrix: List[List[int]],
                                size: int) -> None:
+    print('Possibilities of Moving')
+    print(colored('You are on the Yellow tile', 'yellow'))
+    print(colored('Green tiles are the possibilities', 'green'))
+    print(' ' * 4, end="")
     for column in range(size):
         print('{:4}'.format(column), end="")
     print('\n')
