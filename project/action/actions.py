@@ -67,6 +67,7 @@ class Move(Action):
         print_moving_possibilities(player.position, possibilities, self.game.game_map.graph.matrix,
                                    self.game.game_map.size)
         selected_place = ask_where_to_move(possibilities)
+        player.set_position(selected_place)
 
 
 class Defend(Action):
