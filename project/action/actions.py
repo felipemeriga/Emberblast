@@ -84,7 +84,6 @@ class Hide(Action):
 
     def act(self, player: Player) -> None:
         result = self.game.chose_probability(additional=[0.7])
-        # TODO - Print hide result on print.py
         player.set_hidden(result)
 
 

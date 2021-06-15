@@ -29,6 +29,10 @@ game_section_configuration_schema = {
     "level_up_attributes_increment": {
         'required': True,
         'type': 'dict',
+    },
+    "side-effects": {
+        'required': True,
+        'type': 'dict',
     }
 }
 
@@ -103,4 +107,35 @@ race_section_configuration_schema = {
 
 level_up_attributes_configuration_schema = {
     **attribute_section_schema
+}
+
+side_effects_configuration_schema = {
+    'type': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['buff', 'debuff']
+    },
+    'attribute': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['health_points', 'magic_points', 'move_speed', 'strength', 'intelligence', 'accuracy', 'armour',
+                    'magic_resist', 'will']
+    },
+    'base': {
+        'required': True,
+        'type': 'number',
+        'min': 1,
+        'max': 100
+    },
+    'duration': {
+        'required': True,
+        'type': 'number',
+        'min': 1,
+        'max': 20
+    },
+    'occurrence': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['constant', 'iterated']
+    },
 }

@@ -3,9 +3,9 @@ from yaml.scanner import ScannerError
 from cerberus import Validator, SchemaError
 
 from .schema import race_section_configuration_schema, game_section_configuration_schema, \
-    job_section_configuration_schema, level_up_attributes_configuration_schema
+    job_section_configuration_schema, level_up_attributes_configuration_schema, side_effects_configuration_schema
 from .logger import get_logger
-from project.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT
+from project.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT, SIDE_EFFECTS_SECTION
 from project.utils import get_project_root, deep_get
 from project.exception import ConfigFileError
 
@@ -20,6 +20,7 @@ class Configuration(object):
         self.jobs = {}
         self.races = {}
         self.level_up_attributes_increment = {}
+        self.side_effects = { }
         self.custom_jobs = {}
         self.custom_races = {}
         try:
@@ -42,6 +43,7 @@ class Configuration(object):
             self.validate_jobs_attributes()
             self.validate_races_attributes()
             self.validate_level_up_increment_attributes()
+            self.validate_side_effects()
         except ConfigFileError as err:
             raise SystemExit(str(err))
         except SchemaError as err:
@@ -89,7 +91,12 @@ class Configuration(object):
         if not v.validate(self.level_up_attributes_increment, level_up_attributes_configuration_schema):
             self.error_handler(v.errors, LEVEL_UP_INCREMENT)
 
-
+    def validate_side_effects(self):
+        self.side_effects = deep_get(self.game, SIDE_EFFECTS_SECTION)
+        v = Validator(side_effects_configuration_schema)
+        for key, value in self.side_effects.items():
+            if not v.validate(value, side_effects_configuration_schema):
+                self.error_handler(v.errors, key)
 @Configuration
 def get_configuration():
     pass
