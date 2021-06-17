@@ -1,30 +1,32 @@
 items:
-    potion:
-      type: healing
-      tier: common
-      description: Heals 10 Health Points
-      attribute: health_points
-      base: 10
-    ether:
-      type: healing
-      tier: common
-      description: Heals 10 Magic Points
-      attribute: magic_points
-      base: 10
-    antidote:
-      type: recovery
-      tier: common
-      status: poison
-    steel_sword:
-      type: equipable
-      tier: common
-      description: A common sword made of steel
-      attribute: strength
-      base: 1
-      side-effects: []
-    magic_jewel:
-      type: equipable
-      tier: common
-      description: An magic jewel, with a common stone carved on that
-      attribute: intelligence
-      base: 1
+  potion:
+    type: healing
+    tier: common
+    description: Heals 10 Health Points
+    attribute: health_points
+    base: 10
+  ether:
+    type: healing
+    tier: common
+    description: Heals 10 Magic Points
+    attribute: magic_points
+    base: 10
+  antidote:
+    type: recovery
+    description: Cures from poison
+    tier: common
+    status: poison
+  steel_sword:
+    type: equipment
+    tier: common
+    description: A common sword made of steel
+    attribute: strength
+    base: 1
+    side-effects: [ ]
+  magic_jewel:
+    type: equipment
+    tier: common
+    description: An magic jewel, with a common stone carved on that
+    attribute: intelligence
+    base: 1
+    side-effects: [ ]

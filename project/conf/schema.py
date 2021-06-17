@@ -33,6 +33,10 @@ game_section_configuration_schema = {
     "side-effects": {
         'required': True,
         'type': 'dict',
+    },
+    "status": {
+        'required': False,
+        'type': 'string',
     }
 }
 
@@ -138,4 +142,97 @@ side_effects_configuration_schema = {
         'type': 'string',
         'allowed': ['constant', 'iterated']
     },
+}
+
+items_validation_schema = {
+    'type': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['recovery', 'healing', 'equipable']
+    },
+    'tier': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['common', 'uncommon', 'rare', 'legendary']
+    },
+    'description': {
+        'required': True,
+        'type': 'string',
+    },
+    'attribute': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['health_points', 'magic_points', 'move_speed', 'strength', 'intelligence', 'accuracy', 'armour',
+                    'magic_resist', 'will']
+    },
+    'base': {
+        'required': True,
+        'type': 'number',
+        'min': 1,
+        'max': 100
+    },
+    'side-effects': {
+        'required': False,
+        'type': 'list', 'schema': {'type': 'string'}
+    }
+}
+
+general_item_validation_schema = {
+    'type': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['recovery', 'healing', 'equipment']
+    },
+    'tier': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['common', 'uncommon', 'rare', 'legendary']
+    },
+    'description': {
+        'required': True,
+        'type': 'string',
+    },
+}
+healing_item_validation_schema = {
+    **general_item_validation_schema,
+    'attribute': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['health_points', 'magic_points', 'move_speed', 'strength', 'intelligence', 'accuracy', 'armour',
+                    'magic_resist', 'will']
+    },
+    'base': {
+        'required': True,
+        'type': 'number',
+        'min': 1,
+        'max': 100
+    },
+}
+
+recovery_item_validation_schema = {
+    **general_item_validation_schema,
+    'status': {
+        'required': True,
+        'type': 'string',
+    }
+}
+
+equipment_item_validation_schema = {
+    **general_item_validation_schema,
+    'base': {
+        'required': True,
+        'type': 'number',
+        'min': 1,
+        'max': 100
+    },
+    'attribute': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['health_points', 'magic_points', 'move_speed', 'strength', 'intelligence', 'accuracy', 'armour',
+                    'magic_resist', 'will']
+    },
+    'side-effects': {
+        'required': False,
+        'type': 'list', 'schema': {'type': 'string'}
+    }
 }

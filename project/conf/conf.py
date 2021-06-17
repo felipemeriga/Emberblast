@@ -3,9 +3,11 @@ from yaml.scanner import ScannerError
 from cerberus import Validator, SchemaError
 
 from .schema import race_section_configuration_schema, game_section_configuration_schema, \
-    job_section_configuration_schema, level_up_attributes_configuration_schema, side_effects_configuration_schema
+    job_section_configuration_schema, level_up_attributes_configuration_schema, side_effects_configuration_schema, \
+    healing_item_validation_schema, recovery_item_validation_schema, equipment_item_validation_schema
 from .logger import get_logger
-from project.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT, SIDE_EFFECTS_SECTION
+from project.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT, SIDE_EFFECTS_SECTION, \
+    ITEMS_SECTION
 from project.utils import get_project_root, deep_get
 from project.exception import ConfigFileError
 
@@ -16,17 +18,23 @@ class Configuration(object):
         self._logger = get_logger()
         self.project_module = __import__('project')
         self.parsed_yaml_file = {}
+        self.parsed_items_file = {}
         self.game = {}
         self.jobs = {}
         self.races = {}
         self.level_up_attributes_increment = {}
-        self.side_effects = { }
+        self.side_effects = {}
+        self.items = {}
         self.custom_jobs = {}
         self.custom_races = {}
         try:
-            a_yaml_file = open(str(get_project_root()) + '/conf/conf.yaml')
-            self.parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+            config_yaml_file = open(str(get_project_root()) + '/conf/conf.yaml')
+            self.parsed_yaml_file = yaml.load(config_yaml_file, Loader=yaml.FullLoader)
             self.validate_config_file()
+
+            items_yaml_file = open(str(get_project_root()) + '/conf/items.yaml')
+            self.parsed_items_file = yaml.load(items_yaml_file, Loader=yaml.FullLoader)
+            self.validate_items()
         except OSError as err:
             self._logger.error(err)
             raise SystemExit('Could not open the game configuration file')
@@ -44,6 +52,51 @@ class Configuration(object):
             self.validate_races_attributes()
             self.validate_level_up_increment_attributes()
             self.validate_side_effects()
+        except ConfigFileError as err:
+            raise SystemExit(str(err))
+        except SchemaError as err:
+            raise SystemExit(str(err))
+
+    def validate_items(self):
+        try:
+            self.items = self.parsed_items_file.get(ITEMS_SECTION, {})
+            validated_items = {}
+            healing_validator = Validator(healing_item_validation_schema)
+            recovery_validator = Validator(recovery_item_validation_schema)
+            equipment_validator = Validator(equipment_item_validation_schema)
+
+            for key, value in self.items.items():
+                validator = None
+                schema = None
+                if value.get('type') == 'healing':
+                    validator = healing_validator
+                    schema = healing_item_validation_schema
+                elif value.get('type') == 'recovery':
+                    validator = recovery_validator
+                    schema = recovery_item_validation_schema
+                elif value.get('type') == 'equipment':
+                    validator = equipment_validator
+                    schema = equipment_item_validation_schema
+                else:
+                    self._logger.warn(
+                        'Item: {item} of unknown type, valid ones are healing, equipment and recovery'.format(item=key))
+                    continue
+
+                if not validator.validate(value, schema):
+                    self.error_handler(validator.errors, key)
+
+                if 'side-effects' in list(value.keys()):
+                    for element in value.get('side-effects', []):
+                        if element not in self.side_effects.keys():
+                            self._logger.warn(
+                                'Item: {item} has an unknown side effect attached to that'.format(item=key))
+                            continue
+                if 'status' in list(value.keys()):
+                    if value.get('status') not in self.side_effects.keys():
+                        self._logger.warn(
+                            'Item: {item} has an unknown side effect attached to that'.format(item=key))
+                        continue
+                validated_items[key] = value
         except ConfigFileError as err:
             raise SystemExit(str(err))
         except SchemaError as err:
@@ -97,6 +150,8 @@ class Configuration(object):
         for key, value in self.side_effects.items():
             if not v.validate(value, side_effects_configuration_schema):
                 self.error_handler(v.errors, key)
+
+
 @Configuration
 def get_configuration():
     pass
