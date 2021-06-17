@@ -30,3 +30,31 @@ items:
     attribute: intelligence
     base: 1
     side-effects: [ ]
+  sandals_of_hermes:
+    type: equipment
+    tier: legendary
+    description: Winged sandals, a symbol of the Greek messenger god Hermes.
+    attribute: move_speed
+    base: 2
+    side-effects: [ ]
+  loki_scepter_stone:
+    type: equipment
+    tier: legendary
+    description: The Mind Stone allows the user to control the minds of others.
+    attribute: intelligence
+    base: 6
+    side-effects: [ ]
+  excalibur:
+    type: equipment
+    tier: legendary
+    description: Excalibur is the legendary sword of King Arthur.
+    attribute: strength
+    base: 6
+    side-effects: [ haste ]
+  masamune:
+    type: equipment
+    tier: rare
+    description: A Katana that has been forged with diamonds
+    attribute: strength
+    base: 4
+    side-effects: [ ]
