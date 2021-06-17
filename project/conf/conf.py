@@ -19,6 +19,7 @@ class Configuration(object):
         self.project_module = __import__('project')
         self.parsed_yaml_file = {}
         self.parsed_items_file = {}
+        self.parsed_side_effects_file = {}
         self.game = {}
         self.jobs = {}
         self.races = {}
@@ -28,13 +29,7 @@ class Configuration(object):
         self.custom_jobs = {}
         self.custom_races = {}
         try:
-            config_yaml_file = open(str(get_project_root()) + '/conf/conf.yaml')
-            self.parsed_yaml_file = yaml.load(config_yaml_file, Loader=yaml.FullLoader)
-            self.validate_config_file()
-
-            items_yaml_file = open(str(get_project_root()) + '/conf/items.yaml')
-            self.parsed_items_file = yaml.load(items_yaml_file, Loader=yaml.FullLoader)
-            self.validate_items()
+            self.parse_configuration_files()
         except OSError as err:
             self._logger.error(err)
             raise SystemExit('Could not open the game configuration file')
@@ -45,13 +40,25 @@ class Configuration(object):
     def __call__(self, section):
         return self.__getattribute__(section)
 
+    def parse_configuration_files(self):
+        config_yaml_file = open(str(get_project_root()) + '/conf/conf.yaml')
+        self.parsed_yaml_file = yaml.load(config_yaml_file, Loader=yaml.FullLoader)
+        self.validate_config_file()
+
+        side_effects_yaml_file = open(str(get_project_root()) + '/conf/side_effects.yaml')
+        self.parsed_side_effects_file = yaml.load(side_effects_yaml_file, Loader=yaml.FullLoader)
+        self.validate_side_effects()
+
+        items_yaml_file = open(str(get_project_root()) + '/conf/items.yaml')
+        self.parsed_items_file = yaml.load(items_yaml_file, Loader=yaml.FullLoader)
+        self.validate_items()
+
     def validate_config_file(self):
         try:
             self.validate_game_config()
             self.validate_jobs_attributes()
             self.validate_races_attributes()
             self.validate_level_up_increment_attributes()
-            self.validate_side_effects()
         except ConfigFileError as err:
             raise SystemExit(str(err))
         except SchemaError as err:
@@ -145,7 +152,7 @@ class Configuration(object):
             self.error_handler(v.errors, LEVEL_UP_INCREMENT)
 
     def validate_side_effects(self):
-        self.side_effects = deep_get(self.game, SIDE_EFFECTS_SECTION)
+        self.side_effects = self.parsed_items_file.get(SIDE_EFFECTS_SECTION, {})
         v = Validator(side_effects_configuration_schema)
         for key, value in self.side_effects.items():
             if not v.validate(value, side_effects_configuration_schema):

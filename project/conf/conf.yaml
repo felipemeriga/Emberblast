@@ -118,41 +118,4 @@ game:
       armour: 0
       magic_resist: 0
       will: 1
-  side-effects:
-    poison:
-      type: debuff
-      attribute: health_points
-      base: 1
-      duration: 10
-      occurrence: iterated
-    haste:
-      type: buff
-      attribute: move_speed
-      base: 1
-      duration: 3
-      occurrence: constant
-    slow:
-      type: debuff
-      attribute: move_speed
-      base: 1
-      duration: 3
-      occurrence: constant
-    blind:
-      type: debuff
-      attribute: accuracy
-      base: 1
-      duration: 5
-      occurrence: constant
-    protect:
-      type: buff
-      attribute: armour
-      base: 3
-      duration: 3
-      occurrence: constant
-    shell:
-      type: buff
-      attribute: magic_resist
-      base: 3
-      duration: 3
-      occurrence: constant
 

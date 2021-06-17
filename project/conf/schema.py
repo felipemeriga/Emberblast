@@ -29,14 +29,6 @@ game_section_configuration_schema = {
     "level_up_attributes_increment": {
         'required': True,
         'type': 'dict',
-    },
-    "side-effects": {
-        'required': True,
-        'type': 'dict',
-    },
-    "status": {
-        'required': False,
-        'type': 'string',
     }
 }
 
