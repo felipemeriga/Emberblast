@@ -3,9 +3,10 @@ from typing import List
 
 class Item:
 
-    def __init__(self, tier: str, description: str) -> None:
+    def __init__(self, tier: str, description: str, weight: float) -> None:
         self.tier = tier
         self.description = description
+        self.weight = weight
 
 
 class HealingItem(Item):

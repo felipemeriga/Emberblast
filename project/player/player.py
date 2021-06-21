@@ -14,8 +14,7 @@ class Player:
         self.will = 2
         self.level = 1
         self.experience = 0
-        self.buffs = []
-        self.debuffs = []
+        self.side_effects = []
         self._alive = True
         self.position = 0
         self._hidden = False
@@ -62,3 +61,12 @@ class Player:
 
     def is_hidden(self) -> bool:
         return self._hidden
+
+    '''
+    This method it's used for getting the real value of an attribute
+    computing and considering buffs/debuffs from side-effects, as well as
+    items equipped to him.
+    
+    '''
+    def get_attribute_real_value(self):
+        pass

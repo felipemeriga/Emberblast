@@ -5,23 +5,27 @@ items:
     description: Heals 10 Health Points
     attribute: health_points
     base: 10
+    weight: 0.4
   ether:
     type: healing
     tier: common
     description: Heals 10 Magic Points
     attribute: magic_points
     base: 10
+    weight: 0.4
   antidote:
     type: recovery
     description: Cures from poison
     tier: common
     status: poison
+    weight: 0.4
   steel_sword:
     type: equipment
     tier: common
     description: A common sword made of steel
     attribute: strength
     base: 1
+    weight: 1
     side-effects: [ ]
   magic_jewel:
     type: equipment
@@ -29,6 +33,7 @@ items:
     description: An magic jewel, with a common stone carved on that
     attribute: intelligence
     base: 1
+    weight: 0.05
     side-effects: [ ]
   sandals_of_hermes:
     type: equipment
@@ -36,6 +41,7 @@ items:
     description: Winged sandals, a symbol of the Greek messenger god Hermes.
     attribute: move_speed
     base: 2
+    weight: 0.3
     side-effects: [ ]
   loki_scepter_stone:
     type: equipment
@@ -43,6 +49,7 @@ items:
     description: The Mind Stone allows the user to control the minds of others.
     attribute: intelligence
     base: 6
+    weight: 0.2
     side-effects: [ ]
   excalibur:
     type: equipment
@@ -50,6 +57,7 @@ items:
     description: Excalibur is the legendary sword of King Arthur.
     attribute: strength
     base: 6
+    weight: 2
     side-effects: [ haste ]
   masamune:
     type: equipment
@@ -57,4 +65,5 @@ items:
     description: A Katana that has been forged with diamonds
     attribute: strength
     base: 4
+    weight: 0.7
     side-effects: [ ]
