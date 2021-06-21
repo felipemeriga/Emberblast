@@ -1,3 +1,10 @@
+from typing import List
+
+from project.conf import get_logger
+from project.effect import SideEffect
+from project.item import Bag
+
+
 class Player:
     def __init__(self, name, job, race):
         self.job = job
@@ -14,10 +21,11 @@ class Player:
         self.will = 2
         self.level = 1
         self.experience = 0
-        self.side_effects = []
+        self.side_effects: List[SideEffect] = []
         self._alive = True
         self.position = 0
         self._hidden = False
+        self.bag = Bag()
 
         self.add_attributes(self.job)
         self.add_attributes(self.race)
@@ -68,5 +76,20 @@ class Player:
     items equipped to him.
     
     '''
-    def get_attribute_real_value(self):
-        pass
+
+    def get_attribute_real_value(self, attribute: str) -> int:
+        try:
+            attribute = self.__getattribute__(attribute)
+            result = attribute
+            for equipment in self.bag.get_equipments():
+                if equipment.attribute == attribute:
+                    result = result + equipment.base
+            for effect in self.side_effects:
+                if effect.attribute == attribute:
+                    result = result + effect.base
+
+            return result
+        except:
+            logger = get_logger()
+            logger.warn(f'Attribute: {attribute} does not exist, provide a valid one')
+            return 0
