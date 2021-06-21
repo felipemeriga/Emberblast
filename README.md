@@ -44,3 +44,18 @@ default classes, races, skills and items, if you want, you can create your own o
 in the game, or if you just want to enjoy, just grab and play it as the default version.
 
 For accessing all the playing manual with all the detailed rules, access the [GAME MANUAL]().
+
+## Docker
+
+You can also run this game as a Docker container, you can either pull the official image from our public registry
+[registry.emberblast.docker.cc](registry.emberblast.docker.cc).
+
+Our build a custom docker image, and run it, for building the Docker image, run the following command:
+```shell
+docker build -t emberblast .
+```
+
+For running the game:
+```shell
+docker run -it emberblast:latest
+```
