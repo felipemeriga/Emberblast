@@ -4,10 +4,11 @@ from cerberus import Validator, SchemaError
 
 from .schema import race_section_configuration_schema, game_section_configuration_schema, \
     job_section_configuration_schema, level_up_attributes_configuration_schema, side_effects_configuration_schema, \
-    healing_item_validation_schema, recovery_item_validation_schema, equipment_item_validation_schema
+    healing_item_validation_schema, recovery_item_validation_schema, equipment_item_validation_schema, \
+    items_probabilities_schema
 from .logger import get_logger
 from project.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT, SIDE_EFFECTS_SECTION, \
-    ITEMS_SECTION
+    ITEMS_SECTION, ITEMS_PROBABILITIES_SECTION
 from project.utils import get_project_root, deep_get
 from project.exception import ConfigFileError
 
@@ -59,6 +60,7 @@ class Configuration(object):
             self.validate_jobs_attributes()
             self.validate_races_attributes()
             self.validate_level_up_increment_attributes()
+            self.validate_items_probabilities_attributes()
         except ConfigFileError as err:
             raise SystemExit(str(err))
         except SchemaError as err:
@@ -157,6 +159,16 @@ class Configuration(object):
         for key, value in self.side_effects.items():
             if not v.validate(value, side_effects_configuration_schema):
                 self.error_handler(v.errors, key)
+
+    def validate_items_probabilities_attributes(self):
+        probabilities = deep_get(self.game, ITEMS_PROBABILITIES_SECTION)
+        v = Validator(items_probabilities_schema)
+        if not v.validate(probabilities, items_probabilities_schema):
+            self.error_handler(v.errors, ITEMS_PROBABILITIES_SECTION)
+        sum_of_probabilities = sum([x for x in probabilities.values()])
+        if sum_of_probabilities != 1:
+            raise ConfigFileError(
+                'The sum of all the probabilities of the items_probabilities must be 1, which is 100%')
 
 
 @Configuration

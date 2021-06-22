@@ -11,6 +11,11 @@ game:
     armour: 3
     magic_resist: 3
     will: 1
+  items_probabilities:
+    common: 0.6
+    uncommon: 0.2
+    rare: 0.15
+    legendary: 0.05
   jobs:
     Knight:
       attack_type: melee

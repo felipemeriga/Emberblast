@@ -29,6 +29,37 @@ game_section_configuration_schema = {
     "level_up_attributes_increment": {
         'required': True,
         'type': 'dict',
+    },
+    'items_probabilities': {
+        'required': True,
+        'type': 'dict',
+    },
+}
+
+items_probabilities_schema = {
+    'common': {
+        'required': True,
+        'type': 'float',
+        'min': 0,
+        'max': 1
+    },
+    'uncommon': {
+        'required': True,
+        'type': 'float',
+        'min': 0,
+        'max': 1
+    },
+    'rare': {
+        'required': True,
+        'type': 'float',
+        'min': 0,
+        'max': 1
+    },
+    'legendary': {
+        'required': True,
+        'type': 'float',
+        'min': 0,
+        'max': 1
     }
 }
 
