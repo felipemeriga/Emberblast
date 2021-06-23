@@ -3,9 +3,9 @@ items:
     name: Potion
     type: healing
     tier: common
-    description: Heals 10 Health Points
+    description: Heals 5 Health Points
     attribute: health_points
-    base: 6
+    base: 5
     weight: 0.4
   ether:
     name: Ether
@@ -28,7 +28,7 @@ items:
     tier: uncommon
     description: Heals 10 Health Points
     attribute: health_points
-    base: 12
+    base: 10
     weight: 0.4
   steel_sword:
     name: Steel Sword
@@ -39,6 +39,23 @@ items:
     base: 1
     weight: 1
     side-effects: [ ]
+  war_hammer:
+    name: War Hammer
+    type: equipment
+    tier: uncommon
+    description: A big hammer for any kind of fight
+    attribute: strength
+    base: 3
+    weight: 1
+    side-effects: [ ]
+  mega_potion:
+    name: Mega Potion
+    type: healing
+    tier: rare
+    description: Heals 15 Health Points
+    attribute: health_points
+    base: 15
+    weight: 0.4
   magic_jewel:
     name: Magic Jewel
     type: equipment

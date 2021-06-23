@@ -36,17 +36,31 @@ class Map:
             if vertex_valid and position not in selected_positions:
                 return position
 
+    """
+    Function to coordinate distribution of random items in the map
+    
+    The items will be placed in the half of the quantity of the walkable nodes in the map, and with the
+    probabilities for each tier of item configured in the conf file, the quantity for each tier will be determined,
+    and finally a random items will be picked for the respective quantities of each tier, and placed in some random 
+    places.
+
+    :rtype: None
+    """
+
     def distribute_random_items(self) -> None:
         walkable_nodes = self.graph.get_walkable_nodes()
 
         number_of_walkable_nodes = len(walkable_nodes)
         number_of_items = floor(number_of_walkable_nodes / 2)
-        picked_positions = []
         probabilities = get_configuration('item_probabilities')
         common_items_number = round(number_of_items * probabilities.get('common', 0.6))
         uncommon_items_number = round(number_of_items * probabilities.get('uncommon', 0.2))
         rare_items_number = round(number_of_items * probabilities.get('rare', 0.15))
         legendary_items_number = round(number_of_items * probabilities.get('legendary', 0.05))
+        item_type_distribution = {'common': ['healing'] * 45 + ['equipment'] * 30 + ['recovery'] * 25,
+                                  'uncommon': ['healing'] * 50 + ['equipment'] * 50,
+                                  'rare': ['healing'] * 20 + ['equipment'] * 80,
+                                  'legendary': ['equipment'] * 80}
 
         for i in range(common_items_number + uncommon_items_number + rare_items_number + legendary_items_number):
             key = random.choice(list(walkable_nodes.keys()))
@@ -62,10 +76,15 @@ class Map:
             elif rare_items_number > 0:
                 tier = 'rare'
                 rare_items_number = rare_items_number - 1
+                choices = ['item'] * 25 + ['equipment'] * 75
+                item_type = random.choice(choices)
             elif legendary_items_number > 0:
                 tier = 'legendary'
                 legendary_items_number = legendary_items_number - 1
-            item = get_random_item(tier)
+                item_type = 'equipment'
+
+            item_type = random.choice(item_type_distribution.get(tier))
+            item = get_random_item(tier, item_type)
             self.items[key] = item
 
 
