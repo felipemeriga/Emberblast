@@ -64,7 +64,6 @@ class Map:
 
         for i in range(common_items_number + uncommon_items_number + rare_items_number + legendary_items_number):
             key = random.choice(list(walkable_nodes.keys()))
-            node = walkable_nodes.get(key)
             walkable_nodes.pop(key)
             tier = ''
             if common_items_number > 0:
@@ -76,12 +75,9 @@ class Map:
             elif rare_items_number > 0:
                 tier = 'rare'
                 rare_items_number = rare_items_number - 1
-                choices = ['item'] * 25 + ['equipment'] * 75
-                item_type = random.choice(choices)
             elif legendary_items_number > 0:
                 tier = 'legendary'
                 legendary_items_number = legendary_items_number - 1
-                item_type = 'equipment'
 
             item_type = random.choice(item_type_distribution.get(tier))
             item = get_random_item(tier, item_type)
