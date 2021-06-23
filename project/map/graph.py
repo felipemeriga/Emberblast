@@ -1,4 +1,4 @@
-from typing import List, Tuple, Set
+from typing import List, Tuple, Set, Dict
 
 from project.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, convert_number_to_letter
 
@@ -135,3 +135,9 @@ class Graph:
         if position in available_nodes_list:
             available_nodes_list.remove(position)
         return available_nodes_list
+
+    def get_number_of_walkable_nodes(self) -> int:
+        return len([x for x in filter(lambda vertex: vertex.value == 1, list(self.graph_dict.values()))])
+
+    def get_walkable_nodes(self) -> Dict[str, Vertex]:
+        return {k: v for (k, v) in self.graph_dict.items() if v.value == 1}

@@ -168,6 +168,10 @@ side_effects_configuration_schema = {
 }
 
 general_item_validation_schema = {
+    'name': {
+        'required': True,
+        'type': 'string'
+    },
     'type': {
         'required': True,
         'type': 'string',

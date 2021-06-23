@@ -24,6 +24,7 @@ class GameFactory:
             game = DeathMatch(main_player, bots, game_map)
             game.calculate_turn_order()
             game.game_map.define_player_initial_position_random(game.get_all_players())
+            game.game_map.distribute_random_items()
             orchestrator = DeathMatchOrchestrator(game)
             return orchestrator
 

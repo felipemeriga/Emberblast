@@ -29,6 +29,7 @@ class Configuration(object):
         self.items = {}
         self.custom_jobs = {}
         self.custom_races = {}
+        self.item_probabilities = {}
         try:
             self.parse_configuration_files()
         except OSError as err:
@@ -161,11 +162,11 @@ class Configuration(object):
                 self.error_handler(v.errors, key)
 
     def validate_items_probabilities_attributes(self):
-        probabilities = deep_get(self.game, ITEMS_PROBABILITIES_SECTION)
+        self.item_probabilities = deep_get(self.game, ITEMS_PROBABILITIES_SECTION)
         v = Validator(items_probabilities_schema)
-        if not v.validate(probabilities, items_probabilities_schema):
+        if not v.validate(self.item_probabilities, items_probabilities_schema):
             self.error_handler(v.errors, ITEMS_PROBABILITIES_SECTION)
-        sum_of_probabilities = sum([x for x in probabilities.values()])
+        sum_of_probabilities = sum([x for x in self.item_probabilities.values()])
         if sum_of_probabilities != 1:
             raise ConfigFileError(
                 'The sum of all the probabilities of the items_probabilities must be 1, which is 100%')
