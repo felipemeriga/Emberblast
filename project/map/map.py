@@ -1,6 +1,6 @@
 import random
 from math import floor
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from .graph import Graph
 from project.player import Player
@@ -36,18 +36,17 @@ class Map:
             if vertex_valid and position not in selected_positions:
                 return position
 
-    """
-    Function to coordinate distribution of random items in the map
-    
-    The items will be placed in the half of the quantity of the walkable nodes in the map, and with the
-    probabilities for each tier of item configured in the conf file, the quantity for each tier will be determined,
-    and finally a random items will be picked for the respective quantities of each tier, and placed in some random 
-    places.
-
-    :rtype: None
-    """
-
     def distribute_random_items(self) -> None:
+        """
+        Function to coordinate distribution of random items in the map
+
+        The items will be placed in the half of the quantity of the walkable nodes in the map, and with the
+        probabilities for each tier of item configured in the conf file, the quantity for each tier will be determined,
+        and finally a random items will be picked for the respective quantities of each tier, and placed in some random
+        places.
+
+        :rtype: None
+        """
         walkable_nodes = self.graph.get_walkable_nodes()
 
         number_of_walkable_nodes = len(walkable_nodes)
@@ -82,6 +81,18 @@ class Map:
             item_type = random.choice(item_type_distribution.get(tier))
             item = get_random_item(tier, item_type)
             self.items[key] = item
+
+    def check_item_in_position(self, position: str) -> Optional[Item]:
+        """
+        Function to be used by Search action, to discover if player current position has an Item
+
+        :param position: A string with the current position of the player. For example: "A2" or "C4".
+        :rtype: Optional[Item]: The item if it exists or None
+        """
+        item = self.items.get(position, None)
+        if item is not None:
+            self.items.pop(position, None)
+        return item
 
 
 class MapFactory:

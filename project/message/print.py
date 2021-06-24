@@ -149,3 +149,13 @@ def print_moving_possibilities(player_position: str, possibilities: List[str], m
                 attrs.append('blink')
             print(colored('{:4}'.format('*' if matrix[row][column] == 1 else ' '), color, attrs=attrs), end="")
         print('')
+
+
+def print_found_item(player_name: str, found: bool = False, item_tier: str = None, item_name: str = None) -> None:
+    if found:
+        print('Player: {name} found a {tier} item! {item_name} \n'.format(name=player_name,
+                                                                          tier=item_tier,
+                                                                          item_name=item_name
+                                                                          ))
+    else:
+        print('Player: {name} tried to find some item, but nothing was found! \n'.format(name=player_name))

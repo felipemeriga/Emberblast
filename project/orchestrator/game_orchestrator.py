@@ -23,7 +23,7 @@ class GameOrchestrator:
         self.actions['move'] = Move(True, False, self.game)
         self.actions['defend'] = Defend(False, False, self.game)
         self.actions['hide'] = Hide(False, False, self.game)
-        self.actions['search'] = Search(False, False, self.game)
+        self.actions['search'] = Search(True, False, self.game)
         self.actions['attack'] = Attack(False, False, self.game)
         self.actions['skill'] = Skill(False, False, self.game)
         self.actions['item'] = Item(False, False, self.game)

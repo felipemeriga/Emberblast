@@ -22,7 +22,8 @@ from numpy.random import choice
 from project.game import Game
 from project.player import Player
 from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move
-from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities
+from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
+    print_found_item
 
 
 class SingletonAction(type):
@@ -90,6 +91,14 @@ class Hide(Action):
 class Search(Action):
     def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
         super().__init__(independent, repeatable, game)
+
+    def act(self, player: Player) -> None:
+        item = self.game.game_map.check_item_in_position(player.position)
+        if item is not None:
+            player.bag.add_item(item)
+            print_found_item(player_name=player.name, found=True, item_tier=item.tier, item_name=item.name)
+        else:
+            print_found_item(player_name=player.name)
 
 
 class Attack(Action):
