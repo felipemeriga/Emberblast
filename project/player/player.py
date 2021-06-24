@@ -82,6 +82,7 @@ class Player:
     '''
 
     def get_attribute_real_value(self, attribute: str) -> int:
+        # TODO - Add equipped item part, you need to compute bonus only from equipped items
         try:
             attribute = self.__getattribute__(attribute)
             result = attribute
