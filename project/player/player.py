@@ -67,6 +67,10 @@ class Player:
     def set_hidden(self, state: bool) -> None:
         self._hidden = state
 
+    def add_side_effect(self):
+        side = SideEffect(type="buff", attribute="armour", base=3, duration=1, occurrence="constant")
+        self.side_effects.append(side)
+
     def is_hidden(self) -> bool:
         return self._hidden
 
@@ -81,15 +85,17 @@ class Player:
         try:
             attribute = self.__getattribute__(attribute)
             result = attribute
-            for equipment in self.bag.get_equipments():
-                if equipment.attribute == attribute:
-                    result = result + equipment.base
             for effect in self.side_effects:
-                if effect.attribute == attribute:
+                if effect.attribute == attribute and effect.occurrence == 'constant':
                     result = result + effect.base
-
             return result
         except:
             logger = get_logger()
             logger.warn(f'Attribute: {attribute} does not exist, provide a valid one')
             return 0
+
+    def compute_side_effect_duration(self) -> None:
+        for item in self.side_effects:
+            item.duration = item.duration - 1
+            if item.duration <= 0:
+                self.side_effects.remove(item)
