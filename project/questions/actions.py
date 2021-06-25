@@ -4,33 +4,36 @@ import emojis
 from InquirerPy import prompt
 
 
-def ask_check_action() -> str:
+def ask_check_action(show_items: bool = False) -> str:
+    choices = [
+        {
+            'name': emojis.encode('Map and Enemies :city_sunset: '),
+            'value': 'map'
+        },
+        {
+            'name': emojis.encode('My Status: :bar_chart: '),
+            'value': 'status'
+        },
+        {
+            'name': emojis.encode('Single Enemy: :skull: '),
+            'value': 'enemy'
+        }
+    ]
+    if show_items:
+        choices.append({
+            'name': emojis.encode('My Items: :test_tube: '),
+            'value': 'item'
+        })
+
+    choices.append({
+        'name': emojis.encode('Cancel: :x: '),
+        'value': 'cancel'
+    })
     questions = [
         {
             'type': 'list',
             'message': 'Check: ',
-            'choices': [
-                {
-                    'name': emojis.encode('Map and Enemies :city_sunset: '),
-                    'value': 'map'
-                },
-                {
-                    'name': emojis.encode('My Status: :bar_chart: '),
-                    'value': 'status'
-                },
-                {
-                    'name': emojis.encode('Single Enemy: :skull: '),
-                    'value': 'enemy'
-                },
-                {
-                    'name': emojis.encode('My Items: :test_tube: '),
-                    'value': 'item'
-                },
-                {
-                    'name': emojis.encode('Cancel: :x: '),
-                    'value': 'cancel'
-                }
-            ],
+            'choices': choices,
             'default': 'map',
             'invalid_message': 'You need to select at least one check to execute!',
             'show_cursor': True,

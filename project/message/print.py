@@ -163,6 +163,12 @@ def print_found_item(player_name: str, found: bool = False, item_tier: str = Non
 
 
 def print_check_item(item: Item) -> None:
+    """
+    Print Item information that was selected by the player
+
+    :param Item item: Item instance that will be printed.
+    :rtype: None
+    """
     if isinstance(item, EquipmentItem):
         print(emojis.encode('Item Name: {name}! is an equipment of Tier: {tier}  \n'
                             '{description} \n'
@@ -175,4 +181,12 @@ def print_check_item(item: Item) -> None:
                                                                         attribute=item.attribute)))
         print('Side effects: \n')
         for side_effect in item.side_effects:
-            print('{name} \n'.format(name=side_effect))
+            print(
+                '{name}: {base} {attribute} duration: {duration}, occurrence: {occurrence}\n'.format(
+                    name=side_effect.name,
+                    base='+{base}'.format(
+                        base=side_effect.base) if side_effect.effect_type == 'buff' else '-{base}'.format(
+                        base=side_effect.base),
+                    attribute=side_effect.attribute,
+                    duration=side_effect.duration,
+                    occurrence=side_effect.occurrence))

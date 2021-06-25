@@ -38,7 +38,7 @@ items:
     attribute: strength
     base: 1
     weight: 1
-    side-effects: [ ]
+    side-effects: [haste]
   war_hammer:
     name: War Hammer
     type: equipment
@@ -47,7 +47,7 @@ items:
     attribute: strength
     base: 3
     weight: 1
-    side-effects: [ ]
+    side-effects: [ haste ]
   mega_potion:
     name: Mega Potion
     type: healing
@@ -82,7 +82,7 @@ items:
     attribute: intelligence
     base: 6
     weight: 0.2
-    side-effects: [ ]
+    side-effects: [ haste ]
   excalibur:
     name: Excalibur
     type: equipment
@@ -100,4 +100,4 @@ items:
     attribute: strength
     base: 4
     weight: 0.7
-    side-effects: [ ]
+    side-effects: [ haste ]

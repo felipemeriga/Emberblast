@@ -155,7 +155,7 @@ class Configuration(object):
             self.error_handler(v.errors, LEVEL_UP_INCREMENT)
 
     def validate_side_effects(self):
-        self.side_effects = self.parsed_items_file.get(SIDE_EFFECTS_SECTION, {})
+        self.side_effects = self.parsed_side_effects_file.get(SIDE_EFFECTS_SECTION, {})
         v = Validator(side_effects_configuration_schema)
         for key, value in self.side_effects.items():
             if not v.validate(value, side_effects_configuration_schema):

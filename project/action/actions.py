@@ -14,16 +14,13 @@ multiplayer, considering that it's ideal to use the same game class structure, t
 functionalities
 """
 import math
-import random
 from typing import List
-
-from numpy.random import choice
 
 from project.game import Game
 from project.player import Player
 from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, ask_item_to_check
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
-    print_found_item
+    print_found_item, print_check_item
 
 
 class SingletonAction(type):
@@ -147,7 +144,7 @@ class Check(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: Player) -> None:
-        check_option = ask_check_action()
+        check_option = ask_check_action(show_items=True if len(player.bag.items) > 0 else False)
         if check_option == 'status':
             print_player_stats(player)
         elif check_option == 'map':
@@ -159,6 +156,7 @@ class Check(Action):
             print_enemy_status(enemy)
         elif check_option == 'item':
             item = ask_item_to_check(player.bag.items)
+            print_check_item(item)
         else:
             return
 

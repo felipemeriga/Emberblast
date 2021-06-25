@@ -2,6 +2,7 @@ import random
 from typing import List
 
 from project.conf import get_configuration
+from project.effect import SideEffect
 from project.utils import ITEMS_SECTION
 
 
@@ -32,7 +33,7 @@ class RecoveryItem(Item):
 class EquipmentItem(Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int,
-                 side_effects: List[str]) -> None:
+                 side_effects: List[SideEffect]) -> None:
         self.attribute = attribute
         self.base = base
         self.side_effects = side_effects
@@ -69,10 +70,29 @@ def get_random_item(tier: str, item_type: str) -> Item:
                             weight=item_dict.get('weight'),
                             status=item_dict.get('status'))
     elif item_dict.get('type') == 'equipment':
+        '''
+        Side-effects are instantiated here, because when the user equips the item, the side-effect it's 
+        already instantiated and it will be appended into the user's side-effect list, passing the same instance,
+        which makes the changes to duration attribute, each time a new turn comes, reflects both in the list of side
+        effects and also in the bag. 
+        
+        '''
+        # Dictionary of all side-effects in game
+        side_effects_library_dict = get_configuration('side_effects')
+        side_effects: List[SideEffect] = []
+        for side_effect_string in item_dict.get('side-effects'):
+            side_effect_dict = side_effects_library_dict.get(side_effect_string)
+            side_effect = SideEffect(name=side_effect_string,
+                                     effect_type=side_effect_dict.get('type'),
+                                     attribute=side_effect_dict.get('attribute'),
+                                     base=side_effect_dict.get('base'),
+                                     duration=side_effect_dict.get('duration'),
+                                     occurrence=side_effect_dict.get('occurrence'))
+            side_effects.append(side_effect)
         return EquipmentItem(name=item_dict.get('name'),
                              tier=item_dict.get('tier'),
                              description=item_dict.get('description'),
                              weight=item_dict.get('weight'),
                              attribute=item_dict.get('attribute'),
                              base=item_dict.get('base'),
-                             side_effects=item_dict.get('side_effects'))
+                             side_effects=side_effects)
