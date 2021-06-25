@@ -5,7 +5,7 @@ from colorama import Fore
 from emojis import emojis
 from termcolor import colored
 
-from project.item import Item, EquipmentItem
+from project.item import Item, EquipmentItem, RecoveryItem, HealingItem
 from project.utils import get_project_root, convert_number_to_letter
 
 
@@ -190,3 +190,11 @@ def print_check_item(item: Item) -> None:
                     attribute=side_effect.attribute,
                     duration=side_effect.duration,
                     occurrence=side_effect.occurrence))
+    if isinstance(item, RecoveryItem) or isinstance(item, HealingItem):
+        print(emojis.encode('Item Name: {name}! is an recovery item of Tier: {tier}  \n'
+                            '{description} \n'
+                            'Weight: {weight} kg \n'
+                            '\n'.format(name=item.name,
+                                        tier=item.tier,
+                                        description=item.description,
+                                        weight=item.weight)))
