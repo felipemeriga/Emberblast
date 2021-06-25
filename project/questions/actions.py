@@ -23,6 +23,10 @@ def ask_check_action() -> str:
                     'value': 'enemy'
                 },
                 {
+                    'name': emojis.encode('My Items: :test_tube: '),
+                    'value': 'item'
+                },
+                {
                     'name': emojis.encode('Cancel: :x: '),
                     'value': 'cancel'
                 }

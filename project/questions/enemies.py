@@ -19,7 +19,7 @@ def ask_enemy_to_check(enemies: List[Player]) -> Union[str, bool, list, Player]:
             'message': 'Select an action:',
             'choices': choices,
             'default': 'defend',
-            'invalid_message': 'You need to select at least one action to execute!',
+            'invalid_message': 'You need to select at least one enemy to check!',
             'show_cursor': True,
             'max_height': '100'
         }

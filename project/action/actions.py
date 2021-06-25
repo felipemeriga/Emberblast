@@ -21,7 +21,7 @@ from numpy.random import choice
 
 from project.game import Game
 from project.player import Player
-from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move
+from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, ask_item_to_check
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item
 
@@ -157,6 +157,8 @@ class Check(Action):
             enemies = self.game.get_remaining_players(player, include_hidden=True)
             enemy = ask_enemy_to_check(enemies)
             print_enemy_status(enemy)
+        elif check_option == 'item':
+            item = ask_item_to_check(player.bag.items)
         else:
             return
 

@@ -5,6 +5,7 @@ from colorama import Fore
 from emojis import emojis
 from termcolor import colored
 
+from project.item import Item, EquipmentItem
 from project.utils import get_project_root, convert_number_to_letter
 
 
@@ -159,3 +160,19 @@ def print_found_item(player_name: str, found: bool = False, item_tier: str = Non
                                                                           ))
     else:
         print('Player: {name} tried to find some item, but nothing was found! \n'.format(name=player_name))
+
+
+def print_check_item(item: Item) -> None:
+    if isinstance(item, EquipmentItem):
+        print(emojis.encode('Item Name: {name}! is an equipment of Tier: {tier}  \n'
+                            '{description} \n'
+                            'Weight: {weight} kg \n'
+                            'Attribute: + {base} {attribute} \n'.format(name=item.name,
+                                                                        tier=item.tier,
+                                                                        description=item.description,
+                                                                        weight=item.weight,
+                                                                        base=item.base,
+                                                                        attribute=item.attribute)))
+        print('Side effects: \n')
+        for side_effect in item.side_effects:
+            print('{name} \n'.format(name=side_effect))
