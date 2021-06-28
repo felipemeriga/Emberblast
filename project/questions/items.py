@@ -29,3 +29,6 @@ def ask_item_to_check(items: List[Item]) -> Union[str, bool, list, Item]:
     result = prompt(questions=items_questions)
     selected_item = result[0]
     return selected_item
+
+def ask_item_action() -> Union[str, bool, list, Item]:
+    pass
