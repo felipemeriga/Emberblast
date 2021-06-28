@@ -2,7 +2,7 @@ from typing import List
 
 from project.conf import get_logger
 from project.effect import SideEffect
-from project.item import Bag
+from project.item import Bag, Equipment
 
 
 class Player:
@@ -26,6 +26,7 @@ class Player:
         self.position = 0
         self._hidden = False
         self.bag = Bag()
+        self.equipment = Equipment()
 
         self.add_attributes(self.job)
         self.add_attributes(self.race)
