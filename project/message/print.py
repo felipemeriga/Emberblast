@@ -169,8 +169,9 @@ def print_check_item(item: Item) -> None:
     :param Item item: Item instance that will be printed.
     :rtype: None
     """
+    print(colored('---- Item Description --- \n', 'green'))
     if isinstance(item, EquipmentItem):
-        print(emojis.encode('Item Name: {name}! is an equipment of Tier: {tier}  \n'
+        print(emojis.encode('{name}! is an equipment of {tier} tier  \n'
                             '{description} \n'
                             'Weight: {weight} kg \n'
                             'Attribute: + {base} {attribute} \n'.format(name=item.name,
@@ -179,7 +180,7 @@ def print_check_item(item: Item) -> None:
                                                                         weight=item.weight,
                                                                         base=item.base,
                                                                         attribute=item.attribute)))
-        print('Side effects: \n')
+        print(colored('Side effects: \n', 'green'))
         for side_effect in item.side_effects:
             print(
                 '{name}: {base} {attribute} duration: {duration}, occurrence: {occurrence}\n'.format(
@@ -191,7 +192,7 @@ def print_check_item(item: Item) -> None:
                     duration=side_effect.duration,
                     occurrence=side_effect.occurrence))
     if isinstance(item, RecoveryItem) or isinstance(item, HealingItem):
-        print(emojis.encode('Item Name: {name}! is an recovery item of Tier: {tier}  \n'
+        print(emojis.encode('{name}! is an item of {tier} tier  \n'
                             '{description} \n'
                             'Weight: {weight} kg \n'
                             '\n'.format(name=item.name,
