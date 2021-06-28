@@ -38,7 +38,8 @@ items:
     attribute: strength
     base: 1
     weight: 1
-    side-effects: [haste]
+    side-effects: [ ]
+    category: weapon
   war_hammer:
     name: War Hammer
     type: equipment
@@ -47,7 +48,8 @@ items:
     attribute: strength
     base: 3
     weight: 1
-    side-effects: [ haste ]
+    side-effects: [ ]
+    category: weapon
   mega_potion:
     name: Mega Potion
     type: healing
@@ -65,6 +67,7 @@ items:
     base: 1
     weight: 0.05
     side-effects: [ ]
+    category: accessory
   sandals_of_hermes:
     name: Sandals of Hermes
     type: equipment
@@ -74,6 +77,7 @@ items:
     base: 2
     weight: 0.3
     side-effects: [ ]
+    category: boots
   loki_scepter_stone:
     name: Loki Scepter Stone
     type: equipment
@@ -82,7 +86,8 @@ items:
     attribute: intelligence
     base: 6
     weight: 0.2
-    side-effects: [ haste ]
+    side-effects: [ ]
+    category: accessory
   excalibur:
     name: Excalibur
     type: equipment
@@ -92,6 +97,7 @@ items:
     base: 6
     weight: 2
     side-effects: [ haste ]
+    category: weapon
   masamune:
     name: Masamune
     type: equipment
@@ -100,4 +106,5 @@ items:
     attribute: strength
     base: 4
     weight: 0.7
-    side-effects: [ haste ]
+    side-effects: [ ]
+    category: weapon

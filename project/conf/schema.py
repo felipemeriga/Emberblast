@@ -232,5 +232,10 @@ equipment_item_validation_schema = {
     'side-effects': {
         'required': False,
         'type': 'list', 'schema': {'type': 'string'}
+    },
+    'category': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['weapon', 'boots', 'accessory', 'armour', 'shield']
     }
 }

@@ -33,10 +33,11 @@ class RecoveryItem(Item):
 class EquipmentItem(Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int,
-                 side_effects: List[SideEffect]) -> None:
+                 side_effects: List[SideEffect], category: str) -> None:
         self.attribute = attribute
         self.base = base
         self.side_effects = side_effects
+        self.category = category
         super().__init__(name, tier, description, weight)
 
 
