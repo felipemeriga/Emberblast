@@ -96,4 +96,5 @@ def get_random_item(tier: str, item_type: str) -> Item:
                              weight=item_dict.get('weight'),
                              attribute=item_dict.get('attribute'),
                              base=item_dict.get('base'),
-                             side_effects=side_effects)
+                             side_effects=side_effects,
+                             category=item_dict.get('category'))

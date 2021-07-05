@@ -1,3 +1,3 @@
-from .actions import Action, Move, Defend, Hide, Search, Attack, Skill, Item, Check, Pass
+from .actions import Action, Move, Defend, Hide, Search, Attack, Skill, Item, Check, Pass, Drop, Equip
 
-__all__ = ['Action', 'Move', 'Defend', 'Hide', 'Search', 'Attack', 'Skill', 'Item', 'Check', 'Pass']
+__all__ = ['Action', 'Move', 'Defend', 'Hide', 'Search', 'Attack', 'Skill', 'Item', 'Check', 'Pass', 'Drop', 'Equip']

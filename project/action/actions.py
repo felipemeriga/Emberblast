@@ -18,7 +18,8 @@ from typing import List
 
 from project.game import Game
 from project.player import Player
-from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, ask_item_to_check
+from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, ask_item_to_check, \
+    ask_item_action
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item
 
@@ -137,6 +138,25 @@ class Skill(Action):
 class Item(Action):
     def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
         super().__init__(independent, repeatable, game)
+
+    def act(self, player: Player) -> None:
+        pass
+
+
+class Drop(Action):
+    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+        super().__init__(independent, repeatable, game)
+
+    def act(self, player: Player) -> None:
+        pass
+
+
+class Equip(Action):
+    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+        super().__init__(independent, repeatable, game)
+
+    def act(self, player: Player) -> None:
+        pass
 
 
 class Check(Action):

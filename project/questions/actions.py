@@ -74,6 +74,14 @@ def ask_actions_questions(actions_available: List[str]) -> str:
             'name': emojis.encode('Item: :test_tube:'),
             'value': 'item'
         },
+        'equip': {
+            'name': emojis.encode('Equip: :crossed_swords:'),
+            'value': 'equip'
+        },
+        'drop': {
+            'name': emojis.encode('Drop: :arrow_down:'),
+            'value': 'drop'
+        },
         'check': {
             'name': emojis.encode('Check: :eyes:'),
             'value': 'check'

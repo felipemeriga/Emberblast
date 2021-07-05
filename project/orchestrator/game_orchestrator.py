@@ -3,7 +3,7 @@ from os import system
 import emojis
 from colorama import Fore
 
-from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Action, Check, Pass
+from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Action, Check, Pass, Equip, Drop
 from project.game import Game
 from project.player import ControlledPlayer, BotPlayer
 from project.questions import ask_actions_questions
@@ -27,6 +27,8 @@ class GameOrchestrator:
         self.actions['attack'] = Attack(False, False, self.game)
         self.actions['skill'] = Skill(False, False, self.game)
         self.actions['item'] = Item(False, False, self.game)
+        self.actions['equip'] = Equip(True, True, self.game)
+        self.actions['drop'] = Drop(True, True, self.game)
         self.actions['check'] = Check(True, True, self.game)
         self.actions['pass'] = Pass(True, False, self.game)
 
@@ -63,7 +65,6 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
     def controlled_decisioning(self, player: ControlledPlayer) -> None:
         self.actions_left = list(self.actions.keys())
-        last_action = ''
 
         while len(self.actions_left) > 2:
             chosen_action_string = ask_actions_questions(self.actions_left)
