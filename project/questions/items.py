@@ -6,7 +6,7 @@ from InquirerPy import prompt
 from project.item import Item
 
 
-def ask_item_to_check(items: List[Item]) -> Union[str, bool, list, Item]:
+def select_item(items: List[Item]) -> Union[str, bool, list, Item]:
     choices = []
     for item in items:
         choices.append({
@@ -20,7 +20,7 @@ def ask_item_to_check(items: List[Item]) -> Union[str, bool, list, Item]:
             'message': 'Select an item:',
             'choices': choices,
             'default': items[0],
-            'invalid_message': 'You need to select at least one item to check',
+            'invalid_message': 'You need to select at least one item',
             'show_cursor': True,
             'max_height': '100'
         }
@@ -29,37 +29,3 @@ def ask_item_to_check(items: List[Item]) -> Union[str, bool, list, Item]:
     result = prompt(questions=items_questions)
     selected_item = result[0]
     return selected_item
-
-
-def ask_item_action() -> Union[str, bool, list, str]:
-    choices = [
-        {
-            'name': emojis.encode('Use Item :test_tube: '),
-            'value': 'use'
-        },
-        {
-            'name': emojis.encode('Equip: :gun: '),
-            'value': 'equip'
-        },
-        {
-            'name': emojis.encode('Drop: :recycle: '),
-            'value': 'drop'
-        },
-        {
-            'name': emojis.encode('Cancel: :x: '),
-            'value': 'cancel'
-        }
-    ]
-    questions = [
-        {
-            'type': 'list',
-            'message': 'Item Action: ',
-            'choices': choices,
-            'default': 'map',
-            'invalid_message': 'You need to select at least one item action to execute!',
-            'show_cursor': True,
-            'max_height': '100'
-        }
-    ]
-    result = prompt(questions=questions)
-    return result[0]

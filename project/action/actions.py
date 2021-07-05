@@ -18,8 +18,7 @@ from typing import List
 
 from project.game import Game
 from project.player import Player
-from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, ask_item_to_check, \
-    ask_item_action
+from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item
 
@@ -175,7 +174,7 @@ class Check(Action):
             enemy = ask_enemy_to_check(enemies)
             print_enemy_status(enemy)
         elif check_option == 'item':
-            item = ask_item_to_check(player.bag.items)
+            item = select_item(player.bag.items)
             print_check_item(item)
         else:
             return
