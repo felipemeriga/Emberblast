@@ -18,7 +18,8 @@ from typing import List
 
 from project.game import Game
 from project.player import Player
-from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item
+from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item, \
+    confirm_item_question
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item
 
@@ -147,7 +148,12 @@ class Drop(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: Player) -> None:
-        pass
+        selected_item = select_item(player.bag.items)
+        confirm = confirm_item_question()
+        if confirm:
+            player.bag.remove_item(selected_item)
+            # TODO - convert the game map dict for string(position) - List[Item]
+            # self.game
 
 
 class Equip(Action):

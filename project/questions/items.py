@@ -29,3 +29,12 @@ def select_item(items: List[Item]) -> Union[str, bool, list, Item]:
     result = prompt(questions=items_questions)
     selected_item = result[0]
     return selected_item
+
+
+def confirm_item_question() -> Union[str, bool, list, bool]:
+    questions = [
+        {"type": "confirm", "message": "Are you sure?", "name": "confirm", "default": False},
+    ]
+    result = prompt(questions)
+    confirm = result["confirm"]
+    return confirm
