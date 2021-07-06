@@ -84,8 +84,8 @@ class DeathMatchOrchestrator(GameOrchestrator):
             chosen_action_string = ask_actions_questions(self.hide_invalid_actions(player))
             action = self.actions[chosen_action_string]
             self.clear()
-            action.act(player)
-            self.compute_player_decisions(action, chosen_action_string)
+            if action.act(player) is None:
+                self.compute_player_decisions(action, chosen_action_string)
 
     def compute_player_decisions(self, action: Action, action_string: str) -> None:
         if action_string == PASS_ACTION_NAME:

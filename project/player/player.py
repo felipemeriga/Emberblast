@@ -2,7 +2,7 @@ from typing import List
 
 from project.conf import get_logger
 from project.effect import SideEffect
-from project.item import Bag, Equipment
+from project.item import Bag, Equipment, Item
 
 
 class Player:
@@ -69,21 +69,23 @@ class Player:
         self._hidden = state
 
     def add_side_effect(self):
-        side = SideEffect(type="buff", attribute="armour", base=3, duration=1, occurrence="constant")
+        side = SideEffect(name="rock", effect_type="buff", attribute="armour", base=3, duration=1,
+                          occurrence="constant")
         self.side_effects.append(side)
 
     def is_hidden(self) -> bool:
         return self._hidden
 
-    '''
-    This method it's used for getting the real value of an attribute
-    computing and considering buffs/debuffs from side-effects, as well as
-    items equipped to him.
-    
-    '''
+    def use_item(self, item: Item) -> None:
+        pass
 
     def get_attribute_real_value(self, attribute: str) -> int:
-        # TODO - Add equipped item part, you need to compute bonus only from equipped items
+        """
+        This method it's used for getting the real value of an attribute
+        computing and considering buffs/debuffs from side-effects, as well as
+        items equipped to him.
+
+        """
         try:
             attribute = self.__getattribute__(attribute)
             result = attribute

@@ -16,7 +16,7 @@ def ask_enemy_to_check(enemies: List[Player]) -> Union[str, bool, list, Player]:
     enemies_questions = [
         {
             'type': 'list',
-            'message': 'Select an action:',
+            'message': 'Select an enemy:',
             'choices': choices,
             'default': 'defend',
             'invalid_message': 'You need to select at least one enemy to check!',

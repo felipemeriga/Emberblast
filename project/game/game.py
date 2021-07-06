@@ -51,6 +51,14 @@ class Game:
             choice([True, False], 1, p=[positive_percentage if positive_percentage <= 1 else 1, negative_percentage])[
                 0]
 
+    def check_another_players_in_position(self, position: str) -> List[Player]:
+        another_players = []
+        for player in  self.get_all_players():
+            if player.position == position:
+                another_players.append(player)
+
+        return another_players
+
     def get_all_players(self) -> List[Player]:
         players = [self.main_player]
         players.extend(self.bots)
