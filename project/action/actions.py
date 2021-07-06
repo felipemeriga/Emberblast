@@ -19,7 +19,7 @@ from typing import List
 from project.game import Game
 from project.player import Player
 from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item, \
-    confirm_item_question
+    confirm_item_question, display_equipment_choices
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item
 
@@ -162,9 +162,8 @@ class Equip(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: Player) -> None:
-        equipment_items = player.bag.get_equipments()
-        selected_item = select_item(equipment_items)
-        player.equipment.equip(selected_item)
+        equipment = display_equipment_choices(player)
+        player.equipment.equip(equipment)
 
 
 class Check(Action):
