@@ -16,7 +16,7 @@ class Map:
         self.type = map_type
         self.size = size
         self.graph = Graph(size=size)
-        self.items: Dict[str, Item] = {}
+        self.items: Dict[str, List[Item]] = {}
 
     def define_player_initial_position_random(self, players: List[Player]) -> None:
         selected_positions = []
@@ -80,20 +80,25 @@ class Map:
 
             item_type = random.choice(item_type_distribution.get(tier))
             item = get_random_item(tier, item_type)
-            self.items[key] = item
+            self.add_item_to_map(key, item)
 
-    def check_item_in_position(self, position: str) -> Optional[Item]:
+    def check_item_in_position(self, position: str) -> Optional[List[Item]]:
         """
         Function to be used by Search action, to discover if player current position has an Item
 
         :param position: A string with the current position of the player. For example: "A2" or "C4".
         :rtype: Optional[Item]: The item if it exists or None
         """
-        item = self.items.get(position, None)
-        if item is not None:
+        items = self.items.get(position, None)
+        if items is not None:
             self.items.pop(position, None)
-        return item
+        return items
 
+    def add_item_to_map(self, position: str, item: Item) -> None:
+        if self.items.get(position, None):
+            self.items.get(position).append(item)
+        else:
+            self.items[position] = [item]
 
 class MapFactory:
     def create_map(self, map_size: int) -> Map:

@@ -91,10 +91,11 @@ class Search(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: Player) -> None:
-        item = self.game.game_map.check_item_in_position(player.position)
-        if item is not None:
-            player.bag.add_item(item)
-            print_found_item(player_name=player.name, found=True, item_tier=item.tier, item_name=item.name)
+        items = self.game.game_map.check_item_in_position(player.position)
+        if items is not None:
+            for item in items:
+                player.bag.add_item(item)
+                print_found_item(player_name=player.name, found=True, item_tier=item.tier, item_name=item.name)
         else:
             print_found_item(player_name=player.name)
 
