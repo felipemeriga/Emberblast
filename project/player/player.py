@@ -2,7 +2,7 @@ from typing import List
 
 from project.conf import get_logger
 from project.effect import SideEffect
-from project.item import Bag, Equipment, Item
+from project.item import Bag, Equipment, Item, HealingItem, RecoveryItem
 
 
 class Player:
@@ -31,6 +31,13 @@ class Player:
         self.add_attributes(self.job)
         self.add_attributes(self.race)
 
+        # As players can suffer damage, or recover, or even cast magic
+        # Life will represent the current player life and mana the remaining mana to cast magic
+        # Health points and magic points will be the reference value and maximum value that
+        # life and mana can reach
+        self.life = self.health_points
+        self.mana = self.magic_points
+
     def add_attributes(self, attributes=None):
         self.health_points += attributes.health_points
         self.magic_points += attributes.magic_points
@@ -52,9 +59,19 @@ class Player:
             self._level_up()
 
     def suffer_damage(self, damage: float) -> None:
-        self.health_points = self.health_points - damage
-        if self.health_points <= 0:
+        self.life = self.life - damage
+        if self.life <= 0:
             self.die()
+
+    def heal(self, attribute: str, value: int) -> None:
+        if attribute == 'health_points':
+            self.life = self.life + value
+            if self.life > self.health_points:
+                self.life = self.health_points
+        elif attribute == 'magic_points':
+            self.mana = self.mana + value
+            if self.mana > self.magic_points:
+                self.mana = self.magic_points
 
     def die(self) -> None:
         self._alive = False
@@ -77,7 +94,13 @@ class Player:
         return self._hidden
 
     def use_item(self, item: Item) -> None:
-        pass
+        if isinstance(item, HealingItem):
+            self.heal(item.attribute, item.base)
+        elif isinstance(item, RecoveryItem):
+            status = item.status
+            found_side_effect = filter(lambda side_effect: status == side_effect.name, self.side_effects)
+            if found_side_effect:
+                self.side_effects.remove(next(found_side_effect))
 
     def get_attribute_real_value(self, attribute: str) -> int:
         """
@@ -99,7 +122,7 @@ class Player:
             return 0
 
     def compute_side_effect_duration(self) -> None:
-        for item in self.side_effects:
-            item.duration = item.duration - 1
-            if item.duration <= 0:
-                self.side_effects.remove(item)
+        for side_effect in self.side_effects:
+            side_effect.duration = side_effect.duration - 1
+            if side_effect.duration <= 0:
+                self.side_effects.remove(side_effect)

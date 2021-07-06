@@ -51,10 +51,11 @@ class Game:
             choice([True, False], 1, p=[positive_percentage if positive_percentage <= 1 else 1, negative_percentage])[
                 0]
 
-    def check_another_players_in_position(self, position: str) -> List[Player]:
+    def check_another_players_in_position(self, current_player: Player) -> List[Player]:
+        position = current_player.position
         another_players = []
-        for player in  self.get_all_players():
-            if player.position == position:
+        for player in self.get_all_players():
+            if player.position == position and player is not current_player:
                 another_players.append(player)
 
         return another_players

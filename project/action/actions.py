@@ -149,12 +149,13 @@ class Item(Action):
     def act(self, player: Player) -> Optional[bool]:
         usable_items = player.bag.get_usable_items()
         selected_item = select_item(usable_items)
-        another_players_in_position = self.game.check_another_players_in_position(player.position)
+        another_players_in_position = self.game.check_another_players_in_position(player)
         if len(another_players_in_position) > 0:
             if not confirm_use_item_on_you():
                 player = ask_enemy_to_check(another_players_in_position)
         if confirm_item_selection():
             player.use_item(selected_item)
+            player.bag.remove_item(selected_item)
         else:
             return True
 
