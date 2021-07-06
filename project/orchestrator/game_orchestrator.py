@@ -1,11 +1,12 @@
 from os import system
+from typing import List
 
 import emojis
 from colorama import Fore
 
 from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Action, Check, Pass, Equip, Drop
 from project.game import Game
-from project.player import ControlledPlayer, BotPlayer
+from project.player import ControlledPlayer, BotPlayer, Player
 from project.questions import ask_actions_questions
 from project.utils import PASS_ACTION_NAME
 
@@ -17,7 +18,7 @@ class GameOrchestrator:
         self.game = game
         self.actions = {}
         self.init_actions()
-        self.actions_left = []
+        self.actions_left: List[str] = []
 
     def init_actions(self) -> None:
         self.actions['move'] = Move(True, False, self.game)
@@ -63,11 +64,24 @@ class DeathMatchOrchestrator(GameOrchestrator):
     def bot_decisioning(self, player: BotPlayer) -> None:
         pass
 
+    def hide_invalid_actions(self, player: Player) -> List[str]:
+        valid_actions = self.actions_left.copy()
+
+        if 'item' in valid_actions:
+            if not player.bag.has_item_type(is_usable=True):
+                valid_actions.remove('item')
+        if not player.bag.has_item_type(is_equipment=True):
+            valid_actions.remove('equip')
+        if len(player.bag.items) < 1:
+            valid_actions.remove('drop')
+
+        return valid_actions
+
     def controlled_decisioning(self, player: ControlledPlayer) -> None:
         self.actions_left = list(self.actions.keys())
 
         while len(self.actions_left) > 2:
-            chosen_action_string = ask_actions_questions(self.actions_left)
+            chosen_action_string = ask_actions_questions(self.hide_invalid_actions(player))
             action = self.actions[chosen_action_string]
             self.clear()
             action.act(player)

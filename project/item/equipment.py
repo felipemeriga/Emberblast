@@ -1,7 +1,7 @@
 import typing
 from typing import List
 
-from .items import EquipmentItem
+from .items import EquipmentItem, Item
 
 
 class Equipment:
@@ -15,7 +15,7 @@ class Equipment:
         self.weapon: typing.Union[None, EquipmentItem] = None
         self.armour: typing.Union[None, EquipmentItem] = None
         self.boots: typing.Union[None, EquipmentItem] = None
-        self.accessory: List[EquipmentItem] = []
+        self.accessory: typing.Union[None, EquipmentItem] = None
 
     def equip(self, equipment: EquipmentItem):
         """
@@ -53,3 +53,9 @@ class Equipment:
         :rtype: None
         """
         self.__setattr__(category, None)
+
+    def check_and_remove(self, selected_item: Item):
+        if isinstance(selected_item, EquipmentItem):
+            for item in self.__dict__.items():
+                if item == selected_item:
+                    self.remove_equipment(selected_item.category)

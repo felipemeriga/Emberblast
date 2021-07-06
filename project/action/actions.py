@@ -152,9 +152,9 @@ class Drop(Action):
         selected_item = select_item(player.bag.items)
         confirm = confirm_item_question()
         if confirm:
+            player.equipment.check_and_remove(selected_item)
             player.bag.remove_item(selected_item)
-            # TODO - convert the game map dict for string(position) - List[Item]
-            # self.game
+            self.game.game_map.add_item_to_map(player.position, selected_item)
 
 
 class Equip(Action):
@@ -162,7 +162,9 @@ class Equip(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: Player) -> None:
-        pass
+        equipment_items = player.bag.get_equipments()
+        selected_item = select_item(equipment_items)
+        player.equipment.equip(selected_item)
 
 
 class Check(Action):
