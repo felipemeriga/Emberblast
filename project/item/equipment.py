@@ -54,6 +54,11 @@ class Equipment:
         """
         self.__setattr__(category, None)
 
+    def is_equipped(self, equipment: EquipmentItem) -> bool:
+        if self.__getattribute__(equipment.category) == equipment:
+            return True
+        return False
+
     def check_and_remove(self, selected_item: Item):
         if isinstance(selected_item, EquipmentItem):
             for item in self.__dict__.items():
