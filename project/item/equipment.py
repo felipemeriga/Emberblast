@@ -1,6 +1,4 @@
 import typing
-from typing import List
-
 from .items import EquipmentItem, Item
 
 
@@ -55,11 +53,23 @@ class Equipment:
         self.__setattr__(category, None)
 
     def is_equipped(self, equipment: EquipmentItem) -> bool:
+        """
+        This function will check if an item it's equipped on the player.
+
+        :param EquipmentItem equipment: The equipment to identify.
+        :rtype: None
+        """
         if self.__getattribute__(equipment.category) == equipment:
             return True
         return False
 
     def check_and_remove(self, selected_item: Item):
+        """
+        Check if item it's equipped, and remove it.
+
+        :param Item selected_item: The equipment to verify.
+        :rtype: None
+        """
         if isinstance(selected_item, EquipmentItem):
             for item in self.__dict__.items():
                 if item == selected_item:

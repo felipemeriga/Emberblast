@@ -9,6 +9,16 @@ from project.utils import ITEMS_SECTION
 class Item:
 
     def __init__(self, name: str, tier: str, description: str, weight: float) -> None:
+        """
+        Constructor of Item (Primitive Class)
+
+        :param str name: Name of the item.
+        :param str tier: The tier of the item(common, uncommon, rare, legendary),
+        :param str description: Description of the item.
+        :param float weight: Weight of the item.
+
+        :rtype: None
+        """
         self.name = name
         self.tier = tier
         self.description = description
@@ -18,6 +28,18 @@ class Item:
 class HealingItem(Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int) -> None:
+        """
+        Constructor of HealingItem
+
+        :param str name: Name of the item.
+        :param str tier: The tier of the item(common, uncommon, rare, legendary),
+        :param str description: Description of the item.
+        :param float weight: Weight of the item.
+        :param str attribute: Attribute to be healed.
+        :param int base: How much the attribute will be healed.
+
+        :rtype: None
+        """
         self.attribute = attribute
         self.base = base
         super().__init__(name, tier, description, weight)
@@ -26,6 +48,16 @@ class HealingItem(Item):
 class RecoveryItem(Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, status: str) -> None:
+        """
+        Constructor of RecoveryItem
+
+        :param str name: Name of the item.
+        :param str tier: The tier of the item(common, uncommon, rare, legendary),
+        :param str description: Description of the item.
+        :param float weight: Weight of the item.
+        :param str status: The status(side-effect) to be recovered.
+        :rtype: None
+        """
         self.status = status
         super().__init__(name, tier, description, weight)
 
@@ -34,6 +66,17 @@ class EquipmentItem(Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int,
                  side_effects: List[SideEffect], category: str) -> None:
+        """
+        Constructor of EquipmentItem
+
+        :param str name: Name of the equipment.
+        :param str tier: The tier of the equipment(common, uncommon, rare, legendary)
+        :param str description: Description of the item.
+        :param float weight: Weight of the item.
+        :param str attribute: Attribute that the equip improves.
+        :param int base: The value of that attribute that this equip will improve
+        :rtype: None
+        """
         self.attribute = attribute
         self.base = base
         self.side_effects = side_effects
@@ -41,17 +84,15 @@ class EquipmentItem(Item):
         super().__init__(name, tier, description, weight)
 
 
-"""
-Function to get a random item among the validated ones from items config file
-
-
-:param tier str: The tier of the random item
-:param type str: The item_type of the random item
-:rtype: Item
-"""
-
-
 def get_random_item(tier: str, item_type: str) -> Item:
+    """
+    Function to get a random item along all the items from the items.yaml file,
+    considering a specific tier and type.
+
+    :param str tier: The tier of the item.
+    :param str item_type: The type of the item(healing, recovery, equipment)
+    :rtype: Item
+    """
     items_dicts = get_configuration(ITEMS_SECTION)
     item_key = random.choice(
         list({k: v for (k, v) in items_dicts.items() if v.get('tier') == tier and v.get('type') == item_type}.keys()))
