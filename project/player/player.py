@@ -1,12 +1,22 @@
-from typing import List
+from typing import List, Union
 
 from project.conf import get_logger
 from project.effect import SideEffect
 from project.item import Bag, Equipment, Item, HealingItem, RecoveryItem
+from .job import Job
+from .race import Race
 
 
 class Player:
-    def __init__(self, name, job, race):
+    def __init__(self, name: str, job: Job, race: Race) -> None:
+        """
+       Constructor
+
+        :param str name: Name of the player.
+        :param Job job: Job of the player.
+        :param Race race: The race of the player.
+        :rtype: None
+        """
         self.job = job
         self.race = race
         self.name = name
@@ -38,7 +48,13 @@ class Player:
         self.life = self.health_points
         self.mana = self.magic_points
 
-    def add_attributes(self, attributes=None):
+    def add_attributes(self, attributes: Union[Job, Race] = None) -> None:
+        """
+       Every action generates experience, and when reaching 100, character will level up.
+
+        :param Union[Job, Race] attributes: Value to be computed.
+        :rtype: None
+        """
         self.health_points += attributes.health_points
         self.magic_points += attributes.magic_points
         self.move_speed += attributes.move_speed
@@ -52,18 +68,47 @@ class Player:
     def _level_up(self):
         raise NotImplementedError('Player::to_string() should be implemented!')
 
-    def earn_xp(self, experience):
+    def earn_xp(self, experience: int) -> None:
+        """
+       Every action generates experience, and when reaching 100, character will level up.
+
+        :param int experience: Value to be computed.
+        :rtype: None
+        """
         self.experience = self.experience + experience
         if self.experience >= 100:
             self.experience = self.experience - 100
             self._level_up()
 
     def suffer_damage(self, damage: float) -> None:
+        """
+       Method that is used when character has suffered some damage.
+
+        :param int damage: Value to be decreased.
+        :rtype: None
+        """
         self.life = self.life - damage
         if self.life <= 0:
             self.die()
 
+    def spend_mana(self, quantity: int) -> None:
+        """
+       Method that is used when character has spent mana with some skill, or due
+       to side effects.
+
+        :param int quantity: Value to be decreased.
+        :rtype: None
+        """
+        self.mana = self.mana - quantity
+
     def heal(self, attribute: str, value: int) -> None:
+        """
+       Method that is used when character has its life or mana recovered,
+       from a skill or item.
+
+        :param str attribute: which attribute to be healed.
+        :rtype: None
+        """
         if attribute == 'health_points':
             self.life = self.life + value
             if self.life > self.health_points:
@@ -74,26 +119,64 @@ class Player:
                 self.mana = self.magic_points
 
     def die(self) -> None:
+        """
+       Kill the character due to damage suffered or a side effect.
+
+        :rtype: None
+        """
         self._alive = False
 
     def is_alive(self) -> bool:
+        """
+       Check if player is alive or not.
+
+        :rtype: bool
+        """
         return self._alive
 
     def set_position(self, position: str) -> None:
+        """
+       Set new position of the player, this method is called when player it's moving through the map.
+
+        :param bool state: boolean to turn hidden(True) or visible(False).
+        :rtype: None
+        """
         self.position = position
 
     def set_hidden(self, state: bool) -> None:
+        """
+       Turn on/off into hidden state, so it can't be found by another players.
+
+        :param bool state: boolean to turn hidden(True) or visible(False).
+        :rtype: None
+        """
         self._hidden = state
 
     def add_side_effect(self):
-        side = SideEffect(name="rock", effect_type="buff", attribute="armour", base=3, duration=1,
-                          occurrence="constant")
+        """
+       To add a new side effect in the player.
+
+        :rtype: None
+        """
+        side = SideEffect(name="poison", effect_type="debuff", attribute="health_points", base=1, duration=3,
+                          occurrence="iterated")
         self.side_effects.append(side)
 
     def is_hidden(self) -> bool:
+        """
+       Returns if the player is hidden or not.
+
+        :rtype: bool
+        """
         return self._hidden
 
     def use_item(self, item: Item) -> None:
+        """
+       This function computes the usage of a healing or recover item.
+
+        :param Item item: The item to be used.
+        :rtype: None
+        """
         if isinstance(item, HealingItem):
             self.heal(item.attribute, item.base)
         elif isinstance(item, RecoveryItem):
@@ -108,6 +191,8 @@ class Player:
         computing and considering buffs/debuffs from side-effects, as well as
         items equipped to him.
 
+        :param str attribute: Attribute to be computed.
+        :rtype: int
         """
         try:
             attribute = self.__getattribute__(attribute)
@@ -121,7 +206,33 @@ class Player:
             logger.warn(f'Attribute: {attribute} does not exist, provide a valid one')
             return 0
 
+    def compute_iterated_side_effects(self) -> None:
+        """
+        There are side effects that are iterated, which means that each turn they will buff/debuff
+        the character attributes. So, each turn this method will be called to apply those effects in the player.
+
+        :rtype: None
+        """
+        iterated_side_effects = [x for x in
+                                 filter(lambda side_effect: side_effect.occurrence == 'iterated', self.side_effects)]
+
+        for side_effect in iterated_side_effects:
+            if side_effect.effect_type == 'buff':
+                self.heal(side_effect.attribute, side_effect.base)
+            elif side_effect.effect_type == 'debuff':
+                if side_effect.attribute == 'health_points':
+                    self.suffer_damage(side_effect.base)
+                elif side_effect.attribute == 'magic_points':
+                    self.spend_mana(side_effect.base)
+
     def compute_side_effect_duration(self) -> None:
+        """
+        Each side effects may last in the player depending its duration configuration,
+        each turn, this method will be called to compute this duration, when the duration
+        reaches to 0, it will be excluded from the character.
+
+        :rtype: None
+        """
         for side_effect in self.side_effects:
             side_effect.duration = side_effect.duration - 1
             if side_effect.duration <= 0:

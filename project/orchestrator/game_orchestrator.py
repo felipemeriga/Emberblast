@@ -79,6 +79,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
     def controlled_decisioning(self, player: ControlledPlayer) -> None:
         self.actions_left = list(self.actions.keys())
+        player.add_side_effect()
 
         while len(self.actions_left) > 2:
             chosen_action_string = ask_actions_questions(self.hide_invalid_actions(player))
