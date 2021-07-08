@@ -110,6 +110,13 @@ class Attack(Action):
         super().__init__(independent, repeatable, game)
 
     def get_attack_possibilities(self, player: Player, players: List[Player]) -> List[Player]:
+        """
+        This function computes which enemies a player can attack, considering its attack style,
+        ranged or melee.
+
+        :param Player player: The player that will execute the attack action.
+        :rtype: List[Player] players: The list of enemies to attack.
+        """
         possible_foes = []
         attacker_combat_type = player.job.attack_type
 

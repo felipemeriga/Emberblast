@@ -14,7 +14,14 @@ from project.exception import ConfigFileError
 
 
 class Configuration(object):
-    def __init__(self, arg):
+    def __init__(self, arg) -> None:
+        """
+        Base constructor of this class, that will be used as a decorator, to create a Singleton entity.
+        So, all another classes at runtime, can access this same instantiated object.
+
+        :param arg: General arguments
+        :rtype: None
+        """
         self._arg = arg
         self._logger = get_logger()
         self.project_module = __import__('project')
@@ -42,7 +49,20 @@ class Configuration(object):
     def __call__(self, section):
         return self.__getattribute__(section)
 
-    def parse_configuration_files(self):
+    def parse_configuration_files(self) -> None:
+        """
+        Get's the configuration files from the repo, or another location,
+        parses and validates them, to make sure everything is fine before starting the game.
+
+        In the case there is an error that may further affect the execution of the game, it
+        will panic.
+
+        There are many yaml configuration files, the conf.yaml, items.yaml, side_effects.yaml and
+        skills.yaml. In schema.py file there is all the patterns of how each of the sections of those configuration
+        files may look like, and the types of each field.
+
+        :rtype: None
+        """
         config_yaml_file = open(str(get_project_root()) + '/conf/conf.yaml')
         self.parsed_yaml_file = yaml.load(config_yaml_file, Loader=yaml.FullLoader)
         self.validate_config_file()
@@ -55,7 +75,14 @@ class Configuration(object):
         self.parsed_items_file = yaml.load(items_yaml_file, Loader=yaml.FullLoader)
         self.validate_items()
 
-    def validate_config_file(self):
+    def validate_config_file(self) -> None:
+        """
+        There are many yaml configuration files, the conf.yaml, items.yaml, side_effects.yaml and
+        skills.yaml. They are separated to keep things organized, this method focus on conf.yaml, which
+        has all the declarative configuration of the game.
+
+        :rtype: None
+        """
         try:
             self.validate_game_config()
             self.validate_jobs_attributes()
@@ -67,7 +94,12 @@ class Configuration(object):
         except SchemaError as err:
             raise SystemExit(str(err))
 
-    def validate_items(self):
+    def validate_items(self) -> None:
+        """
+        Validate all the items from items.yaml, to make sure all of them have been defined properly.
+
+        :rtype: None
+        """
         try:
             self.items = self.parsed_items_file.get(ITEMS_SECTION, {})
             validated_items = {}
@@ -112,7 +144,14 @@ class Configuration(object):
         except SchemaError as err:
             raise SystemExit(str(err))
 
-    def error_handler(self, errors=None, section=''):
+    def error_handler(self, errors=None, section: str = '') -> None:
+        """
+        General error handler, to format the error message, when a field in the configuration file it's wrong.
+
+        :param errors: The errors to be analysed.
+        :param section: The section that contains an error.
+        :rtype: None
+        """
         if errors is None:
             errors = {}
 
@@ -128,13 +167,23 @@ class Configuration(object):
         self._logger.error(formatted_error_string)
         raise ConfigFileError(formatted_error_string)
 
-    def validate_game_config(self):
+    def validate_game_config(self) -> None:
+        """
+        Validates the game section from conf.yaml.
+
+        :rtype: None
+        """
         self.game = self.parsed_yaml_file.get(GAME_SECTION, {})
         v = Validator(game_section_configuration_schema)
         if not v.validate(self.game, game_section_configuration_schema):
             self.error_handler(v.errors, GAME_SECTION)
 
     def validate_jobs_attributes(self):
+        """
+        Validates the jobs attributes from conf.yaml.
+
+        :rtype: None
+        """
         self.jobs = deep_get(self.game, JOBS_SECTION)
         v = Validator(job_section_configuration_schema)
         for key, value in self.jobs.items():
@@ -142,6 +191,11 @@ class Configuration(object):
                 self.error_handler(v.errors, key)
 
     def validate_races_attributes(self):
+        """
+        Validates the races attributes from conf.yaml.
+
+        :rtype: None
+        """
         self.races = deep_get(self.game, RACES_SECTION)
         v = Validator(race_section_configuration_schema)
         for key, value in self.races.items():
@@ -149,12 +203,22 @@ class Configuration(object):
                 self.error_handler(v.errors, key)
 
     def validate_level_up_increment_attributes(self):
+        """
+        Validates the level up increment attributes from conf.yaml.
+
+        :rtype: None
+        """
         self.level_up_attributes_increment = deep_get(self.game, LEVEL_UP_INCREMENT)
         v = Validator(level_up_attributes_configuration_schema)
         if not v.validate(self.level_up_attributes_increment, level_up_attributes_configuration_schema):
             self.error_handler(v.errors, LEVEL_UP_INCREMENT)
 
     def validate_side_effects(self):
+        """
+        Validates side_effects.yaml file.
+
+        :rtype: None
+        """
         self.side_effects = self.parsed_side_effects_file.get(SIDE_EFFECTS_SECTION, {})
         v = Validator(side_effects_configuration_schema)
         for key, value in self.side_effects.items():
@@ -162,6 +226,11 @@ class Configuration(object):
                 self.error_handler(v.errors, key)
 
     def validate_items_probabilities_attributes(self):
+        """
+        Validates items probabilities section from conf.yaml.
+
+        :rtype: None
+        """
         self.item_probabilities = deep_get(self.game, ITEMS_PROBABILITIES_SECTION)
         v = Validator(items_probabilities_schema)
         if not v.validate(self.item_probabilities, items_probabilities_schema):
