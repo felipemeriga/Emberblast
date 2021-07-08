@@ -12,6 +12,14 @@ from ..item import Item, get_random_item
 class Map:
 
     def __init__(self, name: str, map_type: str, size: int) -> None:
+        """
+        Pick a random postion for a player in the game start.
+
+        :param str name: The name of the map.
+        :param str map_type: The type of the terrain of the map.
+        :param int size: The size of the map, used to construct the graph.
+        :rtype: None.
+        """
         self.name = name
         self.type = map_type
         self.size = size
@@ -19,6 +27,12 @@ class Map:
         self.items: Dict[str, List[Item]] = {}
 
     def define_player_initial_position_random(self, players: List[Player]) -> None:
+        """
+        Pick a random postion for a player in the game start.
+
+        :param List[Player] players: The available positions to scan.
+        :rtype: str.
+        """
         selected_positions = []
 
         for player in players:
@@ -27,6 +41,13 @@ class Map:
             selected_positions.append(position)
 
     def pick_available_position(self, selected_positions: List[str]) -> str:
+        """
+        Function that will be called on game construction, to place players randomly in the map,
+        considering that player can't start in a tile that there is already another player.
+
+        :param List[str] selected_positions: The available positions to scan.
+        :rtype: str.
+        """
         while True:
             row = random.randint(0, self.size - 1)
             column = random.randint(0, self.size - 1)
@@ -86,8 +107,8 @@ class Map:
         """
         Function to be used by Search action, to discover if player current position has an Item
 
-        :param position: A string with the current position of the player. For example: "A2" or "C4".
-        :rtype: Optional[Item]: The item if it exists or None
+        :param str position: A string with the current position of the player. For example: "A2" or "C4".
+        :rtype: Optional[Item]: The item if it exists or None.
         """
         items = self.items.get(position, None)
         if items is not None:
@@ -95,13 +116,31 @@ class Map:
         return items
 
     def add_item_to_map(self, position: str, item: Item) -> None:
+        """
+        Add an item to map, this method may be called in game creation, when items are distributed randomly,
+        or when a character drops an item.
+
+        :param str position: The position of the map, like "A2" or "C4" where item will be added.
+        :param Item item: Item object that will be added.
+
+        :rtype: None.
+        """
         if self.items.get(position, None):
             self.items.get(position).append(item)
         else:
             self.items[position] = [item]
 
+
 class MapFactory:
     def create_map(self, map_size: int) -> Map:
+        """
+        Factory design pattern to create a new map.
+
+        :param int map_size: The size of the map, it will be expressed as the number of tiles of a matrix,
+        For example, size = 5, the map will be based on a 5 x 5 matrix.
+
+        :rtype: Map.
+        """
         game_map = Map('test', 'wind', map_size)
         game_map.graph.init_graph()
         return game_map
