@@ -6,6 +6,12 @@ from project.player import Player
 
 
 def ask_enemy_to_check(enemies: List[Player]) -> Union[str, bool, list, Player]:
+    """
+    Ask which enemy the player wants to know more info.
+
+    :param List[Player] enemies: The unhidden players to analyze.
+    :rtype: Union[str, bool, list, Player].
+    """
     choices = []
     for enemy in enemies:
         choices.append({

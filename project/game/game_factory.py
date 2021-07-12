@@ -5,7 +5,7 @@ from project.game import DeathMatch
 from project.map import MapFactory, Map
 from project.orchestrator import GameOrchestrator, DeathMatchOrchestrator
 from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, bot_factory, BotPlayer
-from project.questions import BEGIN_GAME_QUESTIONS
+from project.questions import perform_game_create_questions
 
 
 class GameFactory:
@@ -22,7 +22,7 @@ class GameFactory:
 
         :rtype: GameOrchestrator.
         """
-        self.begin_question_results = prompt(BEGIN_GAME_QUESTIONS)
+        self.begin_question_results = perform_game_create_questions()
         main_player = self.init_players()
 
         bots = self.init_bots()

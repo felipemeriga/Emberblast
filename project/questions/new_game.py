@@ -1,4 +1,7 @@
+from typing import Union
+
 import emojis
+from InquirerPy import prompt
 from prompt_toolkit.validation import Validator, ValidationError
 
 from project.conf import get_configuration
@@ -63,3 +66,12 @@ BEGIN_GAME_QUESTIONS = [
         "name": "job"
     },
 ]
+
+
+def perform_game_create_questions() -> Union[str, bool, list, dict]:
+    """
+    This function is used by asking a new game questions.
+
+    :rtype: Union[str, bool, list, dict].
+    """
+    return prompt(BEGIN_GAME_QUESTIONS)

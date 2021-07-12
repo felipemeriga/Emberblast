@@ -8,6 +8,12 @@ from project.player import Player
 
 
 def select_item(items: List[Item]) -> Union[str, bool, list, Item]:
+    """
+    Select an item to use, or even get more information about it.
+
+    :param List[Item] items: The available items for the player.
+    :rtype: Union[str, bool, list, Item].
+    """
     choices = []
     for item in items:
         choices.append({
@@ -33,6 +39,11 @@ def select_item(items: List[Item]) -> Union[str, bool, list, Item]:
 
 
 def confirm_item_selection() -> Union[str, bool, list, bool]:
+    """
+    Confirm question, to ensure that player really wants to use the selected item.
+
+    :rtype: Union[str, bool, list, bool].
+    """
     questions = [
         {"type": "confirm", "message": "Are you sure?", "name": "confirm", "default": False},
     ]
@@ -42,6 +53,11 @@ def confirm_item_selection() -> Union[str, bool, list, bool]:
 
 
 def confirm_use_item_on_you() -> Union[str, bool, list, bool]:
+    """
+    Confirm question, to ensure that player really wants to use the selected item on himself.
+
+    :rtype: Union[str, bool, list, bool].
+    """
     questions = [
         {"type": "confirm", "message": "Are you using the item on yourself?", "name": "confirm", "default": False},
     ]
@@ -51,6 +67,12 @@ def confirm_use_item_on_you() -> Union[str, bool, list, bool]:
 
 
 def display_equipment_choices(player: Player) -> Union[str, bool, list, EquipmentItem]:
+    """
+    Will display all the equipments that player has, for equipping one of them.
+
+    :param Player player: The current player.
+    :rtype: Union[str, bool, list, EquipmentItem].
+    """
     equipments = player.bag.get_equipments()
     choices = []
 

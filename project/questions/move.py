@@ -5,6 +5,12 @@ from emojis import emojis
 
 
 def ask_where_to_move(possibilities: List[str]) -> str:
+    """
+    This function is used by asking the player where he wants to move.
+
+    :param List[str] possibilities: The previously calculated possibilities of movement.
+    :rtype: Union[str, bool, list, str].
+    """
     questions = [
         {
             'type': 'list',
