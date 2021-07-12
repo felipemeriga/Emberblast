@@ -1,24 +1,35 @@
 from typing import List
 
 import timg
-from colorama import Fore
 from emojis import emojis
 from termcolor import colored
 
 from project.item import Item, EquipmentItem, RecoveryItem, HealingItem
+from project.player import Player
 from project.utils import get_project_root, convert_number_to_letter
 
 
-def print_greetings():
+def print_greetings() -> None:
+    """
+    Print game greetings.
+
+    :rtype: None
+    """
     obj = timg.Renderer()
     project_path = get_project_root()
     obj.load_image_from_file(str(project_path) + '/img/emberblast.png')
     obj.resize(100, 100)
     obj.render(timg.ASCIIMethod)
-    print(Fore.RED + emojis.encode(':fire: Welcome to Emberblast! :fire: \n\n'))
+    print(emojis.encode(colored(':fire: Welcome to Emberblast! :fire: \n\n', 'red')))
 
 
 def print_player_stats(player):
+    """
+    Print the current playing player stats and attributes.
+
+    :param Player player: The current player.
+    :rtype: None
+    """
     print(emojis.encode(
         ':man: {name} Stats: \n\n'.format(name=player.name)))
     print(emojis.encode(
@@ -43,7 +54,13 @@ def print_player_stats(player):
                                         will=player.will)))
 
 
-def print_enemy_status(enemy) -> None:
+def print_enemy_status(enemy: Player) -> None:
+    """
+    Print the current status and attributes of a unhidden player.
+
+    :param Player enemy: The selected enemy.
+    :rtype: None
+    """
     print(emojis.encode(colored('Enemy {name}({job}) is currently at position: {position} \n'
                                 ':bar_chart: Level: {level} \n'
                                 ':green_heart: Health Points: {health} \n'
@@ -71,12 +88,25 @@ def print_enemy_status(enemy) -> None:
                                 'red')))
 
 
-def print_plain_matrix(matrix) -> None:
+def print_plain_matrix(matrix: List[List[int]]) -> None:
+    """
+    Print the matrix, that represents the map.
+
+    :param List[List[int]] matrix: The matrix that represents the map.
+    :rtype: None
+    """
     print('\n'.join([''.join(['{:4}'.format(item) for item in row])
                      for row in matrix]))
 
 
-def print_plain_map(matrix, size) -> None:
+def print_plain_map(matrix: List[List[int]], size: int) -> None:
+    """
+    Print the plain map, without any additional info.
+
+    :param List[List[int]] matrix: The matrix that represents the map.
+    :param int size: Size of the map.
+    :rtype: None
+    """
     # Print the columns first
     print(' ' * 4, end="")
     for column in range(size):
@@ -89,7 +119,16 @@ def print_plain_map(matrix, size) -> None:
         print('')
 
 
-def print_map_info(player, players, size, matrix) -> None:
+def print_map_info(player: Player, players: List[Player], matrix: List[List[int]], size: int) -> None:
+    """
+    Print the current position of all unhidden players in the map, and all the characteristics of it.
+
+    :param Player player: The player that is currently playing.
+    :param List[Player] players: Another competitors.
+    :param List[List[int]] matrix: The matrix that represents the map.
+    :param int size: Size of the map.
+    :rtype: None
+    """
     foes_positions = []
     print(colored('{name} is currently at position: {position}, '
                   'with {health_points} HP'.format(name=player.name,
@@ -128,6 +167,15 @@ def print_map_info(player, players, size, matrix) -> None:
 
 def print_moving_possibilities(player_position: str, possibilities: List[str], matrix: List[List[int]],
                                size: int) -> None:
+    """
+    Print all the possibilities of moving in the map, considering the player's move speed.
+
+    :param str player_position: Original position of the player.
+    :param List[str] possibilities: The possibilities of movements, previously calculated.
+    :param List[List[int]] matrix: The matrix that represents the map.
+    :param int size: Size of the map.
+    :rtype: None
+    """
     print('Possibilities of Moving')
     print(colored('You are on the Yellow tile', 'yellow'))
     print(colored('Green tiles are the possibilities', 'green'))
@@ -153,6 +201,15 @@ def print_moving_possibilities(player_position: str, possibilities: List[str], m
 
 
 def print_found_item(player_name: str, found: bool = False, item_tier: str = None, item_name: str = None) -> None:
+    """
+    Print if an item was found or not.
+
+    :param str player_name: Player's name, whom is currently searching for an item.
+    :param bool found: Whether the player has found it.
+    :param str item_tier: Tier of the found item.
+    :param str item_name: Item name.
+    :rtype: None
+    """
     if found:
         print('Player: {name} found a {tier} item! {item_name} \n'.format(name=player_name,
                                                                           tier=item_tier,
