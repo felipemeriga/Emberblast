@@ -10,9 +10,18 @@ from project.questions import BEGIN_GAME_QUESTIONS
 
 class GameFactory:
     def __init__(self):
+        """
+        Constructor of the class, responsible for creating the game, and performing the proper questions.
+        """
         self.begin_question_results = None
 
     def new_game(self) -> GameOrchestrator:
+        """
+        Creates a new game, prompting the user the necessary questions of how the game will be, and
+        instantiate the proper objects, according to what was requested.
+
+        :rtype: GameOrchestrator.
+        """
         self.begin_question_results = prompt(BEGIN_GAME_QUESTIONS)
         main_player = self.init_players()
 
@@ -29,12 +38,29 @@ class GameFactory:
             return orchestrator
 
     def init_map(self, map_size: int) -> Map:
+        """
+        Calls MapFactory to create a new map, depending on the number of players, that will be proportional to map size.
+
+        :param int map_size: The size of the map, may change depending the number of players.
+        :rtype: Map.
+        """
         return MapFactory().create_map(map_size)
 
     def init_players(self) -> ControlledPlayer:
+        """
+        Method used for generating the controlled players.
+
+        :rtype: ControlledPlayer.
+        """
         return ControlledPlayer(self.begin_question_results.get('nickname'),
                                 dynamic_jobs_classes[self.begin_question_results.get('job')](),
                                 dynamic_races_classes[self.begin_question_results.get('race')]())
 
     def init_bots(self) -> List[BotPlayer]:
+        """
+        Method used for generating the bots, which will call bot_factory, that randomly picks
+        available races and jobs for each player.
+
+        :rtype: List[BotPlayer].
+        """
         return bot_factory(self.begin_question_results.get('bots_number'))
