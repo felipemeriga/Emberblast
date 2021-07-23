@@ -2,6 +2,7 @@ from typing import Union
 
 import emojis
 from InquirerPy import prompt
+from prompt_toolkit.document import Document
 from prompt_toolkit.validation import Validator, ValidationError
 
 from project.conf import get_configuration
@@ -9,7 +10,10 @@ from project.utils import GAME_SECTION, RACES_SECTION, JOBS_SECTION
 
 
 class MaxBotsInputValidator(Validator):
-    def validate(self, document):
+    def validate(self, document: Document):
+        """
+        This function is used for validating  the number of bots inserted, when creating a new game.
+        """
         max_bot_number = get_configuration(GAME_SECTION).get('max_number_bots')
         if not document.text.isnumeric():
             raise ValidationError(
