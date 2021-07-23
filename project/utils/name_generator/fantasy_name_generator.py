@@ -5,7 +5,14 @@ from ..utils import get_project_root
 NAME_GENERATOR_PATH = '{root}/utils/name_generator'.format(root=get_project_root())
 
 
-def generate_name():
+def generate_name() -> str:
+    """
+    This functions works based in two files, the first_name.txt and second_name.txt.
+    Each of those files, contains thousands of names, and a first and last name will be randomly
+    picked to form a random generated name.
+
+    :rtype: str
+    """
     try:
         with open(NAME_GENERATOR_PATH + '/first_name.txt') as names_file:
             names = names_file.read().splitlines()
