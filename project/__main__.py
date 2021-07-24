@@ -1,21 +1,25 @@
 import sys
 
+import cloudpickle
 from colorama import Fore
 import atexit
 from project.game import GameFactory
 from project.message import print_greetings
 
 
-def exit_handler():
-    print('My application is ending!')
+def exit_handler(orchestrator):
+    f = open('store.pckl', 'wb')
+    cloudpickle.dump(orchestrator, f)
+    f.close()
+    print('Closing Emberblast!')
 
 
 def run_project(args):
-    game_orchestrator = None
     try:
         print_greetings()
         game_factory = GameFactory()
         game_orchestrator = game_factory.new_game()
+        atexit.register(exit_handler, game_orchestrator)
         game_orchestrator.execute_game()
     except KeyboardInterrupt:
         pass
@@ -24,5 +28,4 @@ def run_project(args):
 
 
 if __name__ == '__main__':
-    atexit.register(exit_handler)
     run_project(sys.argv)
