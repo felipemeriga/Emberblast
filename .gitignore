@@ -133,3 +133,6 @@ dmypy.json
 
 # Game logs
 /log
+
+# Pickle Application State Files
+store.pckl

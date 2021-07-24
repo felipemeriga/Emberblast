@@ -10,7 +10,7 @@ from project.utils.name_generator import generate_name
 
 
 class BotPlayer(Player):
-    def __init__(self, job: Job, race: Race, name: str =None) -> None:
+    def __init__(self, name: str, job: Job, race: Race) -> None:
         """
         Constructor of bot player.
 
@@ -50,6 +50,6 @@ def bot_factory(number_of_bots):
         chosen_race = races[randrange(len(races))]
         job = dynamic_jobs_classes[chosen_job]()
         race = dynamic_races_classes[chosen_race]()
-        bots.append(BotPlayer(job, race, name))
+        bots.append(BotPlayer(name, job, race))
 
     return bots

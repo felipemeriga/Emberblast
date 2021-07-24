@@ -5,7 +5,7 @@ from .race import Race
 
 
 class ControlledPlayer(Player):
-    def __init__(self, job: Job, race: Race, name: str = None) -> None:
+    def __init__(self, name: str, job: Job, race: Race) -> None:
         """
         Constructor of bot player.
 

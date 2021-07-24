@@ -14,13 +14,36 @@ from project.utils import PASS_ACTION_NAME
 class GameOrchestrator:
 
     def __init__(self, game: Game) -> None:
+        """
+        Constructor of the Game Orchestrator, which is the Class that receives a Game object,
+        and command and coordinate the actions, and the execution of the game based on turns.
+
+        :param Game game: The created game to be executed.
+        :rtype: None.
+        """
         self.clear = lambda: system('clear')
         self.game = game
         self.actions = {}
         self.init_actions()
+        """
+        The actions left, it's an array of the available actions of a player on a turn,
+        for each player and each turn, this array is modified.
+        """
         self.actions_left: List[str] = []
+        """
+        The turn remaining players manages how many players are left for playing a turn, this variable
+        it's very important for saved games, because it helps the game to be continued exactly from the 
+        player that was playing when the game was saved.
+        """
+        self.turn_remaining_players: List[Player] = []
 
     def init_actions(self) -> None:
+        """
+        Init the actions available in the game, each of the actions of the game, are represented by Singleton clases
+        that coordinates and implements the execution of that action.
+
+        :rtype: None.
+        """
         self.actions['move'] = Move(True, False, self.game)
         self.actions['defend'] = Defend(False, False, self.game)
         self.actions['hide'] = Hide(False, False, self.game)
@@ -33,29 +56,58 @@ class GameOrchestrator:
         self.actions['check'] = Check(True, True, self.game)
         self.actions['pass'] = Pass(True, False, self.game)
 
-    def init_game(self):
+    def execute_game(self) -> None:
+        """
+        This method should be implement by Styles of Games that Inherits from this superclass.
+
+        :rtype: None.
+        """
         raise NotImplementedError('Game::to_string() should be implemented!')
 
 
 class DeathMatchOrchestrator(GameOrchestrator):
 
     def __init__(self, game: Game) -> None:
+        """
+        Constructor of the DeathMatchOrchestrator.
+        :rtype: None.
+        """
         super().__init__(game)
 
-    def init_game(self) -> None:
+    def execute_game(self) -> None:
+        """
+        The implementation of the superclass method,which is the one for executing each of the calculated turns of
+        the game. It's the same method to start a newly created game or a continue.
+
+        :rtype: None.
+        """
         try:
-            turn_list = list(self.game.turns.copy().keys())
+            # Getting only the last element of the list, because in the case it's a saved game, it will take the last
+            # player turn, and continue from there, if it's a new game, it will only game the first turn, which is the
+            # first and the only element of the turns dictionary.
+            turn_list = [list(self.game.turns.copy().keys())[-1]]
             for turn in turn_list:
                 self.clear()
                 print(Fore.GREEN + emojis.encode(
                     ':fire: Starting Turn {turn}! Embrace Yourselves! :fire: \n\n'.format(turn=turn)))
-                for player in self.game.turns.get(turn):
+
+                if not len(self.turn_remaining_players) > 0:
+                    # Making a copy of the dict, because dicts are mutable, and without a copy, would alter
+                    # the attribute from Game class.
+                    # Additionally, the remaining players attributes allow the game to be continued from the player
+                    # that was playing when the game was saved.
+                    self.turn_remaining_players = self.game.turns.get(turn).copy()
+
+                while len(self.turn_remaining_players) > 0:
+                    player = self.turn_remaining_players[0]
                     print(emojis.encode(
                         ':man: {name} Time! \n\n'.format(name=player.name)))
                     if isinstance(player, ControlledPlayer):
                         self.controlled_decisioning(player)
                     else:
                         self.bot_decisioning(player)
+                    self.turn_remaining_players.remove(player)
+
                 self.game.calculate_turn_order()
                 turn_list.append(turn + 1)
         except Exception as err:
