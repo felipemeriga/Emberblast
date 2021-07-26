@@ -132,7 +132,10 @@ dmypy.json
 .pyre/
 
 # Game logs
-/log
+log
 
 # Pickle Application State Files
 store.pckl
+
+# Game Save Files
+saved_games
