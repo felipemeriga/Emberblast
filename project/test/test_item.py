@@ -4,10 +4,28 @@ from .test import BaseTestCase
 from project.item import get_random_item, Item, EquipmentItem, RecoveryItem, HealingItem, Bag
 
 
-def mock_item(tier: str = 'common', item_type: str = 'healing') -> Callable:
+def mock_recovery_item(tier: str = 'common') -> Callable:
     def wrapper(func):
-        item = get_random_item(tier, item_type)
-        setattr(func, 'mock_item', item)
+        item = get_random_item(tier, 'recovery')
+        setattr(func, 'mock_recovery_item', item)
+        return func
+
+    return wrapper
+
+
+def mock_equipment_item(tier: str = 'common') -> Callable:
+    def wrapper(func):
+        item = get_random_item(tier, 'equipment')
+        setattr(func, 'mock_equipment_item', item)
+        return func
+
+    return wrapper
+
+
+def mock_healing_item(tier: str = 'common') -> Callable:
+    def wrapper(func):
+        item = get_random_item(tier, 'healing')
+        setattr(func, 'mock_healing_item', item)
         return func
 
     return wrapper

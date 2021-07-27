@@ -3,6 +3,7 @@ from typing import Dict, Callable
 
 from project.player import dynamic_races_classes, dynamic_jobs_classes, Player
 from .test import BaseTestCase
+from .test_item import mock_healing_item
 
 
 def mock_job() -> Callable:
@@ -37,6 +38,7 @@ def mock_player() -> Callable:
 
 
 @mock_player()
+@mock_healing_item()
 class TestModulePlayer(BaseTestCase):
     def test_module(self) -> None:
         self.test_create_dynamic_races()
@@ -73,5 +75,14 @@ class TestModulePlayer(BaseTestCase):
         self.mock_player.heal('health_points', 1)
         self.mock_player.heal('magic_points', 1)
 
+        self.assertEqual(self.mock_player.life, self.mock_player.health_points)
+        self.assertEqual(self.mock_player.mana, self.mock_player.magic_points)
+
+    def test_use_healing_item(self) -> None:
+        if self.mock_healing_item.attribute == 'health_points':
+            self.mock_player.suffer_damage(2)
+        elif self.mock_healing_item.attribute == 'magic_points':
+            self.mock_player.spend_mana(2)
+        self.mock_player.use_item(self.mock_healing_item)
         self.assertEqual(self.mock_player.life, self.mock_player.health_points)
         self.assertEqual(self.mock_player.mana, self.mock_player.magic_points)
