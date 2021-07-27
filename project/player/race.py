@@ -44,6 +44,7 @@ class Race(metaclass=RaceMeta):
     def get_name(self):
         return self.__class__.__name__
 
+
 # dynamic constructor
 def constructor(self):
     pass
