@@ -1,3 +1,3 @@
-from .map import MapFactory, Map
+from .map import MapFactory, Map, Graph
 
-__all__ = ['MapFactory', 'Map']
+__all__ = ['MapFactory', 'Map', 'Graph']

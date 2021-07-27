@@ -9,7 +9,13 @@ from project.utils.name_generator import generate_name
 
 class TestModuleUtils(unittest.TestCase):
     def test_module(self):
-        pass
+        self.test_generate_random_adjacent_matrix()
+        self.test_generate_visited_default_matrix()
+        self.test_find_key_recursively()
+        self.test_deep_get()
+        self.test_convert_letter_to_number()
+        self.test_convert_number_to_letter()
+        self.test_generate_name()
 
     @staticmethod
     def get_mock_dict() -> Dict:
