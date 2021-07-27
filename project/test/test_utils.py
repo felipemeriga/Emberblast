@@ -11,7 +11,8 @@ class TestModuleUtils(unittest.TestCase):
     def test_module(self):
         pass
 
-    def get_mock_dict(self) -> Dict:
+    @staticmethod
+    def get_mock_dict() -> Dict:
         return {
             'root': {
                 'nested1': {
