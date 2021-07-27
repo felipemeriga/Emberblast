@@ -47,6 +47,8 @@ class Configuration(object):
             raise SystemExit('Could not parse the configuration file')
 
     def __call__(self, section):
+        if section == '':
+            return self
         return self.__getattribute__(section)
 
     def parse_configuration_files(self) -> None:
