@@ -1,6 +1,5 @@
-import unittest
 from typing import Any
-
+from .test import BaseTestCase
 from project.conf import get_configuration
 
 
@@ -15,7 +14,7 @@ def get_mock_conf_section(section: str) -> Any:
     return wrapper
 
 
-class TestModuleConf(unittest.TestCase):
+class TestModuleConf(BaseTestCase):
     def test_module(self):
         self.test_conf()
 

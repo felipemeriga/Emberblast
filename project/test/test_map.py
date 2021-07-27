@@ -1,12 +1,13 @@
 import random
-import unittest
+from .test import BaseTestCase
 from project.map import Map, Graph
 from project.utils import convert_number_to_letter
 
 
-class TestModuleMap(unittest.TestCase):
+class TestModuleMap(BaseTestCase):
     def test_module(self):
-        pass
+        self.test_graph_generation()
+        self.test_map_attributes()
 
     def test_graph_generation(self) -> None:
         size = random.randint(0, 10)

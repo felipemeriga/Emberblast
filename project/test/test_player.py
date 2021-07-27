@@ -41,6 +41,7 @@ class TestModulePlayer(BaseTestCase):
     def test_module(self) -> None:
         self.test_create_dynamic_races()
         self.test_create_dynamic_jobs()
+        self.test_player_suffer_damage()
 
     def check_race_job_attributes(self, instances_dict: Dict) -> None:
         for instance in instances_dict.values():
@@ -65,3 +66,12 @@ class TestModulePlayer(BaseTestCase):
     def test_player_suffer_damage(self) -> None:
         self.mock_player.suffer_damage(10000)
         self.assertFalse(self.mock_player.is_alive())
+
+    def test_player_heal(self) -> None:
+        self.mock_player.suffer_damage(1)
+        self.mock_player.spend_mana(1)
+        self.mock_player.heal('health_points', 1)
+        self.mock_player.heal('magic_points', 1)
+
+        self.assertEqual(self.mock_player.life, self.mock_player.health_points)
+        self.assertEqual(self.mock_player.mana, self.mock_player.magic_points)

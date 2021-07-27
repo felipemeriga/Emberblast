@@ -1,5 +1,5 @@
 import random
-import unittest
+from .test import BaseTestCase
 from typing import Dict
 
 from project.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, find_key_recursively, \
@@ -7,7 +7,7 @@ from project.utils import generate_random_adjacent_matrix, generate_visited_defa
 from project.utils.name_generator import generate_name
 
 
-class TestModuleUtils(unittest.TestCase):
+class TestModuleUtils(BaseTestCase):
     def test_module(self):
         self.test_generate_random_adjacent_matrix()
         self.test_generate_visited_default_matrix()
