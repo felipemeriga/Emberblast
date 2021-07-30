@@ -22,6 +22,7 @@ def run_project(args):
     except KeyboardInterrupt:
         pass
     except Exception as err:
+        print(err)
         print(Fore.RED + 'System shutdown with unexpected error')
 
 

@@ -5,6 +5,7 @@ from typing import List, Dict
 
 import cloudpickle
 
+from project.game import Game
 from project.orchestrator import GameOrchestrator
 from project.utils import get_project_root
 
@@ -31,6 +32,14 @@ def save_game_state_on_exit(orchestrator_object: GameOrchestrator) -> None:
     f = open(save_file_path, 'wb')
     cloudpickle.dump(orchestrator_object, f)
     f.close()
+
+
+def recover_saved_game_orchestrator(file: Path) -> GameOrchestrator:
+    game_orchestrator = None
+    # Load data (deserialize)
+    f = open(str(file), 'rb')
+    game_orchestrator = cloudpickle.load(f)
+    return game_orchestrator
 
 
 def get_saved_game_files() -> List[Path]:
