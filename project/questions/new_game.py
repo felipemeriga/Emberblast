@@ -72,6 +72,31 @@ BEGIN_GAME_QUESTIONS = [
 ]
 
 
+def perform_first_question() -> Union[str, bool, list, str]:
+    choices = [
+        {
+            'name': emojis.encode('New Game :new:'),
+            'value': 'new'
+        }, {
+            'name': emojis.encode('Continue :repeat:'),
+            'value': 'continue'
+        }
+    ]
+    first_game_questions = [
+        {
+            'type': 'list',
+            'message': 'Select an option: ',
+            'choices': choices,
+            'default': 'new',
+            'invalid_message': 'You need to select at least one game type to play!',
+            'show_cursor': True,
+            'max_height': '100'
+        }
+    ]
+    result = prompt(questions=first_game_questions)
+    return result[0]
+
+
 def perform_game_create_questions() -> Union[str, bool, list, dict]:
     """
     This function is used by asking a new game questions.

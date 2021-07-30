@@ -5,7 +5,9 @@ from project.game import DeathMatch
 from project.map import MapFactory, Map
 from project.orchestrator import GameOrchestrator, DeathMatchOrchestrator
 from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, bot_factory, BotPlayer
-from project.questions import perform_game_create_questions
+from project.questions import perform_game_create_questions, perform_first_question
+from project.questions.save import get_saved_game
+from project.save import get_normalized_saved_files_dict
 
 
 class GameFactory:
@@ -14,6 +16,26 @@ class GameFactory:
         Constructor of the class, responsible for creating the game, and performing the proper questions.
         """
         self.begin_question_results = None
+
+    def pre_initial_settings(self) -> GameOrchestrator:
+        """
+        Executes the first game questions, checking if the player wants to create a new game, or load an existing one.
+
+        :rtype: GameOrchestrator.
+        """
+        normalized_files = get_normalized_saved_files_dict()
+
+        # Checking first if there are any saved games
+        if len(normalized_files) > 0:
+            first_game_question = perform_first_question()
+            if first_game_question == 'new':
+                return self.new_game()
+            elif first_game_question == 'continue':
+                normalized_files = get_normalized_saved_files_dict()
+                selected_file = get_saved_game(normalized_files)
+                print(selected_file)
+        else:
+            self.new_game()
 
     def new_game(self) -> GameOrchestrator:
         """

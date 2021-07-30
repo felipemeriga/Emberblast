@@ -16,7 +16,7 @@ def run_project(args):
     try:
         print_greetings()
         game_factory = GameFactory()
-        game_orchestrator = game_factory.new_game()
+        game_orchestrator = game_factory.pre_initial_settings()
         atexit.register(exit_handler, game_orchestrator)
         game_orchestrator.execute_game()
     except KeyboardInterrupt:
