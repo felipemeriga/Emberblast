@@ -23,7 +23,7 @@ def print_greetings() -> None:
     print(emojis.encode(colored(':fire: Welcome to Emberblast! :fire: \n\n', 'red')))
 
 
-def print_player_stats(player):
+def print_player_stats(player: Player):
     """
     Print the current playing player stats and attributes.
 

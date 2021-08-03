@@ -3,7 +3,6 @@ from project.utils import JOBS_SECTION
 
 
 class JobMeta(type):
-
     def __init__(self, clsname, superclasses, attributedict):
         if clsname == 'Job':
             return
@@ -23,6 +22,7 @@ class JobMeta(type):
 
 
 class Job(metaclass=JobMeta):
+
     def __init__(self, health_points,
                  magic_points,
                  move_speed,
@@ -63,9 +63,9 @@ def display_method(self, arg):
 def class_method(cls, arg):
     print(arg)
 
-
+@classmethod
 def get_name(self):
-    return self.__class__.__name__
+    return self.name
 
 
 def create_dynamic_jobs():
@@ -76,6 +76,7 @@ def create_dynamic_jobs():
             # constructor
             "__init__": constructor,
 
+            "name": job,
             # member functions
             "func_arg": display_method,
             "class_func": class_method,

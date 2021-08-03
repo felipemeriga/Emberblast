@@ -1,4 +1,3 @@
-from InquirerPy import prompt
 from typing import List
 
 from project.game import DeathMatch

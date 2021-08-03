@@ -1,7 +1,7 @@
 import random
 from typing import Dict, Callable
 
-from project.player import dynamic_races_classes, dynamic_jobs_classes, Player
+from project.player import dynamic_races_classes, dynamic_jobs_classes, ControlledPlayer
 from .test import BaseTestCase
 from .test_item import mock_healing_item
 
@@ -30,21 +30,16 @@ def mock_race() -> Callable:
 @mock_job()
 def mock_player() -> Callable:
     def wrapper(func):
-        player = Player(name='test player', job=mock_player.job, race=mock_player.race)
+        player = ControlledPlayer(name='test player', job=mock_player.job, race=mock_player.race)
         setattr(func, 'mock_player', player)
         return func
 
     return wrapper
 
 
-@mock_player()
 @mock_healing_item()
+@mock_player()
 class TestModulePlayer(BaseTestCase):
-    def test_module(self) -> None:
-        self.test_create_dynamic_races()
-        self.test_create_dynamic_jobs()
-        self.test_player_suffer_damage()
-
     def check_race_job_attributes(self, instances_dict: Dict) -> None:
         for instance in instances_dict.values():
             self.assertHasAttr(instance, 'health_points')
@@ -68,6 +63,7 @@ class TestModulePlayer(BaseTestCase):
     def test_player_suffer_damage(self) -> None:
         self.mock_player.suffer_damage(10000)
         self.assertFalse(self.mock_player.is_alive())
+        self.mock_player.heal('health_points', 10000)
 
     def test_player_heal(self) -> None:
         self.mock_player.suffer_damage(1)

@@ -1,14 +1,22 @@
 import random
+from typing import Callable
+
 from .test import BaseTestCase
 from project.map import Map, Graph
 from project.utils import convert_number_to_letter
 
 
-class TestModuleMap(BaseTestCase):
-    def test_module(self):
-        self.test_graph_generation()
-        self.test_map_attributes()
+def mock_map() -> Callable:
+    def wrapper(func):
+        size = random.randint(0, 10)
+        new_map = Map(name='test_map', map_type='test', size=size)
+        setattr(func, 'mock_map', new_map)
+        return func
 
+    return wrapper
+
+
+class TestModuleMap(BaseTestCase):
     def test_graph_generation(self) -> None:
         size = random.randint(0, 10)
         new_graph = Graph(size=size)

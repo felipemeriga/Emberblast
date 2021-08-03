@@ -15,9 +15,6 @@ def get_mock_conf_section(section: str) -> Any:
 
 
 class TestModuleConf(BaseTestCase):
-    def test_module(self):
-        self.test_conf()
-
     def test_conf(self):
         # this test is self explanatory, as the game configuration class itself, already does a lot of
         # validations on all the required files, params and environment variables, the only test to be done it's

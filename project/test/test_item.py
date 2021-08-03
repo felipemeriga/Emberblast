@@ -36,16 +36,6 @@ class TestModuleItem(BaseTestCase):
         super(TestModuleItem, self).__init__(*args, **kwargs)
         self.bag = Bag()
 
-    def test_module(self) -> None:
-        self.test_get_random_item()
-        self.test_get_random_healing()
-        self.test_get_random_equipment()
-        self.test_get_random_recoverable()
-        self.test_bag_get_equipments()
-        self.test_bag_get_usable_items()
-        self.test_bag_weight_measurement()
-        self.test_bag_has_item_type()
-
     def test_get_random_item(self) -> None:
         item = get_random_item(tier='common', item_type='healing')
         self.assertIsInstance(item, Item)
