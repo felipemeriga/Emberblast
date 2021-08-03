@@ -61,8 +61,9 @@ def class_method(cls, arg):
     print(arg)
 
 
+@classmethod
 def get_name(self):
-    return self.__class__.__name__
+    return self.name
 
 
 def create_dynamic_races():
@@ -73,6 +74,7 @@ def create_dynamic_races():
             # constructor
             "__init__": constructor,
 
+            "name": race,
             # member functions
             "func_arg": display_method,
             "class_func": class_method,
