@@ -201,7 +201,7 @@ class Check(Action):
             print_player_stats(player)
         elif check_option == 'map':
             unhidden_foes = self.game.get_remaining_players(player, include_hidden=True)
-            print_map_info(player, unhidden_foes, self.game.game_map.size, self.game.game_map.graph.matrix)
+            print_map_info(player, unhidden_foes, self.game.game_map.graph.matrix, self.game.game_map.size)
         elif check_option == 'enemy':
             enemies = self.game.get_remaining_players(player, include_hidden=True)
             enemy = ask_enemy_to_check(enemies)
