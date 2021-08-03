@@ -8,8 +8,9 @@ from project.utils import convert_number_to_letter
 
 def mock_map() -> Callable:
     def wrapper(func):
-        size = random.randint(0, 10)
+        size = random.randint(3, 10)
         new_map = Map(name='test_map', map_type='test', size=size)
+        new_map.graph.init_graph()
         setattr(func, 'mock_map', new_map)
         return func
 

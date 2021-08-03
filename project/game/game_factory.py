@@ -5,7 +5,7 @@ from project.map import MapFactory, Map
 from project.orchestrator import GameOrchestrator, DeathMatchOrchestrator
 from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, bot_factory, BotPlayer
 from project.questions import perform_game_create_questions, perform_first_question
-from project.questions.save import get_saved_game
+from project.questions import get_saved_game
 from project.save import get_normalized_saved_files_dict, recover_saved_game_orchestrator
 
 

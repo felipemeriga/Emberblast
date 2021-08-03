@@ -5,7 +5,6 @@ from typing import List, Dict
 
 import cloudpickle
 
-from project.game import Game
 from project.orchestrator import GameOrchestrator
 from project.utils import get_project_root
 
