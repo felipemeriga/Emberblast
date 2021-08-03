@@ -5,10 +5,10 @@ from cerberus import Validator, SchemaError
 from .schema import race_section_configuration_schema, game_section_configuration_schema, \
     job_section_configuration_schema, level_up_attributes_configuration_schema, side_effects_configuration_schema, \
     healing_item_validation_schema, recovery_item_validation_schema, equipment_item_validation_schema, \
-    items_probabilities_schema
+    items_probabilities_schema, skills_validation_schema
 from .logger import get_logger
 from project.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT, SIDE_EFFECTS_SECTION, \
-    ITEMS_SECTION, ITEMS_PROBABILITIES_SECTION
+    ITEMS_SECTION, ITEMS_PROBABILITIES_SECTION, SKILLS_SECTION
 from project.utils import get_project_root, deep_get
 from project.exception import ConfigFileError
 
@@ -28,12 +28,14 @@ class Configuration(object):
         self.parsed_yaml_file = {}
         self.parsed_items_file = {}
         self.parsed_side_effects_file = {}
+        self.parsed_skills_file = {}
         self.game = {}
         self.jobs = {}
         self.races = {}
         self.level_up_attributes_increment = {}
         self.side_effects = {}
         self.items = {}
+        self.skills = {}
         self.custom_jobs = {}
         self.custom_races = {}
         self.item_probabilities = {}
@@ -76,6 +78,10 @@ class Configuration(object):
         items_yaml_file = open(str(get_project_root()) + '/conf/items.yaml')
         self.parsed_items_file = yaml.load(items_yaml_file, Loader=yaml.FullLoader)
         self.validate_items()
+
+        skills_yaml_file = open(str(get_project_root()) + '/conf/skills.yaml')
+        self.parsed_skills_file = yaml.load(skills_yaml_file, Loader=yaml.FullLoader)
+        self.validate_skills()
 
     def validate_config_file(self) -> None:
         """
@@ -215,7 +221,7 @@ class Configuration(object):
         if not v.validate(self.level_up_attributes_increment, level_up_attributes_configuration_schema):
             self.error_handler(v.errors, LEVEL_UP_INCREMENT)
 
-    def validate_side_effects(self):
+    def validate_side_effects(self) -> None:
         """
         Validates side_effects.yaml file.
 
@@ -227,7 +233,19 @@ class Configuration(object):
             if not v.validate(value, side_effects_configuration_schema):
                 self.error_handler(v.errors, key)
 
-    def validate_items_probabilities_attributes(self):
+    def validate_skills(self) -> None:
+        """
+        Validates skills.yaml file.
+
+        :rtype: None
+        """
+        self.skills = self.parsed_skills_file.get(SKILLS_SECTION, {})
+        v = Validator(skills_validation_schema)
+        for key, value in self.skills.items():
+            if not v.validate(value, skills_validation_schema):
+                self.error_handler(v.errors, key)
+
+    def validate_items_probabilities_attributes(self) -> None:
         """
         Validates items probabilities section from conf.yaml.
 

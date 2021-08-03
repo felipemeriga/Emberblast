@@ -239,3 +239,26 @@ equipment_item_validation_schema = {
         'allowed': ['weapon', 'boots', 'accessory', 'armour', 'shield']
     }
 }
+
+skills_validation_schema = {
+    'name': {
+        'type': 'string',
+        'required': True
+    },
+    'description': {
+        'type': 'string',
+        'required': False
+    },
+    'damage': {
+        'type': 'number',
+        'required': True
+    },
+    'level_requirement': {
+        'type': 'number',
+        'required': True
+    },
+    'job': {
+        'type': 'string',
+        'required': True
+    }
+}
