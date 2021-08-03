@@ -7,7 +7,6 @@ from project.questions import ask_check_action, ask_actions_questions, select_it
 from .test_item import mock_healing_item, mock_recovery_item, mock_equipment_item
 from ..item import Item
 
-
 # All of the test under this test file are meant to be run manually only, for testing each of the
 # questions asked in the game
 def manual_test(func):
