@@ -1,13 +1,14 @@
-skills:
-  fireball:
-    name: Fireball
-    description: launches a fireball in the nearby enemy
-    damage: 5
-    level_requirement: 1
-    job: Wizard
-  pierce:
-    name: Pierce Arrow
-    description: Launches a heavy charged blow with your bow
-    damage: 2
-    level_requirement: 2
-    job: Archer
+fireball:
+  name: Fireball
+  description: launches a fireball in the nearby enemy
+  damage: 5
+  level_requirement: 1
+  range: 0
+  job: Wizard
+pierce:
+  name: Pierce Arrow
+  description: Launches a heavy charged blow with your bow
+  damage: 2
+  level_requirement: 2
+  range: 0
+  job: Archer

@@ -1,110 +1,109 @@
-items:
-  potion:
-    name: Potion
-    type: healing
-    tier: common
-    description: Heals 5 Health Points
-    attribute: health_points
-    base: 5
-    weight: 0.4
-  ether:
-    name: Ether
-    type: healing
-    tier: common
-    description: Heals 10 Magic Points
-    attribute: magic_points
-    base: 10
-    weight: 0.4
-  antidote:
-    name: Andidote
-    type: recovery
-    description: Cures from poison
-    tier: common
-    status: poison
-    weight: 0.4
-  super_potion:
-    name: Super Potion
-    type: healing
-    tier: uncommon
-    description: Heals 10 Health Points
-    attribute: health_points
-    base: 10
-    weight: 0.4
-  steel_sword:
-    name: Steel Sword
-    type: equipment
-    tier: common
-    description: A common sword made of steel
-    attribute: strength
-    base: 1
-    weight: 1
-    side-effects: [ ]
-    category: weapon
-  war_hammer:
-    name: War Hammer
-    type: equipment
-    tier: uncommon
-    description: A big hammer for any kind of fight
-    attribute: strength
-    base: 3
-    weight: 1
-    side-effects: [ ]
-    category: weapon
-  mega_potion:
-    name: Mega Potion
-    type: healing
-    tier: rare
-    description: Heals 15 Health Points
-    attribute: health_points
-    base: 15
-    weight: 0.4
-  magic_jewel:
-    name: Magic Jewel
-    type: equipment
-    tier: common
-    description: An magic jewel, with a common stone carved on that
-    attribute: intelligence
-    base: 1
-    weight: 0.05
-    side-effects: [ ]
-    category: accessory
-  sandals_of_hermes:
-    name: Sandals of Hermes
-    type: equipment
-    tier: legendary
-    description: Winged sandals, a symbol of the Greek messenger god Hermes.
-    attribute: move_speed
-    base: 2
-    weight: 0.3
-    side-effects: [ ]
-    category: boots
-  loki_scepter_stone:
-    name: Loki Scepter Stone
-    type: equipment
-    tier: legendary
-    description: The Mind Stone allows the user to control the minds of others.
-    attribute: intelligence
-    base: 6
-    weight: 0.2
-    side-effects: [ ]
-    category: accessory
-  excalibur:
-    name: Excalibur
-    type: equipment
-    tier: legendary
-    description: Excalibur is the legendary sword of King Arthur.
-    attribute: strength
-    base: 6
-    weight: 2
-    side-effects: [ haste ]
-    category: weapon
-  masamune:
-    name: Masamune
-    type: equipment
-    tier: rare
-    description: A Katana that has been forged with diamonds
-    attribute: strength
-    base: 4
-    weight: 0.7
-    side-effects: [ ]
-    category: weapon
+potion:
+  name: Potion
+  type: healing
+  tier: common
+  description: Heals 5 Health Points
+  attribute: health_points
+  base: 5
+  weight: 0.4
+ether:
+  name: Ether
+  type: healing
+  tier: common
+  description: Heals 10 Magic Points
+  attribute: magic_points
+  base: 10
+  weight: 0.4
+antidote:
+  name: Andidote
+  type: recovery
+  description: Cures from poison
+  tier: common
+  status: poison
+  weight: 0.4
+super_potion:
+  name: Super Potion
+  type: healing
+  tier: uncommon
+  description: Heals 10 Health Points
+  attribute: health_points
+  base: 10
+  weight: 0.4
+steel_sword:
+  name: Steel Sword
+  type: equipment
+  tier: common
+  description: A common sword made of steel
+  attribute: strength
+  base: 1
+  weight: 1
+  side-effects: [ ]
+  category: weapon
+war_hammer:
+  name: War Hammer
+  type: equipment
+  tier: uncommon
+  description: A big hammer for any kind of fight
+  attribute: strength
+  base: 3
+  weight: 1
+  side-effects: [ ]
+  category: weapon
+mega_potion:
+  name: Mega Potion
+  type: healing
+  tier: rare
+  description: Heals 15 Health Points
+  attribute: health_points
+  base: 15
+  weight: 0.4
+magic_jewel:
+  name: Magic Jewel
+  type: equipment
+  tier: common
+  description: An magic jewel, with a common stone carved on that
+  attribute: intelligence
+  base: 1
+  weight: 0.05
+  side-effects: [ ]
+  category: accessory
+sandals_of_hermes:
+  name: Sandals of Hermes
+  type: equipment
+  tier: legendary
+  description: Winged sandals, a symbol of the Greek messenger god Hermes.
+  attribute: move_speed
+  base: 2
+  weight: 0.3
+  side-effects: [ ]
+  category: boots
+loki_scepter_stone:
+  name: Loki Scepter Stone
+  type: equipment
+  tier: legendary
+  description: The Mind Stone allows the user to control the minds of others.
+  attribute: intelligence
+  base: 6
+  weight: 0.2
+  side-effects: [ ]
+  category: accessory
+excalibur:
+  name: Excalibur
+  type: equipment
+  tier: legendary
+  description: Excalibur is the legendary sword of King Arthur.
+  attribute: strength
+  base: 6
+  weight: 2
+  side-effects: [ haste ]
+  category: weapon
+masamune:
+  name: Masamune
+  type: equipment
+  tier: rare
+  description: A Katana that has been forged with diamonds
+  attribute: strength
+  base: 4
+  weight: 0.7
+  side-effects: [ ]
+  category: weapon

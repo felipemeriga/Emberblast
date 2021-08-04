@@ -253,6 +253,10 @@ skills_validation_schema = {
         'type': 'number',
         'required': True
     },
+    'range': {
+        'type': 'number',
+        'required': True
+    },
     'level_requirement': {
         'type': 'number',
         'required': True

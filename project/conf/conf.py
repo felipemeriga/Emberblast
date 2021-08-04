@@ -26,9 +26,6 @@ class Configuration(object):
         self._logger = get_logger()
         self.project_module = __import__('project')
         self.parsed_yaml_file = {}
-        self.parsed_items_file = {}
-        self.parsed_side_effects_file = {}
-        self.parsed_skills_file = {}
         self.game = {}
         self.jobs = {}
         self.races = {}
@@ -72,15 +69,15 @@ class Configuration(object):
         self.validate_config_file()
 
         side_effects_yaml_file = open(str(get_project_root()) + '/conf/side_effects.yaml')
-        self.parsed_side_effects_file = yaml.load(side_effects_yaml_file, Loader=yaml.FullLoader)
+        self.side_effects = yaml.load(side_effects_yaml_file, Loader=yaml.FullLoader)
         self.validate_side_effects()
 
         items_yaml_file = open(str(get_project_root()) + '/conf/items.yaml')
-        self.parsed_items_file = yaml.load(items_yaml_file, Loader=yaml.FullLoader)
+        self.items = yaml.load(items_yaml_file, Loader=yaml.FullLoader)
         self.validate_items()
 
         skills_yaml_file = open(str(get_project_root()) + '/conf/skills.yaml')
-        self.parsed_skills_file = yaml.load(skills_yaml_file, Loader=yaml.FullLoader)
+        self.skills = yaml.load(skills_yaml_file, Loader=yaml.FullLoader)
         self.validate_skills()
 
     def validate_config_file(self) -> None:
@@ -109,7 +106,6 @@ class Configuration(object):
         :rtype: None
         """
         try:
-            self.items = self.parsed_items_file.get(ITEMS_SECTION, {})
             validated_items = {}
             healing_validator = Validator(healing_item_validation_schema)
             recovery_validator = Validator(recovery_item_validation_schema)
@@ -227,7 +223,6 @@ class Configuration(object):
 
         :rtype: None
         """
-        self.side_effects = self.parsed_side_effects_file.get(SIDE_EFFECTS_SECTION, {})
         v = Validator(side_effects_configuration_schema)
         for key, value in self.side_effects.items():
             if not v.validate(value, side_effects_configuration_schema):
@@ -239,11 +234,12 @@ class Configuration(object):
 
         :rtype: None
         """
-        self.skills = self.parsed_skills_file.get(SKILLS_SECTION, {})
         v = Validator(skills_validation_schema)
         for key, value in self.skills.items():
             if not v.validate(value, skills_validation_schema):
                 self.error_handler(v.errors, key)
+            if not value.get('job', None) in self.jobs:
+                self.error_handler(None, 'job')
 
     def validate_items_probabilities_attributes(self) -> None:
         """
