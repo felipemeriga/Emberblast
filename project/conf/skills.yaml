@@ -1,14 +1,35 @@
-fireball:
+Fireball:
   name: Fireball
   description: launches a fireball in the nearby enemy
   damage: 5
   level_requirement: 1
-  range: 0
+  field: 0
   job: Wizard
-pierce:
+Fireball2:
+  name: Fireball2
+  description: launches a fireball in the nearby enemy
+  damage: 5
+  level_requirement: 1
+  field: 0
+  job: Wizard
+Pierce:
   name: Pierce Arrow
   description: Launches a heavy charged blow with your bow
   damage: 2
-  level_requirement: 2
-  range: 0
+  level_requirement: 1
+  field: 0
   job: Archer
+Heal:
+  name: Heal
+  description: Launches a heavy charged blow with your bow
+  damage: 2
+  level_requirement: 1
+  field: 0
+  job: Priest
+Steal:
+  name: Steal
+  description: Steal an item from a foe
+  damage: 2
+  level_requirement: 1
+  field: 0
+  job: Rogue

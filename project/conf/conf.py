@@ -59,7 +59,7 @@ class Configuration(object):
         will panic.
 
         There are many yaml configuration files, the conf.yaml, items.yaml, side_effects.yaml and
-        skills.yaml. In schema.py file there is all the patterns of how each of the sections of those configuration
+        skill.yaml. In schema.py file there is all the patterns of how each of the sections of those configuration
         files may look like, and the types of each field.
 
         :rtype: None
@@ -83,7 +83,7 @@ class Configuration(object):
     def validate_config_file(self) -> None:
         """
         There are many yaml configuration files, the conf.yaml, items.yaml, side_effects.yaml and
-        skills.yaml. They are separated to keep things organized, this method focus on conf.yaml, which
+        skill.yaml. They are separated to keep things organized, this method focus on conf.yaml, which
         has all the declarative configuration of the game.
 
         :rtype: None
@@ -230,7 +230,7 @@ class Configuration(object):
 
     def validate_skills(self) -> None:
         """
-        Validates skills.yaml file.
+        Validates skill.yaml file.
 
         :rtype: None
         """
