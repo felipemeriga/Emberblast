@@ -1,8 +1,6 @@
 from abc import abstractmethod, ABC
 from typing import List, Union
 
-from project.effect import SideEffect
-
 
 class ISideEffect(ABC):
     name: str
@@ -32,7 +30,7 @@ class IRecoveryItem(IItem):
 class IEquipmentItem(IItem):
     attribute: str
     base: int
-    side_effects: List[SideEffect]
+    side_effects: List[ISideEffect]
     category: str
 
 
@@ -123,26 +121,26 @@ class IRace:
 
 
 class IPlayer(ABC):
-    job: IJob = None
-    race = None
-    name = ""
-    health_points = 0
-    magic_points = 0
-    move_speed = 0
-    strength = 0
-    intelligence = 0
-    accuracy = 0
-    armour = 0
-    magic_resist = 0
-    will = 0
-    level = 0
-    experience = 0
-    side_effects: List[SideEffect] = []
-    _alive = True
-    position = 0
-    _hidden = False
-    bag: any = None
-    equipment: any = None
+    job: IJob
+    race: IRace
+    name: str
+    health_points: int
+    magic_points: int
+    move_speed: int
+    strength: int
+    intelligence: int
+    accuracy: int
+    armour: int
+    magic_resist: int
+    will: int
+    level: int
+    experience: int
+    side_effects: List[ISideEffect]
+    _alive: bool
+    position: int
+    _hidden: bool
+    bag: IBag
+    equipment: IEquipment
 
     @abstractmethod
     def add_attributes(self, attributes: Union[IJob, IRace] = None) -> None:
