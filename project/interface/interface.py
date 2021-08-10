@@ -24,6 +24,7 @@ class IEquipmentItem(IItem):
     attribute: str
     base: int
     side_effects: List[SideEffect]
+    category: str
 
 
 class IBag(ABC):

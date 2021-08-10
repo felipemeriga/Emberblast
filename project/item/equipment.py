@@ -1,6 +1,6 @@
-import typing
-from .items import EquipmentItem, Item
-from project.interface import IEquipment
+from typing import Union
+
+from project.interface import IEquipment, IEquipmentItem, IItem
 
 
 class Equipment(IEquipment):
@@ -11,12 +11,12 @@ class Equipment(IEquipment):
 
         :rtype: None
         """
-        self.weapon: typing.Union[None, EquipmentItem] = None
-        self.armour: typing.Union[None, EquipmentItem] = None
-        self.boots: typing.Union[None, EquipmentItem] = None
-        self.accessory: typing.Union[None, EquipmentItem] = None
+        self.weapon: Union[None, IEquipmentItem] = None
+        self.armour: Union[None, IEquipmentItem] = None
+        self.boots: Union[None, IEquipmentItem] = None
+        self.accessory: Union[None, IEquipmentItem] = None
 
-    def equip(self, equipment: EquipmentItem):
+    def equip(self, equipment: IEquipmentItem):
         """
         Receives an instantiated EquipmentItem object, and set it to this class
         attribute, accordingly to the equipment category (weapon, armour, shield, etc..)
@@ -36,7 +36,7 @@ class Equipment(IEquipment):
         :rtype: str
         """
         result = 0
-        item: typing.Union[None, EquipmentItem] = None
+        item: Union[None, IEquipmentItem] = None
         for item in self.__dict__.items():
             if item is not None:
                 if item.attribute == attribute:
@@ -53,7 +53,7 @@ class Equipment(IEquipment):
         """
         self.__setattr__(category, None)
 
-    def is_equipped(self, equipment: EquipmentItem) -> bool:
+    def is_equipped(self, equipment: IEquipmentItem) -> bool:
         """
         This function will check if an item it's equipped on the player.
 
@@ -64,14 +64,14 @@ class Equipment(IEquipment):
             return True
         return False
 
-    def check_and_remove(self, selected_item: Item):
+    def check_and_remove(self, selected_item: IItem):
         """
         Check if item it's equipped, and remove it.
 
         :param Item selected_item: The equipment to verify.
         :rtype: None
         """
-        if isinstance(selected_item, EquipmentItem):
+        if isinstance(selected_item, IEquipmentItem):
             for item in self.__dict__.items():
                 if item == selected_item:
                     self.remove_equipment(selected_item.category)
