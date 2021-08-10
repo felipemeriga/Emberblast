@@ -1,6 +1,7 @@
 from functools import wraps
 from typing import List, cast, Any
 from .items import Item, EquipmentItem, HealingItem, RecoveryItem
+from project.interface import IBag
 
 
 def weight_compute(func):
@@ -16,7 +17,7 @@ def weight_compute(func):
     return wrapper
 
 
-class Bag:
+class Bag(IBag):
     def __init__(self) -> None:
         """
         Constructor

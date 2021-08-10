@@ -1,12 +1,18 @@
+from random import randrange
 from typing import List
 
+from project.conf import get_configuration
 from project.game import DeathMatch
 from project.map import MapFactory, Map
 from project.orchestrator import GameOrchestrator, DeathMatchOrchestrator
-from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, bot_factory, BotPlayer
+from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, BotPlayer
 from project.questions import perform_game_create_questions, perform_first_question
 from project.questions import get_saved_game
 from project.save import get_normalized_saved_files_dict, recover_saved_game_orchestrator
+from project.item import Bag
+from project.utils import JOBS_SECTION, RACES_SECTION
+from project.utils.name_generator import generate_name
+from project.item import Equipment
 
 
 class GameFactory:
@@ -74,9 +80,13 @@ class GameFactory:
 
         :rtype: ControlledPlayer.
         """
+        bag = Bag()
+        equipment = Equipment()
         return ControlledPlayer(self.begin_question_results.get('nickname'),
                                 dynamic_jobs_classes[self.begin_question_results.get('job')](),
-                                dynamic_races_classes[self.begin_question_results.get('race')]())
+                                dynamic_races_classes[self.begin_question_results.get('race')](),
+                                bag,
+                                equipment)
 
     def init_bots(self) -> List[BotPlayer]:
         """
@@ -86,3 +96,26 @@ class GameFactory:
         :rtype: List[BotPlayer].
         """
         return bot_factory(self.begin_question_results.get('bots_number'))
+
+
+def bot_factory(number_of_bots: int):
+    """
+    Function that will generated all the bots, depending of the number that was informed as the argument,
+    each bot race and job, will be picked randomly.
+
+    :rtype: None.
+    """
+    bots = []
+    jobs = list(get_configuration(JOBS_SECTION).keys())
+    races = list(get_configuration(RACES_SECTION).keys())
+    for n in range(int(number_of_bots)):
+        name = generate_name()
+        chosen_job = jobs[randrange(len(jobs))]
+        chosen_race = races[randrange(len(races))]
+        job = dynamic_jobs_classes[chosen_job]()
+        race = dynamic_races_classes[chosen_race]()
+        bag = Bag()
+        equipment = Equipment()
+        bots.append(BotPlayer(name, job, race, bag, equipment))
+
+    return bots

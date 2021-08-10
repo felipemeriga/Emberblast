@@ -1,8 +1,9 @@
 import typing
 from .items import EquipmentItem, Item
+from project.interface import IEquipment
 
 
-class Equipment:
+class Equipment(IEquipment):
 
     def __init__(self) -> None:
         """

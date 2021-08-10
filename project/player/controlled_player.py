@@ -2,10 +2,11 @@ from .job import Job
 from .player import Player
 from project.questions import ask_attributes_to_improve
 from .race import Race
+from project.interface import IBag, IEquipment
 
 
 class ControlledPlayer(Player):
-    def __init__(self, name: str, job: Job, race: Race) -> None:
+    def __init__(self, name: str, job: Job, race: Race, bag: IBag, equipment: IEquipment) -> None:
         """
         Constructor of bot player.
 
@@ -14,7 +15,7 @@ class ControlledPlayer(Player):
         :param str name: Player's name.
         :rtype: None.
         """
-        super().__init__(name, job, race)
+        super().__init__(name, job, race, bag, equipment)
 
     def _level_up(self) -> None:
         """

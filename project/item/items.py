@@ -4,9 +4,10 @@ from typing import List
 from project.conf import get_configuration
 from project.effect import SideEffect
 from project.utils import ITEMS_SECTION
+from project.interface import IItem, IHealingItem, IRecoveryItem, IEquipmentItem
 
 
-class Item:
+class Item(IItem):
 
     def __init__(self, name: str, tier: str, description: str, weight: float) -> None:
         """
@@ -25,7 +26,7 @@ class Item:
         self.weight = weight
 
 
-class HealingItem(Item):
+class HealingItem(IHealingItem, Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int) -> None:
         """
@@ -45,7 +46,7 @@ class HealingItem(Item):
         super().__init__(name, tier, description, weight)
 
 
-class RecoveryItem(Item):
+class RecoveryItem(IRecoveryItem, Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, status: str) -> None:
         """
@@ -62,7 +63,7 @@ class RecoveryItem(Item):
         super().__init__(name, tier, description, weight)
 
 
-class EquipmentItem(Item):
+class EquipmentItem(IEquipmentItem, Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int,
                  side_effects: List[SideEffect], category: str) -> None:

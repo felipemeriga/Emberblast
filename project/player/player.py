@@ -2,13 +2,11 @@ from typing import List, Union
 
 from project.conf import get_logger
 from project.effect import SideEffect
-from project.item import Bag, Equipment, Item, HealingItem, RecoveryItem
-from .job import Job
-from .race import Race
+from project.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag, IJob, IRace, IEquipment
 
 
-class Player:
-    def __init__(self, name: str, job: Job, race: Race) -> None:
+class Player(IPlayer):
+    def __init__(self, name: str, job: IJob, race: IRace, bag: IBag, equipment: IEquipment) -> None:
         """
        Constructor
 
@@ -35,8 +33,8 @@ class Player:
         self._alive = True
         self.position = 0
         self._hidden = False
-        self.bag = Bag()
-        self.equipment = Equipment()
+        self.bag = bag
+        self.equipment = equipment
 
         self.add_attributes(self.job)
         self.add_attributes(self.race)
@@ -48,7 +46,7 @@ class Player:
         self.life = self.health_points
         self.mana = self.magic_points
 
-    def add_attributes(self, attributes: Union[Job, Race] = None) -> None:
+    def add_attributes(self, attributes: Union[IJob, IRace] = None) -> None:
         """
        Every action generates experience, and when reaching 100, character will level up.
 
@@ -170,16 +168,16 @@ class Player:
         """
         return self._hidden
 
-    def use_item(self, item: Item) -> None:
+    def use_item(self, item: IItem) -> None:
         """
        This function computes the usage of a healing or recover item.
 
         :param Item item: The item to be used.
         :rtype: None
         """
-        if isinstance(item, HealingItem):
+        if isinstance(item, IHealingItem):
             self.heal(item.attribute, item.base)
-        elif isinstance(item, RecoveryItem):
+        elif isinstance(item, IRecoveryItem):
             status = item.status
             found_side_effect = filter(lambda side_effect: status == side_effect.name, self.side_effects)
             if found_side_effect:

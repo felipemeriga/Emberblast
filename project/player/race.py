@@ -1,6 +1,7 @@
 from project.conf import get_configuration
 
 from project.utils import RACES_SECTION
+from project.interface import IRace
 
 
 class RaceMeta(type):
@@ -21,7 +22,7 @@ class RaceMeta(type):
                              )
 
 
-class Race(metaclass=RaceMeta):
+class Race(IRace, metaclass=RaceMeta):
     def __init__(self, health_points,
                  magic_points,
                  move_speed,

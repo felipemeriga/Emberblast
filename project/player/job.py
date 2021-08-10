@@ -1,5 +1,6 @@
 from project.conf import get_configuration
 from project.utils import JOBS_SECTION
+from project.interface import IJob
 
 
 class JobMeta(type):
@@ -21,7 +22,7 @@ class JobMeta(type):
                              )
 
 
-class Job(metaclass=JobMeta):
+class Job(IJob, metaclass=JobMeta):
 
     def __init__(self, health_points,
                  magic_points,
@@ -62,6 +63,7 @@ def display_method(self, arg):
 @classmethod
 def class_method(cls, arg):
     print(arg)
+
 
 @classmethod
 def get_name(self):
