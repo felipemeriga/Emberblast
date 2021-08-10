@@ -4,6 +4,15 @@ from typing import List, Union
 from project.effect import SideEffect
 
 
+class ISideEffect(ABC):
+    name: str
+    effect_type: str
+    attribute: str
+    base: int
+    duration: int
+    occurrence: str
+
+
 class IItem(ABC):
     name: str
     tier: str

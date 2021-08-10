@@ -1,5 +1,4 @@
 from typing import Union
-
 from project.interface import IEquipment, IEquipmentItem, IItem
 
 

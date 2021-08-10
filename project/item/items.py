@@ -1,6 +1,5 @@
 import random
 from typing import List
-
 from project.conf import get_configuration
 from project.effect import SideEffect
 from project.utils import ITEMS_SECTION
