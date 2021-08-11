@@ -5,14 +5,13 @@ from typing import List
 from numpy.random import choice
 
 from project.conf import get_configuration
-from project.map import Map
 from project.utils import GAME_SECTION
-from project.interface import IPlayer
+from project.interface import IPlayer, IMap
 
 
 class Game:
 
-    def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: Map) -> None:
+    def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: IMap) -> None:
         """
         Base constructor of this class, for creating the game, remember that the constructor arguments of this class
         are instantiated by the Game Factory.
@@ -126,7 +125,7 @@ class Game:
 
 class DeathMatch(Game):
 
-    def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: Map):
+    def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: IMap):
         """
         There must be many kinds of game, DeathMatch it's basically all vs all,
         and this class represents the implementation of Game.

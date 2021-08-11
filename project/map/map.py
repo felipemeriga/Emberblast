@@ -6,7 +6,7 @@ from .graph import Graph
 from project.utils import convert_number_to_letter
 from project.conf import get_configuration
 from project.item import get_random_item
-from project.interface import IPlayer
+from project.interface import IPlayer, IItem
 
 
 class Map:
@@ -24,7 +24,7 @@ class Map:
         self.type = map_type
         self.size = size
         self.graph = Graph(size=size)
-        self.items: Dict[str, List[any]] = {}
+        self.items: Dict[str, List[IItem]] = {}
 
     def define_player_initial_position_random(self, players: List[IPlayer]) -> None:
         """
@@ -103,7 +103,7 @@ class Map:
             item = get_random_item(tier, item_type)
             self.add_item_to_map(key, item)
 
-    def check_item_in_position(self, position: str) -> Optional[List[any]]:
+    def check_item_in_position(self, position: str) -> Optional[List[IItem]]:
         """
         Function to be used by Search action, to discover if player current position has an Item
 
@@ -115,7 +115,7 @@ class Map:
             self.items.pop(position, None)
         return items
 
-    def add_item_to_map(self, position: str, item: any) -> None:
+    def add_item_to_map(self, position: str, item: IItem) -> None:
         """
         Add an item to map, this method may be called in game creation, when items are distributed randomly,
         or when a character drops an item.

@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import List, Union
+from typing import List, Union, Dict
 
 
 class ISkill(ABC):
@@ -214,3 +214,11 @@ class IPlayer(ABC):
     @abstractmethod
     def compute_side_effect_duration(self) -> None:
         pass
+
+
+class IMap(ABC):
+    name: str
+    type: str
+    size: int
+    graph: int
+    items: Dict[str, List[IItem]]
