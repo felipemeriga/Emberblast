@@ -26,7 +26,7 @@ def print_player_stats(player: IPlayer):
     """
     Print the current playing player stats and attributes.
 
-    :param Player player: The current player.
+    :param IPlayer player: The current player.
     :rtype: None
     """
     print(emojis.encode(
@@ -57,7 +57,7 @@ def print_enemy_status(enemy: IPlayer) -> None:
     """
     Print the current status and attributes of a unhidden player.
 
-    :param Player enemy: The selected enemy.
+    :param IPlayer enemy: The selected enemy.
     :rtype: None
     """
     print(emojis.encode(colored('Enemy {name}({job}) is currently at position: {position} \n'
@@ -122,8 +122,8 @@ def print_map_info(player: IPlayer, players: List[IPlayer], matrix: List[List[in
     """
     Print the current position of all unhidden players in the map, and all the characteristics of it.
 
-    :param Player player: The player that is currently playing.
-    :param List[Player] players: Another competitors.
+    :param IPlayer player: The player that is currently playing.
+    :param List[IPlayer] players: Another competitors.
     :param List[List[int]] matrix: The matrix that represents the map.
     :param int size: Size of the map.
     :rtype: None
@@ -222,7 +222,7 @@ def print_check_item(item: IItem) -> None:
     """
     Print Item information that was selected by the player
 
-    :param Item item: Item instance that will be printed.
+    :param IItem item: Item instance that will be printed.
     :rtype: None
     """
     print(colored('---- Item Description --- \n', 'green'))

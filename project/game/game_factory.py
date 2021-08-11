@@ -27,7 +27,7 @@ class GameFactory:
         """
         Executes the first game questions, checking if the player wants to create a new game, or load an existing one.
 
-        :rtype: GameOrchestrator.
+        :rtype: IGameOrchestrator.
         """
         normalized_files = get_normalized_saved_files_dict()
 
@@ -49,7 +49,7 @@ class GameFactory:
         Creates a new game, prompting the user the necessary questions of how the game will be, and
         instantiate the proper objects, according to what was requested.
 
-        :rtype: GameOrchestrator.
+        :rtype: IGameOrchestrator.
         """
         self.begin_question_results = perform_game_create_questions()
         main_player = self.init_players()
@@ -71,7 +71,7 @@ class GameFactory:
         Calls MapFactory to create a new map, depending on the number of players, that will be proportional to map size.
 
         :param int map_size: The size of the map, may change depending the number of players.
-        :rtype: Map.
+        :rtype: IMap.
         """
         return MapFactory().create_map(map_size)
 
@@ -79,7 +79,7 @@ class GameFactory:
         """
         Method used for generating the controlled players.
 
-        :rtype: ControlledPlayer.
+        :rtype: IControlledPlayer.
         """
         bag = Bag()
         equipment = Equipment()
@@ -94,7 +94,7 @@ class GameFactory:
         Method used for generating the bots, which will call bot_factory, that randomly picks
         available races and jobs for each player.
 
-        :rtype: List[BotPlayer].
+        :rtype: List[IBotPlayer].
         """
         return bot_factory(self.begin_question_results.get('bots_number'))
 
@@ -104,7 +104,8 @@ def bot_factory(number_of_bots: int) -> List[IBotPlayer]:
     Function that will generated all the bots, depending of the number that was informed as the argument,
     each bot race and job, will be picked randomly.
 
-    :rtype: None.
+    :param int number_of_bots: Number of bots to create.
+    :rtype: List[IBotPlayer].
     """
     bots = []
     jobs = list(get_configuration(JOBS_SECTION).keys())

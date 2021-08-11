@@ -17,7 +17,7 @@ class GameOrchestrator(IGameOrchestrator):
         Constructor of the Game Orchestrator, which is the Class that receives a Game object,
         and command and coordinate the actions, and the execution of the game based on turns.
 
-        :param Game game: The created game to be executed.
+        :param IGame game: The created game to be executed.
         :rtype: None.
         """
         self.clear = lambda: system('clear')
@@ -69,6 +69,8 @@ class DeathMatchOrchestrator(GameOrchestrator):
     def __init__(self, game: IGame) -> None:
         """
         Constructor of the DeathMatchOrchestrator.
+
+        :param IGame game: The created game to be executed.
         :rtype: None.
         """
         super().__init__(game)

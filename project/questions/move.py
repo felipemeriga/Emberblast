@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Union
 
 from InquirerPy import prompt
 from emojis import emojis
 
 
-def ask_where_to_move(possibilities: List[str]) -> str:
+def ask_where_to_move(possibilities: List[str]) -> Union[str, bool, list, str]:
     """
     This function is used by asking the player where he wants to move.
 

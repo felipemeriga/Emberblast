@@ -10,8 +10,8 @@ def select_item(items: List[IItem]) -> Union[str, bool, list, IItem]:
     """
     Select an item to use, or even get more information about it.
 
-    :param List[Item] items: The available items for the player.
-    :rtype: Union[str, bool, list, Item].
+    :param List[IItem] items: The available items for the player.
+    :rtype: Union[str, bool, list, IItem].
     """
     choices = []
     for item in items:
@@ -69,8 +69,8 @@ def display_equipment_choices(player: IPlayer) -> Union[str, bool, list, IEquipm
     """
     Will display all the equipments that player has, for equipping one of them.
 
-    :param Player player: The current player.
-    :rtype: Union[str, bool, list, EquipmentItem].
+    :param IPlayer player: The current player.
+    :rtype: Union[str, bool, list, IEquipmentItem].
     """
     equipments = player.bag.get_equipments()
     choices = []

@@ -1,6 +1,6 @@
 import random
 from copy import copy
-from typing import Union
+from typing import Union, Dict, List
 
 from InquirerPy import prompt
 import emojis
@@ -10,7 +10,7 @@ from project.utils import LEVEL_UP_INCREMENT, JOBS_SECTION, RACES_SECTION
 from project.interface import IJob, IRace
 
 
-def improve_attributes_randomly() -> dict:
+def improve_attributes_randomly() -> Dict:
     """
     This function can be used by bots and humans, and it will randomly pick 2 attributes to upgrade.
 
@@ -27,7 +27,7 @@ def improve_attributes_randomly() -> dict:
     }
 
 
-def improve_attributes_automatically(job: IJob, race: IRace) -> dict:
+def improve_attributes_automatically(job: IJob, race: IRace) -> Dict:
     """
     This function can be used by both bots and humans to upgrade their attributes, this method
     Takes the result of the combination of the attributes from job and race, and select the greater ones to improve.
@@ -55,7 +55,7 @@ def improve_attributes_automatically(job: IJob, race: IRace) -> dict:
     return chosen_attributes
 
 
-def ask_attributes_to_improve() -> Union[str, bool, list, list]:
+def ask_attributes_to_improve() -> Union[str, bool, list, List]:
     """
     This function is used by human controlled players to chose which attribute they want to upgrade
 

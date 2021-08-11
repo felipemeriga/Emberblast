@@ -1,16 +1,16 @@
-from typing import List
+from typing import List, Union
 
 import emojis
 from InquirerPy import prompt
 
 
-def ask_check_action(show_items: bool = False) -> str:
+def ask_check_action(show_items: bool = False) -> Union[str, bool, list, str]:
     """
     Ask which kind of information player wants to check.
 
     :param bool show_items: If the player doesn't have items on its bag, this flag will help the
     questions to remove the items question.
-    :rtype: str.
+    :rtype: Union[str, bool, list, str].
     """
     choices = [
         {
@@ -51,12 +51,12 @@ def ask_check_action(show_items: bool = False) -> str:
     return result[0]
 
 
-def ask_actions_questions(actions_available: List[str]) -> str:
+def ask_actions_questions(actions_available: List[str]) -> Union[str, bool, list, str]:
     """
     Ask which action the player is going to execute.
 
     :param List[str] actions_available: The actions that the player it's currently allowed to execute.
-    :rtype: str.
+    :rtype: Union[str, bool, list, str].
     """
     base_actions = {
         'move': {

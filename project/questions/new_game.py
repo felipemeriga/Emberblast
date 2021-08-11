@@ -13,6 +13,9 @@ class MaxBotsInputValidator(Validator):
     def validate(self, document: Document):
         """
         This function is used for validating  the number of bots inserted, when creating a new game.
+
+        :param Document document: The document to be validated.
+        :rtype: None.
         """
         max_bot_number = get_configuration(GAME_SECTION).get('max_number_bots')
         if not document.text.isnumeric():
@@ -73,6 +76,11 @@ BEGIN_GAME_QUESTIONS = [
 
 
 def perform_first_question() -> Union[str, bool, list, str]:
+    """
+    This function is used by asking if the player wants to continue or start a new game.
+
+    :rtype: Union[str, bool, list, str].
+    """
     choices = [
         {
             'name': emojis.encode('New Game :new:'),

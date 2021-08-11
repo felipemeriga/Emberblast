@@ -10,9 +10,11 @@ class Player(IPlayer):
         """
        Constructor
 
-        :param str name: Name of the player.
-        :param Job job: Job of the player.
-        :param Race race: The race of the player.
+        :param str name: Player's name.
+        :param IJob job: The selected job.
+        :param IRace race: The selected race.
+        :param IBag bag: Player's bag.
+        :param IEquipment equipment: Player's equipment.
         :rtype: None
         """
         self.job = job
@@ -173,7 +175,7 @@ class Player(IPlayer):
         """
        This function computes the usage of a healing or recover item.
 
-        :param Item item: The item to be used.
+        :param IItem item: The item to be used.
         :rtype: None
         """
         if isinstance(item, IHealingItem):

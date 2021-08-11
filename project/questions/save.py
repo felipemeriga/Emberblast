@@ -12,7 +12,7 @@ def get_saved_game(normalized_files: List[Dict]) -> Union[str, bool, list, Path]
     name of this file.
 
     :param List[Dict] normalized_files: The dictionary of all saved games.
-    :rtype: GameOrchestrator.
+    :rtype: Union[str, bool, list, Path].
     """
     choices = []
 

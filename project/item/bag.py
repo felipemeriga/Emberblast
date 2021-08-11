@@ -30,7 +30,7 @@ class Bag(IBag):
         """
         Adds an item into the bag
 
-        :param Item item: the Item object to be added
+        :param IItem item: the Item object to be added
         :rtype: None
         """
         self.items.append(item)
@@ -40,7 +40,7 @@ class Bag(IBag):
         """
         It remove one item from the bag
 
-        :param Item item: the Item object to be removed
+        :param IItem item: the Item object to be removed
         :rtype: None
         """
         self.items.remove(item)
@@ -49,7 +49,7 @@ class Bag(IBag):
         """
         It will filter all equipments on your bag
 
-        :rtype List[EquipmentItem]
+        :rtype List[IEquipmentItem]
         """
         return cast(List[IEquipmentItem], [x for x in filter(
             lambda item: isinstance(item, IEquipmentItem), self.items)])
@@ -58,7 +58,7 @@ class Bag(IBag):
         """
         It will filter all recovery and healing items from the bag, so the user can use it.
 
-        :rtype: List[Item]
+        :rtype: List[IItem]
         """
         return [x for x in filter(
             lambda item: isinstance(item, IHealingItem) or isinstance(item, IRecoveryItem), self.items)]

@@ -30,7 +30,7 @@ class Map(IMap):
         """
         Pick a random postion for a player in the game start.
 
-        :param List[Player] players: The available positions to scan.
+        :param List[IPlayer] players: The available positions to scan.
         :rtype: str.
         """
         selected_positions = []
@@ -108,7 +108,7 @@ class Map(IMap):
         Function to be used by Search action, to discover if player current position has an Item
 
         :param str position: A string with the current position of the player. For example: "A2" or "C4".
-        :rtype: Optional[Item]: The item if it exists or None.
+        :rtype: Optional[IItem]: The item if it exists or None.
         """
         items = self.items.get(position, None)
         if items is not None:
@@ -121,7 +121,7 @@ class Map(IMap):
         or when a character drops an item.
 
         :param str position: The position of the map, like "A2" or "C4" where item will be added.
-        :param Item item: Item object that will be added.
+        :param Item IItem: Item object that will be added.
 
         :rtype: None.
         """

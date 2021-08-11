@@ -8,9 +8,11 @@ class ControlledPlayer(IControlledPlayer, Player):
         """
         Constructor of bot player.
 
-        :param Job job: The selected job.
-        :param Race race: The selected race.
         :param str name: Player's name.
+        :param IJob job: The selected job.
+        :param IRace race: The selected race.
+        :param IBag bag: Player's bag.
+        :param IEquipment equipment: Player's equipment.
         :rtype: None.
         """
         super().__init__(name, job, race, bag, equipment)

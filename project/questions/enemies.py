@@ -8,8 +8,8 @@ def ask_enemy_to_check(enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer
     """
     Ask which enemy the player wants to know more info.
 
-    :param List[Player] enemies: The unhidden players to analyze.
-    :rtype: Union[str, bool, list, Player].
+    :param List[IPlayer] enemies: The unhidden players to analyze.
+    :rtype: Union[str, bool, list, IPlayer].
     """
     choices = []
     for enemy in enemies:

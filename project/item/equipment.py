@@ -56,7 +56,7 @@ class Equipment(IEquipment):
         """
         This function will check if an item it's equipped on the player.
 
-        :param EquipmentItem equipment: The equipment to identify.
+        :param IEquipmentItem equipment: The equipment to identify.
         :rtype: None
         """
         if self.__getattribute__(equipment.category) == equipment:
@@ -67,7 +67,7 @@ class Equipment(IEquipment):
         """
         Check if item it's equipped, and remove it.
 
-        :param Item selected_item: The equipment to verify.
+        :param IItem selected_item: The equipment to verify.
         :rtype: None
         """
         if isinstance(selected_item, IEquipmentItem):

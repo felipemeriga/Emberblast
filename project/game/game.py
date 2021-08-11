@@ -18,7 +18,7 @@ class Game(IGame):
 
         :param IPlayer main_player: The main controlled player.
         :param List[IPlayer] bots: The list of bots that will play.
-        :param Map game_map: Generated map of the game.
+        :param IMap game_map: Generated map of the game.
         :rtype: None
         """
         self.main_player = main_player
@@ -84,8 +84,8 @@ class Game(IGame):
         ones that are in the same. This function is mostly used for checking possible foes, or sorting players in
         the field.
 
-        :param Player current_player: The player that is currently playing on its turn.
-        :rtype: List[Player].
+        :param IPlayer current_player: The player that is currently playing on its turn.
+        :rtype: List[IPlayer].
         """
         position = current_player.position
         another_players = []
@@ -99,7 +99,7 @@ class Game(IGame):
         """
         Returns the list of all players of the game.
 
-        :rtype: List[Player].
+        :rtype: List[IPlayer].
         """
         players = [self.main_player]
         players.extend(self.bots)
@@ -111,10 +111,10 @@ class Game(IGame):
         It also has the parameter include_hidden, for including or not
         hidden players in the result.
 
-        :param Player player: The player that is currently playing on its turn.
+        :param IPlayer player: The player that is currently playing on its turn.
         :param bool include_hidden: Whether to include hidden players or not.
 
-        :rtype: List[Player].
+        :rtype: List[IPlayer].
         """
         players = self.get_all_players()
         remaining_players = [x for x in filter(lambda a: a.is_alive() and a.name != player.name if not include_hidden
@@ -130,6 +130,8 @@ class DeathMatch(Game):
         There must be many kinds of game, DeathMatch it's basically all vs all,
         and this class represents the implementation of Game.
 
+        :param IPlayer main_player: The main player of the game.
+        :param List[IPlayer] bots: The bots whom you are playing against.
         :rtype: None.
         """
         super(DeathMatch, self).__init__(main_player, bots, game_map)

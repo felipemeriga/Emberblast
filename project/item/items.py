@@ -70,11 +70,14 @@ class EquipmentItem(IEquipmentItem, Item):
         Constructor of EquipmentItem
 
         :param str name: Name of the equipment.
-        :param str tier: The tier of the equipment(common, uncommon, rare, legendary)
+        :param str tier: The tier of the equipment(common, uncommon, rare, legendary).
         :param str description: Description of the item.
         :param float weight: Weight of the item.
         :param str attribute: Attribute that the equip improves.
-        :param int base: The value of that attribute that this equip will improve
+        :param int base: The value of that attribute that this equip will improve.
+        :param List[ISideEffect] side_effects: The side effects of that equipment.
+        :param str category: The category of the equipment.
+
         :rtype: None
         """
         self.attribute = attribute

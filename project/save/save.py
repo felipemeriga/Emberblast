@@ -14,7 +14,7 @@ def save_game_state_on_exit(orchestrator_object: IGameOrchestrator) -> None:
     This method it's called whenever the game crashes or it's stopped, and basically it saves all the information
     of a played game, saving all the current instantiated objects in a file, using pickle library.
 
-    :param GameOrchestrator orchestrator_object: The orchestrator, that controls all the game.
+    :param IGameOrchestrator orchestrator_object: The orchestrator, that controls all the game.
     :rtype: None.
     """
     now = datetime.now()
@@ -34,6 +34,12 @@ def save_game_state_on_exit(orchestrator_object: IGameOrchestrator) -> None:
 
 
 def recover_saved_game_orchestrator(file: Path) -> IGameOrchestrator:
+    """
+    Get the game orchestrator object from a save file.
+
+    :param Path file: The Path object, where the save file it's located locally.
+    :rtype: IGameOrchestrator.
+    """
     game_orchestrator = None
     # Load data (deserialize)
     f = open(str(file), 'rb')

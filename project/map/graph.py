@@ -117,13 +117,13 @@ class Graph(IGraph):
         self._create_matrix_dfs_traverse(matrix, row + 1, column, visited)
         self._create_matrix_dfs_traverse(matrix, row, column + 1, visited)
 
-    def _compute_vertical_edges(self, vertex: Vertex, row: int, column: int, matrix: List[List[int]]) -> None:
+    def _compute_vertical_edges(self, vertex: IVertex, row: int, column: int, matrix: List[List[int]]) -> None:
         """
         Function that receives a vertex(node), and compute all the neighbour vertical edges, looking for valid
         edges.
 
 
-        :param Vertex vertex: Current vertex to be analysed.
+        :param IVertex vertex: Current vertex to be analysed.
         :param int row: Current row where vertex is.
         :param int column: Current column where vertex is.
         :param List[List[int]] matrix: The entire matrix.
@@ -140,13 +140,13 @@ class Graph(IGraph):
                 edge = Edge(vertex.vertex_id, convert_number_to_letter(row + 1) + str(column), 1)
                 vertex.add_edge(edge)
 
-    def _compute_horizontal_edges(self, vertex: Vertex, row: int, column: int, matrix: List[List[int]]) -> None:
+    def _compute_horizontal_edges(self, vertex: IVertex, row: int, column: int, matrix: List[List[int]]) -> None:
         """
         Function that receives a vertex(node), and compute all the neighbour horizontal edges, looking for valid
         edges.
 
 
-        :param Vertex vertex: Current vertex to be analysed.
+        :param IVertex vertex: Current vertex to be analysed.
         :param int row: Current row where vertex is.
         :param int column: Current column where vertex is.
         :param List[List[int]] matrix: The entire matrix.
@@ -171,7 +171,7 @@ class Graph(IGraph):
         Remember that diagonal edges, are weighted as sqrt(2) * 1.
 
 
-        :param Vertex vertex: Current vertex to be analysed.
+        :param IVertex vertex: Current vertex to be analysed.
         :param int row: Current row where vertex is.
         :param int column: Current column where vertex is.
         :param List[List[int]] matrix: The entire matrix.
@@ -227,7 +227,7 @@ class Graph(IGraph):
         possibilities, and for each new recursive call, the distance will be decreased by 1 (horizontal/vertical)
         possibilities, and sqrt(2) * 1 (diagonal).
 
-        :param Vertex vertex: The current vertex to be analysed.
+        :param IVertex vertex: The current vertex to be analysed.
         :param float reach: The distance to look for possibilities.
         :param Set[str] available_nodes: The list that will be recursively incremented will be found possibilities.
         :param str origin_node: The origin node. For example, "A1".
