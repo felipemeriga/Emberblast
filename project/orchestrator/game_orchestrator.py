@@ -9,11 +9,12 @@ from project.game import Game
 from project.player import ControlledPlayer, BotPlayer, Player
 from project.questions import ask_actions_questions
 from project.utils import PASS_ACTION_NAME
+from project.interface import IGame
 
 
 class GameOrchestrator:
 
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: IGame) -> None:
         """
         Constructor of the Game Orchestrator, which is the Class that receives a Game object,
         and command and coordinate the actions, and the execution of the game based on turns.
@@ -67,7 +68,7 @@ class GameOrchestrator:
 
 class DeathMatchOrchestrator(GameOrchestrator):
 
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: IGame) -> None:
         """
         Constructor of the DeathMatchOrchestrator.
         :rtype: None.

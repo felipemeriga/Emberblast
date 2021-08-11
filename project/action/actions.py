@@ -16,12 +16,11 @@ functionalities
 import math
 from typing import List, Optional
 
-from project.game import Game
-from project.player import Player
 from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item, \
     confirm_item_selection, display_equipment_choices, confirm_use_item_on_you
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item
+from project.interface import IGame, IPlayer
 
 
 class SingletonAction(type):
@@ -34,7 +33,7 @@ class SingletonAction(type):
 
 
 class Action(metaclass=SingletonAction):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         """
         Constructor of the Base Class for Actions.
 
@@ -47,7 +46,7 @@ class Action(metaclass=SingletonAction):
         self.repeatable = repeatable
         self.game = game
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         """
         Base function for executing the action, it has an Optional
         return boolean value, which means that, in the case the action
@@ -63,10 +62,10 @@ class Action(metaclass=SingletonAction):
 
 
 class Move(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position, player.move_speed)
         print_moving_possibilities(player.position, possibilities, self.game.game_map.graph.matrix,
                                    self.game.game_map.size)
@@ -76,25 +75,25 @@ class Move(Action):
 
 
 class Defend(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
 
 class Hide(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         result = self.game.chose_probability(additional=[0.7])
         player.set_hidden(result)
         return
 
 
 class Search(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         items = self.game.game_map.check_item_in_position(player.position)
         if items is not None:
             for item in items:
@@ -106,10 +105,10 @@ class Search(Action):
 
 
 class Attack(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def get_attack_possibilities(self, player: Player, players: List[Player]) -> List[Player]:
+    def get_attack_possibilities(self, player: IPlayer, players: List[IPlayer]) -> List[IPlayer]:
         """
         This function computes which enemies a player can attack, considering its attack style,
         ranged or melee.
@@ -138,22 +137,22 @@ class Attack(Action):
 
         return possible_foes
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         players = self.game.get_remaining_players(player)
         # possible_foes = self.get_attack_possibilities()
         return
 
 
 class Skill(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
 
 class Item(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         usable_items = player.bag.get_usable_items()
         selected_item = select_item(usable_items)
         another_players_in_position = self.game.check_another_players_in_position(player)
@@ -168,10 +167,10 @@ class Item(Action):
 
 
 class Drop(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         selected_item = select_item(player.bag.items)
         confirm = confirm_item_selection()
         if confirm:
@@ -182,20 +181,20 @@ class Drop(Action):
 
 
 class Equip(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         equipment = display_equipment_choices(player)
         player.equipment.equip(equipment)
         return
 
 
 class Check(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def act(self, player: Player) -> Optional[bool]:
+    def act(self, player: IPlayer) -> Optional[bool]:
         check_option = ask_check_action(show_items=True if len(player.bag.items) > 0 else False)
         if check_option == 'status':
             print_player_stats(player)
@@ -214,5 +213,5 @@ class Check(Action):
 
 
 class Pass(Action):
-    def __init__(self, independent: bool, repeatable: bool, game: Game) -> None:
+    def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)

@@ -311,3 +311,35 @@ class IMap(ABC):
     @abstractmethod
     def add_item_to_map(self, position: str, item: IItem) -> None:
         pass
+
+
+class IGame(ABC):
+    main_player: IPlayer
+    bots: List[IPlayer]
+    game_map: IMap
+    turns: dict
+    dice_sides: int
+
+    @abstractmethod
+    def calculate_turn_order(self) -> None:
+        pass
+
+    @abstractmethod
+    def roll_the_dice(self) -> int:
+        pass
+
+    @abstractmethod
+    def chose_probability(self, additional: List[float] = None) -> bool:
+        pass
+
+    @abstractmethod
+    def check_another_players_in_position(self, current_player: IPlayer) -> List[IPlayer]:
+        pass
+
+    @abstractmethod
+    def get_all_players(self) -> List[IPlayer]:
+        pass
+
+    @abstractmethod
+    def get_remaining_players(self, player: IPlayer, include_hidden: bool = False) -> List[IPlayer]:
+        pass

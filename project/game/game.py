@@ -6,10 +6,10 @@ from numpy.random import choice
 
 from project.conf import get_configuration
 from project.utils import GAME_SECTION
-from project.interface import IPlayer, IMap
+from project.interface import IPlayer, IMap, IGame
 
 
-class Game:
+class Game(IGame):
 
     def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: IMap) -> None:
         """
@@ -72,7 +72,7 @@ class Game:
             additional = [0]
         dice_result = self.roll_the_dice()
         positive_percentage = ((1 / self.dice_sides) * dice_result) + functools.reduce(lambda a, b: a + b, additional)
-        negative_percentage = max(0, 1 - positive_percentage)
+        negative_percentage = max(0, 1 - int(positive_percentage))
         return \
             choice([True, False], 1, p=[positive_percentage if positive_percentage <= 1 else 1, negative_percentage])[
                 0]
