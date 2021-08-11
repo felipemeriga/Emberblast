@@ -16,8 +16,8 @@ class Game(IGame):
         Base constructor of this class, for creating the game, remember that the constructor arguments of this class
         are instantiated by the Game Factory.
 
-        :param ControlledPlayer main_player: The main controlled player.
-        :param List[BotPlayer] bots: The list of bots that will play.
+        :param IPlayer main_player: The main controlled player.
+        :param List[IPlayer] bots: The list of bots that will play.
         :param Map game_map: Generated map of the game.
         :rtype: None
         """

@@ -216,6 +216,18 @@ class IPlayer(ABC):
         pass
 
 
+class IControlledPlayer(IPlayer):
+    @abstractmethod
+    def _level_up(self) -> None:
+        pass
+
+
+class IBotPlayer(IPlayer):
+    @abstractmethod
+    def _level_up(self) -> None:
+        pass
+
+
 class IEdge(ABC):
     source: str
     destination: str

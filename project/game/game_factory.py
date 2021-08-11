@@ -13,7 +13,7 @@ from project.item import Bag
 from project.utils import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator import generate_name
 from project.item import Equipment
-from project.interface import IMap
+from project.interface import IMap, IControlledPlayer, IBotPlayer
 
 
 class GameFactory:
@@ -75,7 +75,7 @@ class GameFactory:
         """
         return MapFactory().create_map(map_size)
 
-    def init_players(self) -> ControlledPlayer:
+    def init_players(self) -> IControlledPlayer:
         """
         Method used for generating the controlled players.
 
@@ -89,7 +89,7 @@ class GameFactory:
                                 bag,
                                 equipment)
 
-    def init_bots(self) -> List[BotPlayer]:
+    def init_bots(self) -> List[IBotPlayer]:
         """
         Method used for generating the bots, which will call bot_factory, that randomly picks
         available races and jobs for each player.
@@ -99,7 +99,7 @@ class GameFactory:
         return bot_factory(self.begin_question_results.get('bots_number'))
 
 
-def bot_factory(number_of_bots: int):
+def bot_factory(number_of_bots: int) -> List[IBotPlayer]:
     """
     Function that will generated all the bots, depending of the number that was informed as the argument,
     each bot race and job, will be picked randomly.

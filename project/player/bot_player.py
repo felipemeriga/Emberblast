@@ -1,9 +1,9 @@
 from project.questions import improve_attributes_automatically
 from .player import Player
-from project.interface import IBag, IJob, IRace, IEquipment
+from project.interface import IBag, IJob, IRace, IEquipment, IBotPlayer
 
 
-class BotPlayer(Player):
+class BotPlayer(IBotPlayer, Player):
     def __init__(self, name: str, job: IJob, race: IRace, bag: IBag, equipment: IEquipment) -> None:
         """
         Constructor of bot player.

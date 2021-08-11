@@ -5,11 +5,9 @@ import emojis
 from colorama import Fore
 
 from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Action, Check, Pass, Equip, Drop
-from project.game import Game
-from project.player import ControlledPlayer, BotPlayer, Player
 from project.questions import ask_actions_questions
 from project.utils import PASS_ACTION_NAME
-from project.interface import IGame
+from project.interface import IGame, IControlledPlayer, IPlayer, IBotPlayer
 
 
 class GameOrchestrator:
@@ -36,7 +34,7 @@ class GameOrchestrator:
         it's very important for saved games, because it helps the game to be continued exactly from the 
         player that was playing when the game was saved.
         """
-        self.turn_remaining_players: List[Player] = []
+        self.turn_remaining_players: List[IPlayer] = []
 
     def init_actions(self) -> None:
         """
@@ -103,7 +101,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
                     player = self.turn_remaining_players[0]
                     print(emojis.encode(
                         ':man: {name} Time! \n\n'.format(name=player.name)))
-                    if isinstance(player, ControlledPlayer):
+                    if isinstance(player, IControlledPlayer):
                         self.controlled_decisioning(player)
                     else:
                         self.bot_decisioning(player)
@@ -114,10 +112,10 @@ class DeathMatchOrchestrator(GameOrchestrator):
         except Exception as err:
             print(err)
 
-    def bot_decisioning(self, player: BotPlayer) -> None:
+    def bot_decisioning(self, player: IBotPlayer) -> None:
         pass
 
-    def hide_invalid_actions(self, player: Player) -> List[str]:
+    def hide_invalid_actions(self, player: IPlayer) -> List[str]:
         valid_actions = self.actions_left.copy()
 
         if 'item' in valid_actions:
@@ -130,7 +128,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
         return valid_actions
 
-    def controlled_decisioning(self, player: ControlledPlayer) -> None:
+    def controlled_decisioning(self, player: IControlledPlayer) -> None:
         self.actions_left = list(self.actions.keys())
         player.compute_iterated_side_effects()
 
