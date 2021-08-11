@@ -6,14 +6,13 @@ from numpy.random import choice
 
 from project.conf import get_configuration
 from project.map import Map
-from project.player import Player, BotPlayer
-from project.player import ControlledPlayer
 from project.utils import GAME_SECTION
+from project.interface import IPlayer
 
 
 class Game:
 
-    def __init__(self, main_player: ControlledPlayer, bots: List[BotPlayer], game_map: Map) -> None:
+    def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: Map) -> None:
         """
         Base constructor of this class, for creating the game, remember that the constructor arguments of this class
         are instantiated by the Game Factory.
@@ -79,7 +78,7 @@ class Game:
             choice([True, False], 1, p=[positive_percentage if positive_percentage <= 1 else 1, negative_percentage])[
                 0]
 
-    def check_another_players_in_position(self, current_player: Player) -> List[Player]:
+    def check_another_players_in_position(self, current_player: IPlayer) -> List[IPlayer]:
         """
         This action will be used many times, for example checking how many another enemies are located in the
         same map position of the current player. It basically gets the current player position, and try to find another
@@ -97,7 +96,7 @@ class Game:
 
         return another_players
 
-    def get_all_players(self) -> List[Player]:
+    def get_all_players(self) -> List[IPlayer]:
         """
         Returns the list of all players of the game.
 
@@ -107,7 +106,7 @@ class Game:
         players.extend(self.bots)
         return players
 
-    def get_remaining_players(self, player: Player, include_hidden: bool = False) -> List[Player]:
+    def get_remaining_players(self, player: IPlayer, include_hidden: bool = False) -> List[IPlayer]:
         """
         Returns the list of all players alive, apart from the current player.
         It also has the parameter include_hidden, for including or not
@@ -127,7 +126,7 @@ class Game:
 
 class DeathMatch(Game):
 
-    def __init__(self, main_player, bots, game_map):
+    def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: Map):
         """
         There must be many kinds of game, DeathMatch it's basically all vs all,
         and this class represents the implementation of Game.

@@ -35,7 +35,7 @@ class Equipment(IEquipment):
         :rtype: str
         """
         result = 0
-        item: Union[None, IEquipmentItem] = None
+        item: Union[None, IEquipmentItem]
         for item in self.__dict__.items():
             if item is not None:
                 if item.attribute == attribute:
