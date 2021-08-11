@@ -1,5 +1,5 @@
 import sys
-from typing import List, Dict
+from typing import Dict
 
 from project.conf import get_configuration
 from project.player import Player

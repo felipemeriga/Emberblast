@@ -2,6 +2,15 @@ from abc import abstractmethod, ABC
 from typing import List, Union
 
 
+class ISkill(ABC):
+    name: str
+    description: str
+    damage: int
+    level_requirement: int
+    field: int
+    job: str
+
+
 class ISideEffect(ABC):
     name: str
     effect_type: str

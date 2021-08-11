@@ -1,5 +1,5 @@
 from .interface import IPlayer, IJob, IItem, IHealingItem, IRecoveryItem, IEquipmentItem, IBag, IRace, IEquipment, \
-    ISideEffect
+    ISideEffect, ISkill
 
 __all__ = ['IPlayer', 'IJob', 'IItem', 'IHealingItem', 'IRecoveryItem', 'IEquipmentItem', 'IBag',
-           'IRace', 'IEquipment', 'ISideEffect']
+           'IRace', 'IEquipment', 'ISideEffect', 'ISkill']
