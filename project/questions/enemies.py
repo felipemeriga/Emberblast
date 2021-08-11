@@ -1,11 +1,10 @@
 from typing import List, Union
 
 from InquirerPy import prompt
+from project.interface import IPlayer
 
-from project.player import Player
 
-
-def ask_enemy_to_check(enemies: List[Player]) -> Union[str, bool, list, Player]:
+def ask_enemy_to_check(enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
     """
     Ask which enemy the player wants to know more info.
 

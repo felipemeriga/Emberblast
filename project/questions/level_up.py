@@ -6,9 +6,8 @@ from InquirerPy import prompt
 import emojis
 
 from project.conf import get_configuration
-from project.player.job import Job
-from project.player.race import Race
 from project.utils import LEVEL_UP_INCREMENT, JOBS_SECTION, RACES_SECTION
+from project.interface import IJob, IRace
 
 
 def improve_attributes_randomly() -> dict:
@@ -28,7 +27,7 @@ def improve_attributes_randomly() -> dict:
     }
 
 
-def improve_attributes_automatically(job: Job, race: Race) -> dict:
+def improve_attributes_automatically(job: IJob, race: IRace) -> dict:
     """
     This function can be used by both bots and humans to upgrade their attributes, this method
     Takes the result of the combination of the attributes from job and race, and select the greater ones to improve.

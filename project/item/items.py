@@ -1,9 +1,9 @@
 import random
 from typing import List
 from project.conf import get_configuration
-from project.effect import SideEffect
 from project.utils import ITEMS_SECTION
-from project.interface import IItem, IHealingItem, IRecoveryItem, IEquipmentItem
+from project.effect import SideEffect
+from project.interface import IItem, IHealingItem, IRecoveryItem, IEquipmentItem, ISideEffect
 
 
 class Item(IItem):
@@ -65,7 +65,7 @@ class RecoveryItem(IRecoveryItem, Item):
 class EquipmentItem(IEquipmentItem, Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int,
-                 side_effects: List[SideEffect], category: str) -> None:
+                 side_effects: List[ISideEffect], category: str) -> None:
         """
         Constructor of EquipmentItem
 

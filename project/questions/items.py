@@ -3,11 +3,10 @@ from typing import List, Union
 import emojis
 from InquirerPy import prompt
 
-from project.item import Item, EquipmentItem
-from project.player import Player
+from project.interface import IItem, IEquipmentItem, IPlayer
 
 
-def select_item(items: List[Item]) -> Union[str, bool, list, Item]:
+def select_item(items: List[IItem]) -> Union[str, bool, list, IItem]:
     """
     Select an item to use, or even get more information about it.
 
@@ -66,7 +65,7 @@ def confirm_use_item_on_you() -> Union[str, bool, list, bool]:
     return confirm
 
 
-def display_equipment_choices(player: Player) -> Union[str, bool, list, EquipmentItem]:
+def display_equipment_choices(player: IPlayer) -> Union[str, bool, list, IEquipmentItem]:
     """
     Will display all the equipments that player has, for equipping one of them.
 

@@ -4,8 +4,7 @@ import timg
 from emojis import emojis
 from termcolor import colored
 
-from project.item import Item, EquipmentItem, RecoveryItem, HealingItem
-from project.player import Player
+from project.interface import IPlayer, IItem, IEquipmentItem, IRecoveryItem, IHealingItem
 from project.utils import get_project_root, convert_number_to_letter
 
 
@@ -23,7 +22,7 @@ def print_greetings() -> None:
     print(emojis.encode(colored(':fire: Welcome to Emberblast! :fire: \n\n', 'red')))
 
 
-def print_player_stats(player: Player):
+def print_player_stats(player: IPlayer):
     """
     Print the current playing player stats and attributes.
 
@@ -54,7 +53,7 @@ def print_player_stats(player: Player):
                                         will=player.will)))
 
 
-def print_enemy_status(enemy: Player) -> None:
+def print_enemy_status(enemy: IPlayer) -> None:
     """
     Print the current status and attributes of a unhidden player.
 
@@ -119,7 +118,7 @@ def print_plain_map(matrix: List[List[int]], size: int) -> None:
         print('')
 
 
-def print_map_info(player: Player, players: List[Player], matrix: List[List[int]], size: int) -> None:
+def print_map_info(player: IPlayer, players: List[IPlayer], matrix: List[List[int]], size: int) -> None:
     """
     Print the current position of all unhidden players in the map, and all the characteristics of it.
 
@@ -219,7 +218,7 @@ def print_found_item(player_name: str, found: bool = False, item_tier: str = Non
         print('Player: {name} tried to find some item, but nothing was found! \n'.format(name=player_name))
 
 
-def print_check_item(item: Item) -> None:
+def print_check_item(item: IItem) -> None:
     """
     Print Item information that was selected by the player
 
@@ -227,7 +226,7 @@ def print_check_item(item: Item) -> None:
     :rtype: None
     """
     print(colored('---- Item Description --- \n', 'green'))
-    if isinstance(item, EquipmentItem):
+    if isinstance(item, IEquipmentItem):
         print(emojis.encode('{name}! is an equipment of {tier} tier  \n'
                             '{description} \n'
                             'Weight: {weight} kg \n'
@@ -237,18 +236,19 @@ def print_check_item(item: Item) -> None:
                                                                         weight=item.weight,
                                                                         base=item.base,
                                                                         attribute=item.attribute)))
-        print(colored('Side effects: \n', 'green'))
-        for side_effect in item.side_effects:
-            print(
-                '{name}: {base} {attribute} duration: {duration}, occurrence: {occurrence}\n'.format(
-                    name=side_effect.name,
-                    base='+{base}'.format(
-                        base=side_effect.base) if side_effect.effect_type == 'buff' else '-{base}'.format(
-                        base=side_effect.base),
-                    attribute=side_effect.attribute,
-                    duration=side_effect.duration,
-                    occurrence=side_effect.occurrence))
-    if isinstance(item, RecoveryItem) or isinstance(item, HealingItem):
+        if len(item.side_effects) > 0:
+            print(colored('Side effects: \n', 'green'))
+            for side_effect in item.side_effects:
+                print(
+                    '{name}: {base} {attribute} duration: {duration}, occurrence: {occurrence}\n'.format(
+                        name=side_effect.name,
+                        base='+{base}'.format(
+                            base=side_effect.base) if side_effect.effect_type == 'buff' else '-{base}'.format(
+                            base=side_effect.base),
+                        attribute=side_effect.attribute,
+                        duration=side_effect.duration,
+                        occurrence=side_effect.occurrence))
+    if isinstance(item, IRecoveryItem) or isinstance(item, IHealingItem):
         print(emojis.encode('{name}! is an item of {tier} tier  \n'
                             '{description} \n'
                             'Weight: {weight} kg \n'
