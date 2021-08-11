@@ -53,7 +53,7 @@ BEGIN_GAME_QUESTIONS = [
     {
         "type": "input",
         "message": emojis.encode(':man: Please enter your character name '),
-        "validate": lambda input: 0 < len(input) < 20,
+        "validate": lambda input_value: 0 < len(input_value) < 20,
         "invalid_message": "minimum of 1 letters, max of 20 letters",
         "name": "nickname"
     },

@@ -1,12 +1,10 @@
-from .job import Job
 from .player import Player
 from project.questions import ask_attributes_to_improve
-from .race import Race
-from project.interface import IBag, IEquipment
+from project.interface import IBag, IEquipment, IJob, IRace
 
 
 class ControlledPlayer(Player):
-    def __init__(self, name: str, job: Job, race: Race, bag: IBag, equipment: IEquipment) -> None:
+    def __init__(self, name: str, job: IJob, race: IRace, bag: IBag, equipment: IEquipment) -> None:
         """
         Constructor of bot player.
 

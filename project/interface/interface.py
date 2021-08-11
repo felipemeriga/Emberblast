@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Optional, Set
 
 
 class ISkill(ABC):
@@ -146,7 +146,7 @@ class IPlayer(ABC):
     experience: int
     side_effects: List[ISideEffect]
     _alive: bool
-    position: int
+    position: str
     _hidden: bool
     bag: IBag
     equipment: IEquipment
@@ -216,9 +216,98 @@ class IPlayer(ABC):
         pass
 
 
+class IEdge(ABC):
+    source: str
+    destination: str
+    weight: float
+
+
+class IVertex(ABC):
+    vertex_id: str
+    position: Dict
+    edges: List[IEdge]
+    value: int
+
+    @abstractmethod
+    def add_edge(self, edge: IEdge) -> None:
+        pass
+
+
+class IGraph(ABC):
+    size: int
+    graph_dict: Dict[str, IVertex]
+    matrix: List[List]
+
+    @abstractmethod
+    def init_graph(self) -> None:
+        pass
+
+    @abstractmethod
+    def _create_matrix_dfs_traverse(self, matrix: List[List[int]], row: int, column: int,
+                                    visited: List[List[bool]]) -> None:
+        pass
+
+    @abstractmethod
+    def _compute_vertical_edges(self, vertex: IVertex, row: int, column: int, matrix: List[List[int]]) -> None:
+        pass
+
+    @abstractmethod
+    def _compute_horizontal_edges(self, vertex: IVertex, row: int, column: int, matrix: List[List[int]]) -> None:
+        pass
+
+    @abstractmethod
+    def _compute_diagonal_edges(self, vertex: IVertex, row: int, column: int, matrix: List[List[int]]) -> None:
+        pass
+
+    @abstractmethod
+    def get_list_of_nodes(self) -> List[str]:
+        pass
+
+    @abstractmethod
+    def is_vertex_valid(self, row: int, column: int) -> bool:
+        pass
+
+    @abstractmethod
+    def compute_recursive_range_edges(self, vertex: IVertex, reach: float, available_nodes: Set[str],
+                                      origin_node: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_available_nodes_in_range(self, position: str, radius: int) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_number_of_walkable_nodes(self) -> int:
+        pass
+
+    @abstractmethod
+    def get_walkable_nodes(self) -> Dict[str, IVertex]:
+        pass
+
+
 class IMap(ABC):
     name: str
     type: str
     size: int
-    graph: int
+    graph: IGraph
     items: Dict[str, List[IItem]]
+
+    @abstractmethod
+    def define_player_initial_position_random(self, players: List[IPlayer]) -> None:
+        pass
+
+    @abstractmethod
+    def pick_available_position(self, selected_positions: List[str]) -> str:
+        pass
+
+    @abstractmethod
+    def distribute_random_items(self) -> None:
+        pass
+
+    @abstractmethod
+    def check_item_in_position(self, position: str) -> Optional[List[IItem]]:
+        pass
+
+    @abstractmethod
+    def add_item_to_map(self, position: str, item: IItem) -> None:
+        pass

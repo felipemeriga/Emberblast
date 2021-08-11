@@ -3,7 +3,7 @@ from typing import List
 
 from project.conf import get_configuration
 from project.game import DeathMatch
-from project.map import MapFactory, Map
+from project.map import MapFactory
 from project.orchestrator import GameOrchestrator, DeathMatchOrchestrator
 from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, BotPlayer
 from project.questions import perform_game_create_questions, perform_first_question
@@ -13,6 +13,7 @@ from project.item import Bag
 from project.utils import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator import generate_name
 from project.item import Equipment
+from project.interface import IMap
 
 
 class GameFactory:
@@ -65,7 +66,7 @@ class GameFactory:
             orchestrator = DeathMatchOrchestrator(game)
             return orchestrator
 
-    def init_map(self, map_size: int) -> Map:
+    def init_map(self, map_size: int) -> IMap:
         """
         Calls MapFactory to create a new map, depending on the number of players, that will be proportional to map size.
 

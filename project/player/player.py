@@ -31,7 +31,7 @@ class Player(IPlayer):
         self.experience = 0
         self.side_effects: List[SideEffect] = []
         self._alive = True
-        self.position = 0
+        self.position = ''
         self._hidden = False
         self.bag = bag
         self.equipment = equipment
@@ -105,6 +105,7 @@ class Player(IPlayer):
        from a skill or item.
 
         :param str attribute: which attribute to be healed.
+        :param int value: The life/mana to be healed.
         :rtype: None
         """
         if attribute == 'health_points':
@@ -136,7 +137,7 @@ class Player(IPlayer):
         """
        Set new position of the player, this method is called when player it's moving through the map.
 
-        :param bool state: boolean to turn hidden(True) or visible(False).
+        :param str position: The position where the player is located.
         :rtype: None
         """
         self.position = position
@@ -212,7 +213,7 @@ class Player(IPlayer):
         :rtype: None
         """
         iterated_side_effects = [x for x in
-                                 filter(lambda side_effect: side_effect.occurrence == 'iterated', self.side_effects)]
+                                 filter(lambda effect: effect.occurrence == 'iterated', self.side_effects)]
 
         for side_effect in iterated_side_effects:
             if side_effect.effect_type == 'buff':

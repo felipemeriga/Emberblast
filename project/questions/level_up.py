@@ -37,7 +37,6 @@ def improve_attributes_automatically(job: IJob, race: IRace) -> dict:
     :rtype: dict.
     """
     unsorted_attributes_dict = {}
-    sorted_list = []
     chosen_attributes = {}
     job_attribute_points = get_configuration(JOBS_SECTION).get(job)
     race_attribute_points = get_configuration(RACES_SECTION).get(race)
@@ -144,7 +143,7 @@ def ask_attributes_to_improve() -> Union[str, bool, list, list]:
             ],
             "default": None,
             "multiselect": True,
-            "validate": lambda result: len(result) == 2,
+            "validate": lambda selected: len(selected) == 2,
             "invalid_message": "You need to select 2 attributes to improve!",
             "show_cursor": True,
             "max_height": "100"

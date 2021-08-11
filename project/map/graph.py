@@ -1,9 +1,10 @@
 from typing import List, Set, Dict
 
 from project.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, convert_number_to_letter
+from project.interface import IGraph, IVertex, IEdge
 
 
-class Edge:
+class Edge(IEdge):
     def __init__(self, source: str, destination: str, weight: float) -> None:
         """
         Constructor of Edge
@@ -19,7 +20,7 @@ class Edge:
         self.weight = weight
 
 
-class Vertex:
+class Vertex(IVertex):
     def __init__(self, vertex_id: str, value: int, position: dict) -> None:
         """
         Constructor of Vertex
@@ -31,14 +32,14 @@ class Vertex:
         """
         self.vertex_id = vertex_id
         self.position = position
-        self.edges = []
+        self.edges: List[IEdge] = []
         self.value = value
 
     def add_edge(self, edge: Edge) -> None:
         self.edges.append(edge)
 
 
-class Graph:
+class Graph(IGraph):
     def __init__(self, graph_dict: dict = None, size: int = 5) -> None:
         """
         Constructor of Graph.
@@ -162,7 +163,7 @@ class Graph:
                 edge = Edge(vertex.vertex_id, convert_number_to_letter(row) + str(column + 1), 1)
                 vertex.add_edge(edge)
 
-    def _compute_diagonal_edges(self, vertex: Vertex, row: int, column: int, matrix: List[List[int]]) -> None:
+    def _compute_diagonal_edges(self, vertex: IVertex, row: int, column: int, matrix: List[List[int]]) -> None:
         """
         Function that receives a vertex(node), and compute all the neighbour diagonal edges, looking for valid
         edges.
@@ -215,7 +216,7 @@ class Graph:
         vertex = self.graph_dict.get(letter + str(column))
         return True if vertex.value == 1 else False
 
-    def compute_recursive_range_edges(self, vertex: Vertex, reach: float, available_nodes: Set[str],
+    def compute_recursive_range_edges(self, vertex: IVertex, reach: float, available_nodes: Set[str],
                                       origin_node: str) -> None:
         """
         This function traverses the map using a dijkstra logic, trying to find all the possibilities of paths to

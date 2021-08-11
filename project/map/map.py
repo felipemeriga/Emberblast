@@ -6,10 +6,10 @@ from .graph import Graph
 from project.utils import convert_number_to_letter
 from project.conf import get_configuration
 from project.item import get_random_item
-from project.interface import IPlayer, IItem
+from project.interface import IPlayer, IItem, IMap
 
 
-class Map:
+class Map(IMap):
 
     def __init__(self, name: str, map_type: str, size: int) -> None:
         """
@@ -132,7 +132,7 @@ class Map:
 
 
 class MapFactory:
-    def create_map(self, map_size: int) -> Map:
+    def create_map(self, map_size: int) -> IMap:
         """
         Factory design pattern to create a new map.
 
