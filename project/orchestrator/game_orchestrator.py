@@ -115,9 +115,22 @@ class DeathMatchOrchestrator(GameOrchestrator):
             print(err)
 
     def bot_decisioning(self, player: IPlayer) -> None:
+        """
+        Function that controls bot decisions over a IA.
+
+        :param IPlayer player: The bot that is currently playing.
+        :rtype: None.
+        """
         pass
 
     def hide_invalid_actions(self, player: IPlayer) -> List[str]:
+        """
+        Hide the actions that are invalid in the player context, for example, if the player doesn't have items
+        in his bag, there is no point to show the items options.
+
+        :param IPlayer player: The player that is currently playing.
+        :rtype: List[str].
+        """
         valid_actions = self.actions_left.copy()
 
         if 'item' in valid_actions:
@@ -131,6 +144,12 @@ class DeathMatchOrchestrator(GameOrchestrator):
         return valid_actions
 
     def controlled_decisioning(self, player: IControlledPlayer) -> None:
+        """
+        The function for controlled players to decide which actions they are going to execute each turn.
+
+        :param IControlledPlayer player: The player that is currently playing.
+        :rtype: None.
+        """
         self.actions_left = list(self.actions.keys())
         player.compute_iterated_side_effects()
 
@@ -144,6 +163,13 @@ class DeathMatchOrchestrator(GameOrchestrator):
             player.compute_side_effect_duration()
 
     def compute_player_decisions(self, action: IAction, action_string: str) -> None:
+        """
+        Compute each actions are still available to be execute, after one was already executed.
+
+        :param IAction action: The action that was selected by the player.
+        :param str action_string: The selected action string key.
+        :rtype: None.
+        """
         if action_string == PASS_ACTION_NAME:
             self.actions_left.clear()
         elif action.repeatable:
