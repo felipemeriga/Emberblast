@@ -4,6 +4,7 @@ from typing import Dict, Callable
 from project.player import dynamic_races_classes, dynamic_jobs_classes, ControlledPlayer
 from .test import BaseTestCase
 from .test_item import mock_healing_item
+from project.item import Bag, Equipment
 
 
 def mock_job() -> Callable:
@@ -30,7 +31,8 @@ def mock_race() -> Callable:
 @mock_job()
 def mock_player() -> Callable:
     def wrapper(func):
-        player = ControlledPlayer(name='test player', job=mock_player.job, race=mock_player.race)
+        player = ControlledPlayer(name='test player', job=mock_player.job, race=mock_player.race, bag=Bag(),
+                                  equipment=Equipment())
         setattr(func, 'mock_player', player)
         return func
 

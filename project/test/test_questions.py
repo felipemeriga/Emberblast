@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from unittest import skipIf
 
 from .test import BaseTestCase
@@ -9,7 +8,7 @@ from project.questions import ask_check_action, ask_actions_questions, select_it
     perform_game_create_questions, perform_first_question, ask_attributes_to_improve
 from .test_item import mock_healing_item, mock_recovery_item, mock_equipment_item
 from .test_map import mock_map
-from project.item import Item, EquipmentItem
+from project.interface import IItem, IEquipmentItem
 
 # All of the test under this test file are meant to be run manually only, for testing each of the
 # questions asked in the game
@@ -43,7 +42,7 @@ class TestModuleQuestions(BaseTestCase):
     def test_select_item(self):
         items = [self.mock_equipment_item, self.mock_healing_item, self.mock_recovery_item]
         result = select_item(items)
-        assert isinstance(result, Item)
+        assert isinstance(result, IItem)
 
     def test_ask_enemy_to_check(self) -> None:
         result = ask_enemy_to_check([self.mock_player])
@@ -60,7 +59,7 @@ class TestModuleQuestions(BaseTestCase):
     def test_display_equipment_choices(self) -> None:
         self.mock_player.bag.add_item(self.mock_equipment_item)
         result = display_equipment_choices(self.mock_player)
-        assert isinstance(result, EquipmentItem)
+        assert isinstance(result, IEquipmentItem)
 
     def test_ask_where_to_move(self) -> None:
         possibilities = self.mock_map.graph.get_available_nodes_in_range("A0", 5)

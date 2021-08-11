@@ -1,7 +1,8 @@
 from typing import Callable
 
 from .test import BaseTestCase
-from project.item import get_random_item, Item, EquipmentItem, RecoveryItem, HealingItem, Bag
+from project.item import get_random_item, Bag
+from project.interface import IItem, IHealingItem, IEquipmentItem, IRecoveryItem
 
 
 def mock_recovery_item(tier: str = 'common') -> Callable:
@@ -38,19 +39,19 @@ class TestModuleItem(BaseTestCase):
 
     def test_get_random_item(self) -> None:
         item = get_random_item(tier='common', item_type='healing')
-        self.assertIsInstance(item, Item)
+        self.assertIsInstance(item, IItem)
 
     def test_get_random_healing(self) -> None:
         item = get_random_item(tier='rare', item_type='healing')
-        self.assertIsInstance(item, HealingItem)
+        self.assertIsInstance(item, IHealingItem)
 
     def test_get_random_equipment(self) -> None:
         item = get_random_item(tier='legendary', item_type='equipment')
-        self.assertIsInstance(item, EquipmentItem)
+        self.assertIsInstance(item, IEquipmentItem)
 
     def test_get_random_recoverable(self) -> None:
         item = get_random_item(tier='common', item_type='recovery')
-        self.assertIsInstance(item, RecoveryItem)
+        self.assertIsInstance(item, IRecoveryItem)
 
     def test_bag_get_equipments(self) -> None:
         equipment_item = get_random_item(tier='legendary', item_type='equipment')
