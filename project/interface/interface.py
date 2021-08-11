@@ -329,7 +329,7 @@ class IGame(ABC):
     main_player: IPlayer
     bots: List[IPlayer]
     game_map: IMap
-    turns: dict
+    turns: Dict[int, List[IPlayer]]
     dice_sides: int
 
     @abstractmethod
