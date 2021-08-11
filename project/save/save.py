@@ -5,11 +5,11 @@ from typing import List, Dict
 
 import cloudpickle
 
-from project.orchestrator import GameOrchestrator
+from project.interface import IGameOrchestrator
 from project.utils import get_project_root
 
 
-def save_game_state_on_exit(orchestrator_object: GameOrchestrator) -> None:
+def save_game_state_on_exit(orchestrator_object: IGameOrchestrator) -> None:
     """
     This method it's called whenever the game crashes or it's stopped, and basically it saves all the information
     of a played game, saving all the current instantiated objects in a file, using pickle library.
@@ -33,7 +33,7 @@ def save_game_state_on_exit(orchestrator_object: GameOrchestrator) -> None:
     f.close()
 
 
-def recover_saved_game_orchestrator(file: Path) -> GameOrchestrator:
+def recover_saved_game_orchestrator(file: Path) -> IGameOrchestrator:
     game_orchestrator = None
     # Load data (deserialize)
     f = open(str(file), 'rb')

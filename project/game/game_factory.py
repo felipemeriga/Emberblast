@@ -4,7 +4,7 @@ from typing import List
 from project.conf import get_configuration
 from project.game import DeathMatch
 from project.map import MapFactory
-from project.orchestrator import GameOrchestrator, DeathMatchOrchestrator
+from project.orchestrator import DeathMatchOrchestrator
 from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, BotPlayer
 from project.questions import perform_game_create_questions, perform_first_question
 from project.questions import get_saved_game
@@ -13,7 +13,7 @@ from project.item import Bag
 from project.utils import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator import generate_name
 from project.item import Equipment
-from project.interface import IMap, IControlledPlayer, IBotPlayer
+from project.interface import IMap, IControlledPlayer, IBotPlayer, IGameOrchestrator
 
 
 class GameFactory:
@@ -23,7 +23,7 @@ class GameFactory:
         """
         self.begin_question_results = None
 
-    def pre_initial_settings(self) -> GameOrchestrator:
+    def pre_initial_settings(self) -> IGameOrchestrator:
         """
         Executes the first game questions, checking if the player wants to create a new game, or load an existing one.
 
@@ -44,7 +44,7 @@ class GameFactory:
         else:
             return self.new_game()
 
-    def new_game(self) -> GameOrchestrator:
+    def new_game(self) -> IGameOrchestrator:
         """
         Creates a new game, prompting the user the necessary questions of how the game will be, and
         instantiate the proper objects, according to what was requested.

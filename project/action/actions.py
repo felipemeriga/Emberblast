@@ -20,7 +20,7 @@ from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to
     confirm_item_selection, display_equipment_choices, confirm_use_item_on_you
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item
-from project.interface import IGame, IPlayer
+from project.interface import IGame, IPlayer, IAction
 
 
 class SingletonAction(type):
@@ -32,7 +32,7 @@ class SingletonAction(type):
         return cls._instances[cls]
 
 
-class Action(metaclass=SingletonAction):
+class Action(IAction, metaclass=SingletonAction):
     def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         """
         Constructor of the Base Class for Actions.

@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import List, Union, Dict, Optional, Set
+from typing import List, Union, Dict, Optional, Set, Callable
 
 
 class ISkill(ABC):
@@ -354,4 +354,34 @@ class IGame(ABC):
 
     @abstractmethod
     def get_remaining_players(self, player: IPlayer, include_hidden: bool = False) -> List[IPlayer]:
+        pass
+
+
+class IAction:
+    independent: bool
+    repeatable: bool
+    game: IGame
+
+    @abstractmethod
+    def act(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    @abstractmethod
+    def compute_analytics(self) -> None:
+        pass
+
+
+class IGameOrchestrator:
+    clear: Callable
+    game: IGame
+    actions: Dict[str, IAction]
+    actions_left: List[str]
+    turn_remaining_players: List[IPlayer]
+
+    @abstractmethod
+    def init_actions(self) -> None:
+        pass
+
+    @abstractmethod
+    def execute_game(self) -> None:
         pass

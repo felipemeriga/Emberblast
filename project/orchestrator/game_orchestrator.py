@@ -4,13 +4,13 @@ from typing import List
 import emojis
 from colorama import Fore
 
-from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Action, Check, Pass, Equip, Drop
+from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Check, Pass, Equip, Drop
 from project.questions import ask_actions_questions
 from project.utils import PASS_ACTION_NAME
-from project.interface import IGame, IControlledPlayer, IPlayer, IBotPlayer
+from project.interface import IGame, IControlledPlayer, IPlayer, IAction, IGameOrchestrator
 
 
-class GameOrchestrator:
+class GameOrchestrator(IGameOrchestrator):
 
     def __init__(self, game: IGame) -> None:
         """
@@ -112,7 +112,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         except Exception as err:
             print(err)
 
-    def bot_decisioning(self, player: IBotPlayer) -> None:
+    def bot_decisioning(self, player: IPlayer) -> None:
         pass
 
     def hide_invalid_actions(self, player: IPlayer) -> List[str]:
@@ -141,7 +141,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         else:
             player.compute_side_effect_duration()
 
-    def compute_player_decisions(self, action: Action, action_string: str) -> None:
+    def compute_player_decisions(self, action: IAction, action_string: str) -> None:
         if action_string == PASS_ACTION_NAME:
             self.actions_left.clear()
         elif action.repeatable:
