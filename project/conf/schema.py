@@ -249,8 +249,12 @@ skills_validation_schema = {
         'type': 'string',
         'required': False
     },
-    'damage': {
+    'base': {
         'type': 'number',
+        'required': True
+    },
+    'type': {
+        'type': 'string',
         'required': True
     },
     'field': {
