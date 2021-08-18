@@ -101,6 +101,9 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
                 while len(self.turn_remaining_players) > 0:
                     player = self.turn_remaining_players[0]
+                    if not player.is_alive():
+                        self.turn_remaining_players.remove(player)
+                        continue
                     print(emojis.encode(
                         ':man: {name} Time! \n\n'.format(name=player.name)))
                     if isinstance(player, IControlledPlayer):
