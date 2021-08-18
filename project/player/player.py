@@ -1,3 +1,4 @@
+import math
 from typing import List, Union
 
 from project.conf import get_logger
@@ -143,6 +144,9 @@ class Player(IPlayer):
         :rtype: None
         """
         self.position = position
+
+    def get_ranged_attack_area(self) -> int:
+        return math.floor(1 + self.accuracy / 3)
 
     def set_hidden(self, state: bool) -> None:
         """

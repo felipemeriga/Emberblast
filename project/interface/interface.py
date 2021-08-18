@@ -150,6 +150,8 @@ class IPlayer(ABC):
     _hidden: bool
     bag: IBag
     equipment: IEquipment
+    life: int
+    mana: int
 
     @abstractmethod
     def add_attributes(self, attributes: Union[IJob, IRace] = None) -> None:
@@ -185,6 +187,10 @@ class IPlayer(ABC):
 
     @abstractmethod
     def set_position(self, position: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_ranged_attack_area(self) -> int:
         pass
 
     @abstractmethod

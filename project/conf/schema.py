@@ -253,7 +253,7 @@ skills_validation_schema = {
         'type': 'number',
         'required': True
     },
-    'type': {
+    'kind': {
         'type': 'string',
         'required': True
     },

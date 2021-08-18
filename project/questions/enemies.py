@@ -1,5 +1,6 @@
 from typing import List, Union
 
+import emojis
 from InquirerPy import prompt
 from project.interface import IPlayer
 
@@ -23,13 +24,36 @@ def ask_enemy_to_check(enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer
             'type': 'list',
             'message': 'Select an enemy:',
             'choices': choices,
-            'default': 'defend',
             'invalid_message': 'You need to select at least one enemy to check!',
             'show_cursor': True,
             'max_height': '100'
         }
     ]
 
+    result = prompt(questions=enemies_questions)
+    selected_enemy = result[0]
+    return selected_enemy
+
+
+def ask_enemy_to_attack(enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
+    choices = []
+    for enemy in enemies:
+        choices.append({
+            'name': '{enemy} ({job}) (life: {life})'.format(enemy=enemy.name,
+                                                            job=enemy.job.get_name(),
+                                                            life=enemy.life),
+            'value': enemy
+        })
+    enemies_questions = [
+        {
+            'type': 'list',
+            'message': emojis.encode('Select an enemy to attack: :punch:'),
+            'choices': choices,
+            'invalid_message': 'You need to select at least one enemy to attack!',
+            'show_cursor': True,
+            'max_height': '100'
+        }
+    ]
     result = prompt(questions=enemies_questions)
     selected_enemy = result[0]
     return selected_enemy

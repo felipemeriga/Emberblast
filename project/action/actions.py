@@ -17,9 +17,9 @@ import math
 from typing import List, Optional
 
 from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item, \
-    confirm_item_selection, display_equipment_choices, confirm_use_item_on_you
+    confirm_item_selection, display_equipment_choices, confirm_use_item_on_you, ask_enemy_to_attack
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
-    print_found_item, print_check_item
+    print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_available_foes
 from project.interface import IGame, IPlayer, IAction
 
 
@@ -114,6 +114,7 @@ class Attack(Action):
         ranged or melee.
 
         :param Player player: The player that will execute the attack action.
+        :param List[Player] players: The another players playing against.
         :rtype: List[Player] players: The list of enemies to attack.
         """
         possible_foes = []
@@ -133,13 +134,26 @@ class Attack(Action):
             because the fact of using a circle to determinate foes, it's already a big advantage to ranged based
             players.
             '''
-            reach_distance = math.floor(1 + player.accuracy / 3)
+            position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position,
+                                                                                           player.get_ranged_attack_area())
+            for foe in players:
+                if foe.position in position_possibilities:
+                    possible_foes.append(foe)
 
         return possible_foes
 
     def act(self, player: IPlayer) -> Optional[bool]:
         players = self.game.get_remaining_players(player)
-        # possible_foes = self.get_attack_possibilities()
+        possible_foes = self.get_attack_possibilities(player, players)
+        if len(possible_foes) == 0:
+            print_no_available_foes(player)
+            return False
+        enemy_to_attack = ask_enemy_to_attack(possible_foes)
+        dice_result = self.game.roll_the_dice()
+        print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
+        damage = math.ceil(player.strength + (dice_result / self.game.dice_sides) * 5)
+        enemy_to_attack.suffer_damage(damage)
+        print_suffer_damage(player, enemy_to_attack, damage)
         return
 
 

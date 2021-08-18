@@ -218,6 +218,46 @@ def print_found_item(player_name: str, found: bool = False, item_tier: str = Non
         print('Player: {name} tried to find some item, but nothing was found! \n'.format(name=player_name))
 
 
+def print_no_available_foes(player: IPlayer) -> None:
+    print('There are not any available foes!')
+    print('For melee attack, foes must be in the same position as you: {position}'.format(position=player.position))
+    print('For ranged attack, foes must be within your range of {range}'.format(
+        range=player.get_ranged_attack_area()))
+
+
+def print_suffer_damage(attacker: IPlayer, foe: IPlayer, damage: int) -> None:
+    """
+    Print whenever a player inflicts damages to another players.
+
+    :param IPlayer attacker: The attacking player.
+    :param IPlayer foe: The one suffering the attack.
+    :param int damage: Amount of damage done.
+    :rtype: None
+    """
+    print('Player: {name} inflicted a damage of {damage} on {foe_name}'.format(name=attacker.name,
+                                                                               damage=damage,
+                                                                               foe_name=foe.name))
+    if not foe.is_alive():
+        print(colored('{foe_name} it is now dead'.format(foe_name=foe.name), 'red'))
+    else:
+        print('{foe_name} now has {life} of life'.format(foe_name=foe.name, life=foe.life))
+
+
+def print_dice_result(name: str, result: int, kind: str, max_sides: int) -> None:
+    """
+    Print the result when a player rolls the dice.
+
+    :param str name: The name of the player who is rolling the dice.
+    :param int result: Dice result.
+    :param str kind: The purpose of rolling the dice, like attacking, skill.
+    :param int max_sides: The max sides of the dice, to detect critical attacks/skills.
+    :rtype: None
+    """
+    print('Player: {name} rolled the dice and got {result}!'.format(name=name, result=result))
+    if result == max_sides:
+        print('It is a critical {kind}! You will execute a massive amount of damage!'.format(kind=kind))
+
+
 def print_check_item(item: IItem) -> None:
     """
     Print Item information that was selected by the player
