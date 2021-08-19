@@ -125,15 +125,6 @@ class Attack(Action):
                 if player.position == foe.position:
                     possible_foes.append(foe)
         elif attacker_combat_type == 'ranged':
-            # TODO - implement the foes possibilities to ranged attacks
-            '''
-            For implementing this, considering that the map will still stay in the square matrix architecture,
-            to check which foes are within the attacker reach, we just need to draw a circle from the attacker position,
-            where the radius of this circle, it's the attacker's reach. Everyone inside that range, will be a possible 
-            foe, the only thing that might be good to bear in mind, it's to test the scalability of the ranged attack,
-            because the fact of using a circle to determinate foes, it's already a big advantage to ranged based
-            players.
-            '''
             position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position,
                                                                                            player.get_ranged_attack_area())
             for foe in players:
@@ -151,7 +142,7 @@ class Attack(Action):
         enemy_to_attack = ask_enemy_to_attack(possible_foes)
         dice_result = self.game.roll_the_dice()
         print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
-        damage = math.ceil(player.strength + (dice_result / self.game.dice_sides) * 5)
+        damage = math.ceil(player.strength + (dice_result / self.game.dice_sides) * 5 - enemy_to_attack.armour)
         enemy_to_attack.suffer_damage(damage)
         print_suffer_damage(player, enemy_to_attack, damage)
         return

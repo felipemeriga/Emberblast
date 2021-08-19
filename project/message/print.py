@@ -210,12 +210,12 @@ def print_found_item(player_name: str, found: bool = False, item_tier: str = Non
     :rtype: None
     """
     if found:
-        print('Player: {name} found a {tier} item! {item_name} \n'.format(name=player_name,
-                                                                          tier=item_tier,
-                                                                          item_name=item_name
-                                                                          ))
+        print('{name} found a {tier} item! {item_name} \n'.format(name=player_name,
+                                                                  tier=item_tier,
+                                                                  item_name=item_name
+                                                                  ))
     else:
-        print('Player: {name} tried to find some item, but nothing was found! \n'.format(name=player_name))
+        print('{name} tried to find some item, but nothing was found! \n'.format(name=player_name))
 
 
 def print_no_available_foes(player: IPlayer) -> None:
