@@ -148,6 +148,7 @@ class IPlayer(ABC):
     _alive: bool
     position: str
     _hidden: bool
+    _defense_mode: bool
     bag: IBag
     equipment: IEquipment
     life: int
@@ -198,11 +199,27 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def add_side_effect(self):
+    def is_hidden(self) -> bool:
         pass
 
     @abstractmethod
-    def is_hidden(self) -> bool:
+    def reset_last_action(self) -> bool:
+        pass
+
+    @abstractmethod
+    def set_defense_mode(self, state: bool) -> None:
+        pass
+
+    @abstractmethod
+    def is_defending(self) -> bool:
+        pass
+
+    @abstractmethod
+    def get_defense_value(self, kind: str) -> int:
+        pass
+
+    @abstractmethod
+    def add_side_effect(self):
         pass
 
     @abstractmethod

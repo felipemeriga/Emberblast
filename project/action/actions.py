@@ -78,6 +78,10 @@ class Defend(Action):
     def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
+    def act(self, player: IPlayer) -> Optional[bool]:
+        player.set_defense_mode(True)
+        return
+
 
 class Hide(Action):
     def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
@@ -142,7 +146,8 @@ class Attack(Action):
         enemy_to_attack = ask_enemy_to_attack(possible_foes)
         dice_result = self.game.roll_the_dice()
         print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
-        damage = math.ceil(player.strength + (dice_result / self.game.dice_sides) * 5 - enemy_to_attack.armour)
+        damage = math.ceil(player.strength + (dice_result / self.game.dice_sides) * 5
+                           - enemy_to_attack.get_defense_value('physical'))
         enemy_to_attack.suffer_damage(damage)
         print_suffer_damage(player, enemy_to_attack, damage)
         return

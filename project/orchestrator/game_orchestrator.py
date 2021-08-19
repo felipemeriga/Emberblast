@@ -106,6 +106,8 @@ class DeathMatchOrchestrator(GameOrchestrator):
                         continue
                     print(emojis.encode(
                         ':man: {name} Time! \n\n'.format(name=player.name)))
+                    # Resetting player's last action, If he was defending or hidden, this will be reset for a new turn
+                    player.reset_last_action()
                     if isinstance(player, IControlledPlayer):
                         self.controlled_decisioning(player)
                     else:

@@ -9,7 +9,7 @@ from project.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag,
 class Player(IPlayer):
     def __init__(self, name: str, job: IJob, race: IRace, bag: IBag, equipment: IEquipment) -> None:
         """
-       Constructor
+        Constructor
 
         :param str name: Player's name.
         :param IJob job: The selected job.
@@ -36,6 +36,7 @@ class Player(IPlayer):
         self._alive = True
         self.position = ''
         self._hidden = False
+        self._defense_mode = False
         self.bag = bag
         self.equipment = equipment
 
@@ -51,7 +52,7 @@ class Player(IPlayer):
 
     def add_attributes(self, attributes: Union[IJob, IRace] = None) -> None:
         """
-       Every action generates experience, and when reaching 100, character will level up.
+        Every action generates experience, and when reaching 100, character will level up.
 
         :param Union[Job, Race] attributes: Value to be computed.
         :rtype: None
@@ -71,7 +72,7 @@ class Player(IPlayer):
 
     def earn_xp(self, experience: int) -> None:
         """
-       Every action generates experience, and when reaching 100, character will level up.
+        Every action generates experience, and when reaching 100, character will level up.
 
         :param int experience: Value to be computed.
         :rtype: None
@@ -83,19 +84,19 @@ class Player(IPlayer):
 
     def suffer_damage(self, damage: float) -> None:
         """
-       Method that is used when character has suffered some damage.
+        Method that is used when character has suffered some damage.
 
         :param int damage: Value to be decreased.
         :rtype: None
         """
-        self.life = self.life - damage
+        self.life = int(self.life - damage)
         if self.life <= 0:
             self.die()
 
     def spend_mana(self, quantity: int) -> None:
         """
-       Method that is used when character has spent mana with some skill, or due
-       to side effects.
+        Method that is used when character has spent mana with some skill, or due
+        to side effects.
 
         :param int quantity: Value to be decreased.
         :rtype: None
@@ -104,8 +105,8 @@ class Player(IPlayer):
 
     def heal(self, attribute: str, value: int) -> None:
         """
-       Method that is used when character has its life or mana recovered,
-       from a skill or item.
+        Method that is used when character has its life or mana recovered,
+        from a skill or item.
 
         :param str attribute: which attribute to be healed.
         :param int value: The life/mana to be healed.
@@ -122,7 +123,7 @@ class Player(IPlayer):
 
     def die(self) -> None:
         """
-       Kill the character due to damage suffered or a side effect.
+        Kill the character due to damage suffered or a side effect.
 
         :rtype: None
         """
@@ -130,7 +131,7 @@ class Player(IPlayer):
 
     def is_alive(self) -> bool:
         """
-       Check if player is alive or not.
+        Check if player is alive or not.
 
         :rtype: bool
         """
@@ -138,7 +139,7 @@ class Player(IPlayer):
 
     def set_position(self, position: str) -> None:
         """
-       Set new position of the player, this method is called when player it's moving through the map.
+        Set new position of the player, this method is called when player it's moving through the map.
 
         :param str position: The position where the player is located.
         :rtype: None
@@ -146,16 +147,72 @@ class Player(IPlayer):
         self.position = position
 
     def get_ranged_attack_area(self) -> int:
+        """
+        Get the radius of the reach of ranged attacks
+
+        :rtype: int
+        """
         return math.floor(1 + self.accuracy / 3)
 
     def set_hidden(self, state: bool) -> None:
         """
-       Turn on/off into hidden state, so it can't be found by another players.
+        Turn on/off into hidden state, so it can't be found by another players.
 
         :param bool state: boolean to turn hidden(True) or visible(False).
         :rtype: None
         """
         self._hidden = state
+
+    def is_hidden(self) -> bool:
+        """
+        Returns if the player is hidden or not.
+
+        :rtype: bool
+        """
+        return self._hidden
+
+    def reset_last_action(self) -> None:
+        """
+        Players can get into hidden or defensive state, until they play again in the next turn, this method is called
+        everytime a player is supposed to start its turn, in order to reset actions from turns before.
+
+        :rtype: bool
+        """
+        self.set_hidden(False)
+        self.set_defense_mode(False)
+
+    def set_defense_mode(self, state: bool) -> None:
+        """
+        Turn on/off into defensive state, in this state player's defenses are increased by double until his next play.
+
+        :param bool state: boolean to turn hidden(True) or visible(False).
+        :rtype: None
+        """
+        self._defense_mode = state
+
+    def is_defending(self) -> bool:
+        """
+        Returns if the player is in defensive state.
+
+        :rtype: bool
+        """
+        return self._defense_mode
+
+    def get_defense_value(self, kind: str) -> int:
+        """
+        When in defensive state, players base armour and magic resist may be increased by double, this methods compute
+        all those conditions and return the right value.
+
+        :param str kind: If it's magical defense or armour.
+        :rtype: int
+        """
+        base_defense = 0
+        if kind == 'magic':
+            base_defense = self.magic_resist
+        elif kind == 'physical':
+            base_defense = self.armour
+
+        return base_defense * 2 if self.is_defending() else base_defense
 
     def add_side_effect(self):
         """
@@ -166,14 +223,6 @@ class Player(IPlayer):
         side = SideEffect(name="poison", effect_type="debuff", attribute="health_points", base=1, duration=3,
                           occurrence="iterated")
         self.side_effects.append(side)
-
-    def is_hidden(self) -> bool:
-        """
-       Returns if the player is hidden or not.
-
-        :rtype: bool
-        """
-        return self._hidden
 
     def use_item(self, item: IItem) -> None:
         """
