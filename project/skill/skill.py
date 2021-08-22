@@ -53,7 +53,18 @@ class Skill(ISkill):
 instantiated_skills: Dict = {}
 
 
-def dynamic_skill_class_factory(name, argument_names, base_class):
+def dynamic_skill_class_factory(name: str, argument_names: List, base_class: type):
+    """
+    Skills are defined in the configuration file conf.yaml, this class helps in dynamically creating,
+    at runtime, classes that can be instantiated with the name of the skill.
+
+    :param str name: The name of the dynamic class.
+    :param List argument_names: The attributes list of the class.
+    :param type base_class: The base class, from where the dynamic class will inherit properties.
+
+    :rtype: None.
+    """
+
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             if key not in argument_names:
@@ -66,6 +77,14 @@ def dynamic_skill_class_factory(name, argument_names, base_class):
 
 
 def get_instantiated_skill(skill_dict: Dict) -> ISkill:
+    """
+    Receiving a dictionary with all the characteristics of a Skill, this dictionary will be instantiated in a class that
+    represents this Skill.
+
+    :param Dict skill_dict: The name of the dynamic class.
+
+    :rtype: ISkill.
+    """
     custom_skill = None
     skill_key = list(skill_dict.keys())[0]
     if skill_key not in instantiated_skills:
@@ -101,6 +120,14 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
 
 
 def get_player_available_skills(player: IPlayer) -> List[ISkill]:
+    """
+    Skills can be unlocked/revealed for players depending their levels and jobs, this method compare the current
+    attributes of a player, will all the skills, to check which ones this current player has eligibility to use.
+
+    :param IPlayer player: The current player to discover new skills.
+
+    :rtype: List[ISkill].
+    """
     skill_dicts = get_configuration(SKILLS_SECTION)
     available_skills: List[ISkill] = []
 
@@ -109,6 +136,21 @@ def get_player_available_skills(player: IPlayer) -> List[ISkill]:
             available_skills.append(get_instantiated_skill({key: value}))
 
     return available_skills
+
+
+"""
+--------------- EXTENDED SKILLS ---------------
+
+For default, skills are intended to heal or cause damage to one player, that is why all the skills present in the
+skills configuration file, has a default instantiating mechanism that inherits from Skill parent class, that has the 
+execute method, which simply executes the skill. But you can override the functionality of skills from configuration
+file, creating a concrete class above here and override the methods from Skill class.
+
+This functionally extends the basic implementation, adding more possibilities to the skills in the game. For example,
+the Steal skill from Rogue class, instead of it causing damage or healing someone, this class is written above, 
+making possible from a player to steal the item from another one.
+
+"""
 
 
 class Steal(Skill):
