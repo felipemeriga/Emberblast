@@ -2,10 +2,12 @@ from abc import abstractmethod, ABC
 from typing import List, Union, Dict, Optional, Set, Callable
 
 
-class ISkill(ABC):
+class ISkill:
     name: str
     description: str
-    damage: int
+    base: int
+    cost: int
+    kind: str
     level_requirement: int
     field: int
     job: str
@@ -145,6 +147,7 @@ class IPlayer(ABC):
     level: int
     experience: int
     side_effects: List[ISideEffect]
+    skills: List[ISkill]
     _alive: bool
     position: str
     _hidden: bool
@@ -236,6 +239,10 @@ class IPlayer(ABC):
 
     @abstractmethod
     def compute_side_effect_duration(self) -> None:
+        pass
+
+    @abstractmethod
+    def refresh_skills_list(self) -> None:
         pass
 
 
@@ -407,4 +414,8 @@ class IGameOrchestrator:
 
     @abstractmethod
     def execute_game(self) -> None:
+        pass
+
+    @abstractmethod
+    def initialize_players_skills(self) -> None:
         pass

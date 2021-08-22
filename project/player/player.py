@@ -1,9 +1,10 @@
 import math
-from typing import List, Union
+from typing import Union
 
 from project.conf import get_logger
 from project.effect import SideEffect
 from project.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag, IJob, IRace, IEquipment
+from project.skill import get_player_available_skills
 
 
 class Player(IPlayer):
@@ -32,7 +33,8 @@ class Player(IPlayer):
         self.will = 2
         self.level = 1
         self.experience = 0
-        self.side_effects: List[SideEffect] = []
+        self.side_effects = []
+        self.skills = []
         self._alive = True
         self.position = ''
         self._hidden = False
@@ -291,3 +293,13 @@ class Player(IPlayer):
             side_effect.duration = side_effect.duration - 1
             if side_effect.duration <= 0:
                 self.side_effects.remove(side_effect)
+
+    def refresh_skills_list(self) -> None:
+        """
+        Depending on player's level, new skills can be revealed, this method checks if the player has new skills
+        to learn, and ideally should be executed in the beginning of the game of when the player levels up.
+
+        :rtype: None
+        """
+        available_skills = get_player_available_skills(self)
+        self.skills = available_skills

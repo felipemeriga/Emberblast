@@ -63,6 +63,17 @@ class GameOrchestrator(IGameOrchestrator):
         """
         raise NotImplementedError('Game::to_string() should be implemented!')
 
+    def initialize_players_skills(self) -> None:
+        """
+        Each Job/Race grants player specific skills, that can be revealed under some level conditions
+        this method basically refresh all the skills for all the players, matching the available skills in the
+        configuration file, with players' characteristics.
+
+        :rtype: None.
+        """
+        for player in self.game.get_all_players():
+            player.refresh_skills_list()
+
 
 class DeathMatchOrchestrator(GameOrchestrator):
 
@@ -83,6 +94,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         :rtype: None.
         """
         try:
+            self.initialize_players_skills()
             # Getting only the last element of the list, because in the case it's a saved game, it will take the last
             # player turn, and continue from there, if it's a new game, it will only game the first turn, which is the
             # first and the only element of the turns dictionary.
@@ -132,12 +144,15 @@ class DeathMatchOrchestrator(GameOrchestrator):
         """
         Hide the actions that are invalid in the player context, for example, if the player doesn't have items
         in his bag, there is no point to show the items options.
+        Additionally, another example is a player that hasn't learnt any skills, there is no point in showing skills.
 
         :param IPlayer player: The player that is currently playing.
         :rtype: List[str].
         """
         valid_actions = self.actions_left.copy()
-
+        if 'skill' in valid_actions:
+            if len(player.skills) == 0:
+                valid_actions.remove('skill')
         if 'item' in valid_actions:
             if not player.bag.has_item_type(is_usable=True):
                 valid_actions.remove('item')

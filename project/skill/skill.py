@@ -1,8 +1,8 @@
 import sys
-from typing import Dict
+from typing import Dict, List
 
 from project.conf import get_configuration
-from project.player import Player
+from project.interface import IPlayer, ISkill
 from project.utils import SKILLS_SECTION
 
 """
@@ -24,8 +24,8 @@ extents that.
 """
 
 
-class Skill:
-    def __init__(self, name: str, description: str, base: int,
+class Skill(ISkill):
+    def __init__(self, name: str, description: str, base: int, cost: int,
                  kind: str, level_requirement: int, field: int, job: str) -> None:
         """
         Constructor of the Skill parent class.
@@ -40,12 +40,13 @@ class Skill:
         self.name = name
         self.description = description
         self.base = base
+        self.cost = cost
         self.kind = kind
         self.level_requirement = level_requirement
         self.field = field
         self.job = job
 
-    def execute(self, player: Player) -> None:
+    def execute(self, player: IPlayer) -> None:
         pass
 
 
@@ -64,11 +65,11 @@ def dynamic_skill_class_factory(name, argument_names, base_class):
     return new_class
 
 
-def get_instantiated_skill(skill_dict: Dict) -> Skill:
+def get_instantiated_skill(skill_dict: Dict) -> ISkill:
     custom_skill = None
     skill_key = list(skill_dict.keys())[0]
-    skill_values = skill_dict.get(skill_key)
     if skill_key not in instantiated_skills:
+        skill_values = skill_dict.get(skill_key)
         skill_pkg = sys.modules[__package__].__getattribute__('skill')
         if skill_key in skill_pkg.__dict__:
             prev_defined_class = getattr(skill_pkg, skill_key)
@@ -76,6 +77,7 @@ def get_instantiated_skill(skill_dict: Dict) -> Skill:
                 name=skill_values.get('name'),
                 description=skill_values.get('description'),
                 base=skill_values.get('base'),
+                cost=skill_values.get('cost'),
                 kind=skill_values.get('kind'),
                 level_requirement=skill_values.get('level_requirement'),
                 field=skill_values.get('field'),
@@ -86,6 +88,7 @@ def get_instantiated_skill(skill_dict: Dict) -> Skill:
             custom_skill = dynamic_skill_class(name=skill_values.get('name'),
                                                description=skill_values.get('description'),
                                                base=skill_values.get('base'),
+                                               cost=skill_values.get('cost'),
                                                kind=skill_values.get('kind'),
                                                level_requirement=skill_values.get('level_requirement'),
                                                field=skill_values.get('field'),
@@ -97,16 +100,19 @@ def get_instantiated_skill(skill_dict: Dict) -> Skill:
     return custom_skill
 
 
-def get_player_available_skills(player: Player) -> Dict:
+def get_player_available_skills(player: IPlayer) -> List[ISkill]:
     skill_dicts = get_configuration(SKILLS_SECTION)
-    available_skills = {k: v for (k, v) in skill_dicts.items() if
-                        player.job.get_name() == v.get('job') and player.level == v.get('level_requirement')}
+    available_skills: List[ISkill] = []
+
+    for key, value in skill_dicts.items():
+        if player.job.get_name() == value.get('job') and player.level == value.get('level_requirement'):
+            available_skills.append(get_instantiated_skill({key: value}))
 
     return available_skills
 
 
 class Steal(Skill):
 
-    def __init__(self, name: str, description: str, base: int, kind: str, level_requirement: int, field: int,
+    def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int, field: int,
                  job: str) -> None:
-        super().__init__(name, description, base, kind, level_requirement, field, job)
+        super().__init__(name, description, base, cost, kind, level_requirement, field, job)

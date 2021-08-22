@@ -2,6 +2,7 @@ Fireball:
   name: Fireball
   description: launches a fireball in the nearby enemy
   base: 5
+  cost: 2
   kind: inflict
   level_requirement: 1
   field: 0
@@ -10,6 +11,7 @@ Pierce:
   name: Pierce Arrow
   description: Launches a heavy charged blow with your bow
   base: 2
+  cost: 2
   kind: inflict
   level_requirement: 1
   field: 0
@@ -18,6 +20,7 @@ Heal:
   name: Heal
   description: Launches a heavy charged blow with your bow
   base: 2
+  cost: 2
   kind: recover
   level_requirement: 1
   field: 0
@@ -26,6 +29,7 @@ Steal:
   name: Steal
   description: Steal an item from a foe
   base: 0
+  cost: 2
   kind: inflict
   level_requirement: 1
   field: 0

@@ -253,6 +253,10 @@ skills_validation_schema = {
         'type': 'number',
         'required': True
     },
+    'cost': {
+        'type': 'number',
+        'required': True
+    },
     'kind': {
         'type': 'string',
         'required': True

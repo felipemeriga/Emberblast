@@ -17,10 +17,11 @@ import math
 from typing import List, Optional
 
 from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item, \
-    confirm_item_selection, display_equipment_choices, confirm_use_item_on_you, ask_enemy_to_attack
+    confirm_item_selection, display_equipment_choices, confirm_use_item_on_you, ask_enemy_to_attack, select_skill
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_available_foes
 from project.interface import IGame, IPlayer, IAction
+from project.skill import get_player_available_skills
 
 
 class SingletonAction(type):
@@ -156,6 +157,11 @@ class Attack(Action):
 class Skill(Action):
     def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
+
+    def act(self, player: IPlayer) -> Optional[bool]:
+        available_skills = get_player_available_skills(player)
+        selected_skill = select_skill(available_skills)
+        return
 
 
 class Item(Action):
