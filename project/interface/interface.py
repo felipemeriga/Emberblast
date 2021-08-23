@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import List, Union, Dict, Optional, Set, Callable
+from typing import List, Union, Dict, Optional, Set, Callable, Any
 
 
 class ISkill:
@@ -12,6 +12,9 @@ class ISkill:
     range: int
     area: int
     job: str
+
+    def execute(self, player: 'IPlayer', foes: List['IPlayer']) -> None:
+        pass
 
 
 class ISideEffect(ABC):

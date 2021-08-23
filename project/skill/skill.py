@@ -47,7 +47,7 @@ class Skill(ISkill):
         self.area = area
         self.job = job
 
-    def execute(self, player: IPlayer) -> None:
+    def execute(self, player: IPlayer, foes: List[IPlayer]) -> None:
         pass
 
 
@@ -161,3 +161,6 @@ class Steal(Skill):
     def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
                  range: int, area: int, job: str) -> None:
         super().__init__(name, description, base, cost, kind, level_requirement, range, area, job)
+
+    def execute(self, player: IPlayer, foes: List[IPlayer]) -> None:
+        pass

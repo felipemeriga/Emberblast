@@ -218,12 +218,20 @@ def print_found_item(player_name: str, found: bool = False, item_tier: str = Non
         print('{name} tried to find some item, but nothing was found! \n'.format(name=player_name))
 
 
-def print_no_available_foes(player: IPlayer) -> None:
+def print_no_foes_attack(player: IPlayer) -> None:
     print('There are not any available foes!')
     print('For melee attack, foes must be in the same position as you: {position}'.format(position=player.position))
     print('For ranged attack, foes must be within your range of {range}'.format(
         range=player.get_ranged_attack_area()))
 
+
+def print_no_foes_skill(skill_range: int, player_position: str) -> None:
+    print('There are not any available foes!')
+    if skill_range == 0:
+        print('For melee skill, foes must be in the same position as you: {position}'.format(position=player_position))
+    else:
+        print('For ranged skill, foes must be within the skill range of {range}'.format(
+            range=skill_range))
 
 def print_suffer_damage(attacker: IPlayer, foe: IPlayer, damage: int) -> None:
     """

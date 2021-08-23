@@ -19,7 +19,8 @@ from typing import List, Optional
 from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item, \
     confirm_item_selection, display_equipment_choices, confirm_use_item_on_you, ask_enemy_to_attack, select_skill
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
-    print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_available_foes
+    print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_foes_attack, \
+    print_no_foes_skill
 from project.interface import IGame, IPlayer, IAction
 from project.skill import get_player_available_skills
 
@@ -57,6 +58,31 @@ class Action(IAction, metaclass=SingletonAction):
         :rtype: Optional[bool]
         """
         pass
+
+    def get_attack_possibilities(self, attack_range: int, player: IPlayer, players: List[IPlayer]) -> List[IPlayer]:
+        """
+        This function computes which enemies a player can attack, considering its attack style,
+        ranged or melee.
+
+        :param int attack_range: The range of skill/attack, zero means melee attack/skill.
+        :param Player player: The player that will execute the attack action.
+        :param List[Player] players: The another players playing against.
+        :rtype: List[Player] players: The list of enemies to attack.
+        """
+        possible_foes = []
+
+        if attack_range == 0:
+            for foe in players:
+                if player.position == foe.position:
+                    possible_foes.append(foe)
+        elif attack_range > 0:
+            position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position,
+                                                                                           attack_range)
+            for foe in players:
+                if foe.position in position_possibilities:
+                    possible_foes.append(foe)
+
+        return possible_foes
 
     def compute_analytics(self) -> None:
         pass
@@ -113,36 +139,12 @@ class Attack(Action):
     def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
-    def get_attack_possibilities(self, player: IPlayer, players: List[IPlayer]) -> List[IPlayer]:
-        """
-        This function computes which enemies a player can attack, considering its attack style,
-        ranged or melee.
-
-        :param Player player: The player that will execute the attack action.
-        :param List[Player] players: The another players playing against.
-        :rtype: List[Player] players: The list of enemies to attack.
-        """
-        possible_foes = []
-        attacker_combat_type = player.job.attack_type
-
-        if attacker_combat_type == 'melee':
-            for foe in players:
-                if player.position == foe.position:
-                    possible_foes.append(foe)
-        elif attacker_combat_type == 'ranged':
-            position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position,
-                                                                                           player.get_ranged_attack_area())
-            for foe in players:
-                if foe.position in position_possibilities:
-                    possible_foes.append(foe)
-
-        return possible_foes
-
     def act(self, player: IPlayer) -> Optional[bool]:
         players = self.game.get_remaining_players(player)
-        possible_foes = self.get_attack_possibilities(player, players)
+        attack_range = player.get_ranged_attack_area()
+        possible_foes = self.get_attack_possibilities(attack_range, player, players)
         if len(possible_foes) == 0:
-            print_no_available_foes(player)
+            print_no_foes_attack(player)
             return False
         enemy_to_attack = ask_enemy_to_attack(possible_foes)
         if enemy_to_attack is None:
@@ -160,11 +162,38 @@ class Skill(Action):
     def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
+    def get_affected_players_area_skill(self, target_player: IPlayer, remaining_players: List[IPlayer],
+                                        skill_affected_area):
+        area_foes = [target_player]
+        remaining_players.remove(target_player)
+        position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(target_player.position,
+                                                                                       skill_affected_area)
+
+        for player in remaining_players:
+            if player.position in position_possibilities:
+                area_foes.append(player)
+
+        return area_foes
+
     def act(self, player: IPlayer) -> Optional[bool]:
+        foes = []
         available_skills = get_player_available_skills(player)
         selected_skill = select_skill(available_skills)
+        remaining_players = self.game.get_remaining_players(player)
         if selected_skill is None:
             return False
+        possible_foes = self.get_attack_possibilities(selected_skill.range, player, remaining_players)
+        if len(possible_foes) == 0:
+            print_no_foes_skill(selected_skill.range, player.position)
+            return False
+        enemy_to_attack = ask_enemy_to_attack(possible_foes)
+        if enemy_to_attack is None:
+            return False
+        if selected_skill.area > 0:
+            foes = self.get_affected_players_area_skill(enemy_to_attack, remaining_players, selected_skill.area)
+        else:
+            foes.append(enemy_to_attack)
+        selected_skill.execute(player, foes)
         return
 
 
