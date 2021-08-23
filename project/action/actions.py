@@ -145,6 +145,8 @@ class Attack(Action):
             print_no_available_foes(player)
             return False
         enemy_to_attack = ask_enemy_to_attack(possible_foes)
+        if enemy_to_attack is None:
+            return False
         dice_result = self.game.roll_the_dice()
         print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
         damage = math.ceil(player.strength + (dice_result / self.game.dice_sides) * 5
@@ -161,6 +163,8 @@ class Skill(Action):
     def act(self, player: IPlayer) -> Optional[bool]:
         available_skills = get_player_available_skills(player)
         selected_skill = select_skill(available_skills)
+        if selected_skill is None:
+            return False
         return
 
 
@@ -171,6 +175,8 @@ class Item(Action):
     def act(self, player: IPlayer) -> Optional[bool]:
         usable_items = player.bag.get_usable_items()
         selected_item = select_item(usable_items)
+        if selected_item is None:
+            return False
         another_players_in_position = self.game.check_another_players_in_position(player)
         if len(another_players_in_position) > 0:
             if not confirm_use_item_on_you():

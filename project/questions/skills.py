@@ -15,6 +15,10 @@ def select_skill(available_skills: List[ISkill]) -> Union[str, bool, list, ISkil
             )),
             'value': skill
         })
+    choices.append({
+        'name': emojis.encode('Cancel :x: '),
+        'value': None
+    })
     skill_questions = [
         {
             'type': 'list',

@@ -20,6 +20,10 @@ def select_item(items: List[IItem]) -> Union[str, bool, list, IItem]:
                                                            tier=item.tier)),
             'value': item
         })
+    choices.append({
+        'name': emojis.encode('Cancel :x: '),
+        'value': None
+    })
     items_questions = [
         {
             'type': 'list',

@@ -44,6 +44,10 @@ def ask_enemy_to_attack(enemies: List[IPlayer]) -> Union[str, bool, list, IPlaye
                                                             life=enemy.life),
             'value': enemy
         })
+    choices.append({
+        'name': emojis.encode('Cancel :x: '),
+        'value': None
+    })
     enemies_questions = [
         {
             'type': 'list',

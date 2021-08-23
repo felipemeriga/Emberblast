@@ -9,7 +9,8 @@ class ISkill:
     cost: int
     kind: str
     level_requirement: int
-    field: int
+    reach: int
+    area: int
     job: str
 
 

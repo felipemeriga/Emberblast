@@ -26,7 +26,7 @@ extents that.
 
 class Skill(ISkill):
     def __init__(self, name: str, description: str, base: int, cost: int,
-                 kind: str, level_requirement: int, field: int, job: str) -> None:
+                 kind: str, level_requirement: int, reach: int, area: int, job: str) -> None:
         """
         Constructor of the Skill parent class.
 
@@ -43,7 +43,8 @@ class Skill(ISkill):
         self.cost = cost
         self.kind = kind
         self.level_requirement = level_requirement
-        self.field = field
+        self.reach = reach
+        self.area = area
         self.job = job
 
     def execute(self, player: IPlayer) -> None:
@@ -99,7 +100,8 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                 cost=skill_values.get('cost'),
                 kind=skill_values.get('kind'),
                 level_requirement=skill_values.get('level_requirement'),
-                field=skill_values.get('field'),
+                reach=skill_values.get('reach'),
+                area=skill_values.get('area'),
                 job=skill_values.get('job'),
             )
         else:
@@ -110,7 +112,8 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                                                cost=skill_values.get('cost'),
                                                kind=skill_values.get('kind'),
                                                level_requirement=skill_values.get('level_requirement'),
-                                               field=skill_values.get('field'),
+                                               reach=skill_values.get('reach'),
+                                               area=skill_values.get('area'),
                                                job=skill_values.get('job'))
         instantiated_skills[skill_key] = custom_skill
     else:
@@ -155,6 +158,6 @@ making possible from a player to steal the item from another one.
 
 class Steal(Skill):
 
-    def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int, field: int,
-                 job: str) -> None:
-        super().__init__(name, description, base, cost, kind, level_requirement, field, job)
+    def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
+                 reach: int, area: int, job: str) -> None:
+        super().__init__(name, description, base, cost, kind, level_requirement, reach, area, job)
