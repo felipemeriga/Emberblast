@@ -9,9 +9,18 @@ from project.interface import ISkill
 def select_skill(available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
     choices = []
     for skill in available_skills:
+        area_range_string = ''
+
+        if skill.range == 0:
+            area_range_string = '/ melee skill'
+        elif skill.range > 0 and skill.area == 0:
+            area_range_string = '/ ranged skill with range of {range}, single target'.format(range=skill.range)
+        elif skill.range > 0 and skill.area > 0:
+            area_range_string = '/ ranged skill with range of {range}, area damage of radius {area}'.format(
+                range=skill.range, area=skill.area)
         choices.append({
-            'name': emojis.encode('{name} - type: {kind} - {range} damage - {cost} mana :blue_heart:'.format(
-                name=skill.name, kind=skill.kind, range='area' if skill.field > 0 else 'single', cost=skill.cost
+            'name': emojis.encode('{name} / type: {kind} / cost: {cost} mana :blue_heart: {additional}'.format(
+                name=skill.name, kind=skill.kind, cost=skill.cost, additional=area_range_string
             )),
             'value': skill
         })

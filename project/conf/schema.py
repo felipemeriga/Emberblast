@@ -262,7 +262,7 @@ skills_validation_schema = {
         'required': True,
         'allowed': ['inflict', 'recover']
     },
-    'reach': {
+    'range': {
         'type': 'number',
         'required': True
     },
