@@ -5,8 +5,8 @@ Fireball:
   cost: 2
   kind: inflict
   level_requirement: 1
-  ranged: 5
-  area: 5
+  ranged: 1
+  area: 0
   job: Wizard
 Pierce:
   name: Pierce Arrow
