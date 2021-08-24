@@ -1,9 +1,11 @@
+import math
 import sys
 from typing import Dict, List
 
 from project.conf import get_configuration
 from project.interface import IPlayer, ISkill
 from project.utils import SKILLS_SECTION
+from project.message import print_suffer_damage, print_heal, print_missed, print_spent_mana
 
 """
 This is the base class for defining a Skill, as all the skills are defined dynamically on the skills.yaml file, 
@@ -26,7 +28,7 @@ extents that.
 
 class Skill(ISkill):
     def __init__(self, name: str, description: str, base: int, cost: int,
-                 kind: str, level_requirement: int, range: int, area: int, job: str) -> None:
+                 kind: str, level_requirement: int, ranged: int, area: int, job: str) -> None:
         """
         Constructor of the Skill parent class.
 
@@ -43,13 +45,29 @@ class Skill(ISkill):
         self.cost = cost
         self.kind = kind
         self.level_requirement = level_requirement
-        self.range = range
+        self.ranged = ranged
         self.area = area
         self.job = job
 
-    def execute(self, player: IPlayer, foes: List[IPlayer]) -> None:
-        pass
-
+    def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
+        player.spend_mana(self.cost)
+        print_spent_mana(player.name, self.cost, self.name)
+        if self.kind == 'inflict':
+            for foe in foes:
+                damage = math.ceil(self.base + dice_norm_result * player.intelligence
+                                   - foe.get_defense_value('magic'))
+                if damage > 0:
+                    foe.suffer_damage(damage)
+                    print_suffer_damage(player, foe, damage)
+                else:
+                    print_missed(player, foe)
+                print('\n')
+        elif self.kind == 'recover':
+            for foe in foes:
+                recover_result = math.ceil(self.base + dice_norm_result * player.intelligence)
+                foe.heal('health_points', recover_result)
+                print_heal(player, foe, recover_result)
+                print('\n')
 
 instantiated_skills: Dict = {}
 
@@ -100,7 +118,7 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                 cost=skill_values.get('cost'),
                 kind=skill_values.get('kind'),
                 level_requirement=skill_values.get('level_requirement'),
-                range=skill_values.get('range'),
+                ranged=skill_values.get('ranged'),
                 area=skill_values.get('area'),
                 job=skill_values.get('job'),
             )
@@ -112,7 +130,7 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                                                cost=skill_values.get('cost'),
                                                kind=skill_values.get('kind'),
                                                level_requirement=skill_values.get('level_requirement'),
-                                               range=skill_values.get('range'),
+                                               ranged=skill_values.get('ranged'),
                                                area=skill_values.get('area'),
                                                job=skill_values.get('job'))
         instantiated_skills[skill_key] = custom_skill
@@ -159,8 +177,8 @@ making possible from a player to steal the item from another one.
 class Steal(Skill):
 
     def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
-                 range: int, area: int, job: str) -> None:
-        super().__init__(name, description, base, cost, kind, level_requirement, range, area, job)
+                 ranged: int, area: int, job: str) -> None:
+        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job)
 
-    def execute(self, player: IPlayer, foes: List[IPlayer]) -> None:
+    def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         pass

@@ -20,7 +20,7 @@ from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to
     confirm_item_selection, display_equipment_choices, confirm_use_item_on_you, ask_enemy_to_attack, select_skill
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_foes_attack, \
-    print_no_foes_skill
+    print_no_foes_skill, print_area_damage, print_missed
 from project.interface import IGame, IPlayer, IAction
 from project.skill import get_player_available_skills
 
@@ -153,8 +153,11 @@ class Attack(Action):
         print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
         damage = math.ceil(player.strength + (dice_result / self.game.dice_sides) * 5
                            - enemy_to_attack.get_defense_value('physical'))
-        enemy_to_attack.suffer_damage(damage)
-        print_suffer_damage(player, enemy_to_attack, damage)
+        if damage > 0:
+            enemy_to_attack.suffer_damage(damage)
+            print_suffer_damage(player, enemy_to_attack, damage)
+        else:
+            print_missed(player, enemy_to_attack)
         return
 
 
@@ -177,23 +180,32 @@ class Skill(Action):
 
     def act(self, player: IPlayer) -> Optional[bool]:
         foes = []
+        possible_foes = []
+
         available_skills = get_player_available_skills(player)
         selected_skill = select_skill(available_skills)
         remaining_players = self.game.get_remaining_players(player)
         if selected_skill is None:
             return False
-        possible_foes = self.get_attack_possibilities(selected_skill.range, player, remaining_players)
+        if selected_skill.kind == 'recover':
+            possible_foes = [player]
+        possible_foes.extend(self.get_attack_possibilities(selected_skill.ranged, player, remaining_players))
         if len(possible_foes) == 0:
-            print_no_foes_skill(selected_skill.range, player.position)
+            print_no_foes_skill(selected_skill.ranged, player.position)
             return False
         enemy_to_attack = ask_enemy_to_attack(possible_foes)
         if enemy_to_attack is None:
             return False
         if selected_skill.area > 0:
             foes = self.get_affected_players_area_skill(enemy_to_attack, remaining_players, selected_skill.area)
+            if len(foes) > 0:
+                print_area_damage(selected_skill, foes)
         else:
             foes.append(enemy_to_attack)
-        selected_skill.execute(player, foes)
+        dice_result = self.game.roll_the_dice()
+        print_dice_result(player.name, dice_result, 'skill', self.game.dice_sides)
+        dice_result_normalized = dice_result / self.game.dice_sides
+        selected_skill.execute(player, foes, dice_result_normalized)
         return
 
 

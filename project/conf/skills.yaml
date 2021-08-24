@@ -5,8 +5,8 @@ Fireball:
   cost: 2
   kind: inflict
   level_requirement: 1
-  range: 1
-  area: 0
+  ranged: 5
+  area: 5
   job: Wizard
 Pierce:
   name: Pierce Arrow
@@ -15,7 +15,7 @@ Pierce:
   cost: 2
   kind: inflict
   level_requirement: 1
-  range: 1
+  ranged: 1
   area: 0
   job: Archer
 Heal:
@@ -25,7 +25,7 @@ Heal:
   cost: 2
   kind: recover
   level_requirement: 1
-  range: 1
+  ranged: 1
   area: 0
   job: Priest
 Steal:
@@ -35,6 +35,6 @@ Steal:
   cost: 2
   kind: inflict
   level_requirement: 1
-  range: 1
+  ranged: 1
   area: 0
   job: Rogue

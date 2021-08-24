@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import List, Union, Dict, Optional, Set, Callable, Any
+from typing import List, Union, Dict, Optional, Set, Callable
 
 
 class ISkill:
@@ -9,11 +9,11 @@ class ISkill:
     cost: int
     kind: str
     level_requirement: int
-    range: int
+    ranged: int
     area: int
     job: str
 
-    def execute(self, player: 'IPlayer', foes: List['IPlayer']) -> None:
+    def execute(self, player: 'IPlayer', foes: List['IPlayer'], dice_norm_result: float) -> None:
         pass
 
 

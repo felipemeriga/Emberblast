@@ -4,7 +4,7 @@ import timg
 from emojis import emojis
 from termcolor import colored
 
-from project.interface import IPlayer, IItem, IEquipmentItem, IRecoveryItem, IHealingItem
+from project.interface import IPlayer, IItem, IEquipmentItem, IRecoveryItem, IHealingItem, ISkill
 from project.utils import get_project_root, convert_number_to_letter
 
 
@@ -33,8 +33,8 @@ def print_player_stats(player: IPlayer):
         ':man: {name} Stats: \n\n'.format(name=player.name)))
     print(emojis.encode(
         ':bar_chart: Level: {level} \n'
-        ':green_heart: Health Points: {health} \n'
-        ':blue_heart: Magic Points: {magic} \n'
+        ':green_heart: Life: {life} \n'
+        ':blue_heart: Mana: {mana} \n'
         ':runner: Move Speed: {move} \n'
         ':books: Intelligence: {intelligence} \n'
         ':dart: Accuracy: {accuracy} \n'
@@ -42,8 +42,8 @@ def print_player_stats(player: IPlayer):
         ':shield: Armour: {armour} \n'
         ':cyclone: Magic Resist: {resist} \n'
         ':pray: Will: {will} \n'.format(level=player.level,
-                                        health=player.health_points,
-                                        magic=player.magic_points,
+                                        life=player.life,
+                                        mana=player.mana,
                                         move=player.move_speed,
                                         intelligence=player.intelligence,
                                         accuracy=player.accuracy,
@@ -62,8 +62,8 @@ def print_enemy_status(enemy: IPlayer) -> None:
     """
     print(emojis.encode(colored('Enemy {name}({job}) is currently at position: {position} \n'
                                 ':bar_chart: Level: {level} \n'
-                                ':green_heart: Health Points: {health} \n'
-                                ':blue_heart: Magic Points: {magic} \n'
+                                ':green_heart: Life: {life} \n'
+                                ':blue_heart: Mana: {mana} \n'
                                 ':runner: Move Speed: {move} \n'
                                 ':books: Intelligence: {intelligence} \n'
                                 ':dart: Accuracy: {accuracy} \n'
@@ -74,8 +74,8 @@ def print_enemy_status(enemy: IPlayer) -> None:
                                                                 job=enemy.job.get_name(),
                                                                 position=enemy.position,
                                                                 level=enemy.level,
-                                                                health=enemy.health_points,
-                                                                magic=enemy.magic_points,
+                                                                life=enemy.life,
+                                                                mana=enemy.mana,
                                                                 move=enemy.move_speed,
                                                                 intelligence=enemy.intelligence,
                                                                 accuracy=enemy.accuracy,
@@ -130,18 +130,18 @@ def print_map_info(player: IPlayer, players: List[IPlayer], matrix: List[List[in
     """
     foes_positions = []
     print(colored('{name} is currently at position: {position}, '
-                  'with {health_points} HP'.format(name=player.name,
-                                                   position=player.position,
-                                                   health_points=player.health_points),
+                  'with {life} HP'.format(name=player.name,
+                                          position=player.position,
+                                          life=player.life),
                   'green'))
 
     for opponent in players:
         foes_positions.append(opponent.position)
         print(colored('Enemy {name}({job}) is currently at position: {position}, '
-                      'with {health_points} HP'.format(name=opponent.name,
-                                                       job=opponent.job.get_name(),
-                                                       position=opponent.position,
-                                                       health_points=opponent.health_points),
+                      'with {life} HP'.format(name=opponent.name,
+                                              job=opponent.job.get_name(),
+                                              position=opponent.position,
+                                              life=opponent.life),
                       'red'))
 
     print(' ' * 4, end="")
@@ -233,6 +233,39 @@ def print_no_foes_skill(skill_range: int, player_position: str) -> None:
         print('For ranged skill, foes must be within the skill range of {range}'.format(
             range=skill_range))
 
+
+def print_area_damage(skill: ISkill, affected_players: List[IPlayer]) -> None:
+    print('\n {name} is an area {kind} skill, and it will hit the following players: '.format(name=skill.name,
+                                                                                              kind=skill.kind))
+    for opponent in affected_players:
+        print(colored('Enemy {name}({job}) is currently at position: {position}, '
+                      'with {health_points} HP'.format(name=opponent.name,
+                                                       job=opponent.job.get_name(),
+                                                       position=opponent.position,
+                                                       health_points=opponent.life),
+                      'red'))
+    print('\n')
+
+
+def print_spent_mana(name: str, amount: int, skill_name: str) -> None:
+    print('{player} casted {skill} for {amount} of mana.'.format(player=name, skill=skill_name, amount=amount))
+
+
+def print_heal(healer: IPlayer, foe: IPlayer, amount: int) -> None:
+    if healer == foe:
+        foe_name = 'itself'
+    else:
+        foe_name = foe.name
+    print('{name} healed {foe_name} for {amount} of health points!'.format(name=healer.name,
+                                                                           foe_name=foe_name,
+                                                                           amount=amount))
+    print('{foe_name} now has {life} of life'.format(foe_name=foe.name, life=foe.life))
+
+
+def print_missed(player: IPlayer, foe: IPlayer) -> None:
+    print('{name} tried to attack {foe_name} but missed it.'.format(name=player.name, foe_name=foe.name))
+
+
 def print_suffer_damage(attacker: IPlayer, foe: IPlayer, damage: int) -> None:
     """
     Print whenever a player inflicts damages to another players.
@@ -242,9 +275,9 @@ def print_suffer_damage(attacker: IPlayer, foe: IPlayer, damage: int) -> None:
     :param int damage: Amount of damage done.
     :rtype: None
     """
-    print('Player: {name} inflicted a damage of {damage} on {foe_name}'.format(name=attacker.name,
-                                                                               damage=damage,
-                                                                               foe_name=foe.name))
+    print('{name} inflicted a damage of {damage} on {foe_name}'.format(name=attacker.name,
+                                                                       damage=damage,
+                                                                       foe_name=foe.name))
     if not foe.is_alive():
         print(colored('{foe_name} it is now dead'.format(foe_name=foe.name), 'red'))
     else:
@@ -261,7 +294,7 @@ def print_dice_result(name: str, result: int, kind: str, max_sides: int) -> None
     :param int max_sides: The max sides of the dice, to detect critical attacks/skills.
     :rtype: None
     """
-    print('Player: {name} rolled the dice and got {result}!'.format(name=name, result=result))
+    print('{name} rolled the dice and got {result}!'.format(name=name, result=result))
     if result == max_sides:
         print('It is a critical {kind}! You will execute a massive amount of damage!'.format(kind=kind))
 
