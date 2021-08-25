@@ -277,5 +277,10 @@ skills_validation_schema = {
     'job': {
         'type': 'string',
         'required': True
+    },
+    'base_attribute': {
+        'type': 'string',
+        'required': True,
+        'allowed': ['intelligence', 'strength']
     }
 }

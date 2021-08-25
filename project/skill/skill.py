@@ -28,7 +28,7 @@ extents that.
 
 class Skill(ISkill):
     def __init__(self, name: str, description: str, base: int, cost: int,
-                 kind: str, level_requirement: int, ranged: int, area: int, job: str) -> None:
+                 kind: str, level_requirement: int, ranged: int, area: int, job: str, base_attribute: str) -> None:
         """
         Constructor of the Skill parent class.
 
@@ -48,6 +48,7 @@ class Skill(ISkill):
         self.ranged = ranged
         self.area = area
         self.job = job
+        self.base_attribute = base_attribute
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         player.spend_mana(self.cost)
@@ -122,6 +123,7 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                 ranged=skill_values.get('ranged'),
                 area=skill_values.get('area'),
                 job=skill_values.get('job'),
+                base_attribute=skill_values.get('base_attribute')
             )
         else:
             dynamic_skill_class = dynamic_skill_class_factory(skill_key, list(skill_values), Skill)
@@ -133,7 +135,9 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                                                level_requirement=skill_values.get('level_requirement'),
                                                ranged=skill_values.get('ranged'),
                                                area=skill_values.get('area'),
-                                               job=skill_values.get('job'))
+                                               job=skill_values.get('job'),
+                                               base_attribute=skill_values.get('base_attribute')
+                                               )
         instantiated_skills[skill_key] = custom_skill
     else:
         custom_skill = instantiated_skills[skill_key]
@@ -179,8 +183,8 @@ making possible from a player to steal the item from another one.
 class Steal(Skill):
 
     def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
-                 ranged: int, area: int, job: str) -> None:
-        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job)
+                 ranged: int, area: int, job: str, base_attribute: str) -> None:
+        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job, base_attribute)
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         pass

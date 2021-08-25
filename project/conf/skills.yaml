@@ -8,6 +8,7 @@ Fireball:
   ranged: 1
   area: 0
   job: Wizard
+  base_attribute: intelligence
 Pierce:
   name: Pierce Arrow
   description: Launches a heavy charged blow with your bow
@@ -18,6 +19,7 @@ Pierce:
   ranged: 1
   area: 0
   job: Archer
+  base_attribute: strength
 Heal:
   name: Heal
   description: Launches a heavy charged blow with your bow
@@ -28,6 +30,7 @@ Heal:
   ranged: 1
   area: 0
   job: Priest
+  base_attribute: intelligence
 Steal:
   name: Steal
   description: Steal an item from a foe
@@ -38,3 +41,4 @@ Steal:
   ranged: 1
   area: 0
   job: Rogue
+  base_attribute: strength

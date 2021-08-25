@@ -12,6 +12,7 @@ class ISkill:
     ranged: int
     area: int
     job: str
+    base_attribute: str
 
     def execute(self, player: 'IPlayer', foes: List['IPlayer'], dice_norm_result: float) -> None:
         pass
