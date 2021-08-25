@@ -7,6 +7,12 @@ from project.interface import ISkill
 
 
 def select_skill(available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
+    """
+    Question function, to query user for available skills to use.
+
+    :param List[ISkill] available_skills: Skills to be chosen.
+    :rtype: None
+    """
     choices = []
     for skill in available_skills:
         area_range_string = ''

@@ -219,6 +219,12 @@ def print_found_item(player_name: str, found: bool = False, item_tier: str = Non
 
 
 def print_no_foes_attack(player: IPlayer) -> None:
+    """
+    Print that there is not foe, within the attackers range.
+
+    :param IPlayer player: The attacker.
+    :rtype: None
+    """
     print('There are not any available foes!')
     print('For melee attack, foes must be in the same position as you: {position}'.format(position=player.position))
     print('For ranged attack, foes must be within your range of {range}'.format(
@@ -226,6 +232,13 @@ def print_no_foes_attack(player: IPlayer) -> None:
 
 
 def print_no_foes_skill(skill_range: int, player_position: str) -> None:
+    """
+    Print that there is not foe, within the attackers skill range.
+
+    :param int skill_range: The skill range.
+    :param str player_position: The attacker position.
+    :rtype: None
+    """
     print('There are not any available foes!')
     if skill_range == 0:
         print('For melee skill, foes must be in the same position as you: {position}'.format(position=player_position))
@@ -235,6 +248,13 @@ def print_no_foes_skill(skill_range: int, player_position: str) -> None:
 
 
 def print_area_damage(skill: ISkill, affected_players: List[IPlayer]) -> None:
+    """
+    Print that some skill affects an entire area.
+
+    :param ISkill skill: The casting skill.
+    :param List[IPlayer] affected_players: The players that will be affected by the skill.
+    :rtype: None
+    """
     print('\n {name} is an area {kind} skill, and it will hit the following players: '.format(name=skill.name,
                                                                                               kind=skill.kind))
     for opponent in affected_players:
@@ -248,10 +268,26 @@ def print_area_damage(skill: ISkill, affected_players: List[IPlayer]) -> None:
 
 
 def print_spent_mana(name: str, amount: int, skill_name: str) -> None:
+    """
+    Print that the player healed himself or another one.
+
+    :param IPlayer healer: The healer.
+    :param IPlayer foe: The healed.
+    :param int amount: The amount of life healed.
+    :rtype: None
+    """
     print('{player} casted {skill} for {amount} of mana.'.format(player=name, skill=skill_name, amount=amount))
 
 
 def print_heal(healer: IPlayer, foe: IPlayer, amount: int) -> None:
+    """
+    Print that the player healed himself or another one.
+
+    :param IPlayer healer: The healer.
+    :param IPlayer foe: The healed.
+    :param int amount: The amount of life healed.
+    :rtype: None
+    """
     if healer == foe:
         foe_name = 'itself'
     else:
@@ -263,6 +299,13 @@ def print_heal(healer: IPlayer, foe: IPlayer, amount: int) -> None:
 
 
 def print_missed(player: IPlayer, foe: IPlayer) -> None:
+    """
+    Print that the player missed the attack.
+
+    :param IPlayer player: The attacking player.
+    :param IPlayer foe: The foe suffering damage.
+    :rtype: None
+    """
     print('{name} tried to attack {foe_name} but missed it.'.format(name=player.name, foe_name=foe.name))
 
 
