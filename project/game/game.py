@@ -27,6 +27,18 @@ class Game(IGame):
         self.turns = {}
         self.dice_sides = get_configuration(GAME_SECTION).get('dice_sides', 6)
 
+    def calculate_turn_key(self, player: IPlayer) -> float:
+        """
+        This is the callable function for rolling the dice, and matching the result with players will
+        to check who achieve the greatest number, and the turn will be sorted from the greatest result
+        until the lowest.
+
+
+        :param IPlayer player: current player.
+        :rtype: None
+        """
+        return (player.get_attribute_real_value('will') / 5) * self.roll_the_dice()
+
     def calculate_turn_order(self) -> None:
         """
         The turn order is calculated based on the will of the character, the players are sorted
@@ -45,7 +57,7 @@ class Game(IGame):
             self.turns[turn] = []
         players.extend(self.bots)
         players.append(self.main_player)
-        players.sort(key=lambda x: (x.will / 5) * self.roll_the_dice(),
+        players.sort(key=self.calculate_turn_key,
                      reverse=True)
         self.turns[turn] = players
 

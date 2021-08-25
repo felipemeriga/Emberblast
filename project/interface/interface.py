@@ -370,6 +370,10 @@ class IGame(ABC):
     dice_sides: int
 
     @abstractmethod
+    def calculate_turn_key(self, player: IPlayer) -> float:
+        pass
+
+    @abstractmethod
     def calculate_turn_order(self) -> None:
         pass
 

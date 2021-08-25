@@ -254,17 +254,15 @@ class Player(IPlayer):
         :rtype: int
         """
         try:
-            attribute = self.__getattribute__(attribute)
-            result = attribute
+            if attribute == 'armour' or attribute == 'magic_resist':
+                result = self.get_defense_value(attribute)
+            else:
+                result = self.__getattribute__(attribute)
             for effect in self.side_effects:
                 if effect.attribute == attribute and effect.occurrence == 'constant':
                     result = result + effect.base
 
             result = result + self.equipment.get_attribute_addition(attribute, usage)
-
-            if attribute == 'armour' or attribute == 'magic_resist':
-                result = result + self.get_defense_value(attribute)
-
             return result
         except:
             logger = get_logger()

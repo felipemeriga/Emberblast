@@ -40,8 +40,7 @@ class Equipment(IEquipment):
         :rtype: str
         """
         result = 0
-        item: Union[None, IEquipmentItem]
-        for item in self.__dict__.items():
+        for item in list(self.__dict__.values()):
             if item is not None:
                 if item.attribute == attribute and item.usage == usage:
                     result = result + item.base
@@ -76,6 +75,6 @@ class Equipment(IEquipment):
         :rtype: None
         """
         if isinstance(selected_item, IEquipmentItem):
-            for item in self.__dict__.items():
+            for item in list(self.__dict__.values()):
                 if item == selected_item:
                     self.remove_equipment(selected_item.category)
