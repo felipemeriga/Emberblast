@@ -11,6 +11,7 @@ class Equipment(IEquipment):
         :rtype: None
         """
         self.weapon: Union[None, IEquipmentItem] = None
+        self.shield: Union[None, IEquipmentItem] = None
         self.armour: Union[None, IEquipmentItem] = None
         self.boots: Union[None, IEquipmentItem] = None
         self.accessory: Union[None, IEquipmentItem] = None
@@ -23,22 +24,26 @@ class Equipment(IEquipment):
         :param equipment: EquipmentItem: The equipment to be equipped
         :rtype: None
         """
+        # This if clause it's handling 2 handed weapons, in the case it's 2 handed, it will remove shields.
+        if equipment.category == 'weapon' and equipment.wielding == 2:
+            self.remove_equipment('shield')
         self.__setattr__(equipment.category, equipment)
 
-    def get_attribute_addition(self, attribute: str) -> int:
+    def get_attribute_addition(self, attribute: str, usage: str = 'all') -> int:
         """
         Each of the equipments, may change player's attributes, like HP, MP,
         intelligence, accuracy, this function receives one of that attributes as a string, and
         looks across all the equipments, if some of them improves/increments this attribute.
 
-        :param attribute: str: The string of the attribute to look for increments
+        :param str attribute: The string of the attribute to look for increments
+        :param str usage: If it will get melee, ranged or all equipments.
         :rtype: str
         """
         result = 0
         item: Union[None, IEquipmentItem]
         for item in self.__dict__.items():
             if item is not None:
-                if item.attribute == attribute:
+                if item.attribute == attribute and item.usage == usage:
                     result = result + item.base
 
         return result

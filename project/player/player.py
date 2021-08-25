@@ -154,6 +154,8 @@ class Player(IPlayer):
 
         :rtype: int
         """
+        if self.job.attack_type == 'melee':
+            return 0
         return math.floor(1 + self.accuracy / 3)
 
     def set_hidden(self, state: bool) -> None:
@@ -209,9 +211,9 @@ class Player(IPlayer):
         :rtype: int
         """
         base_defense = 0
-        if kind == 'magic':
+        if kind == 'magic_resist':
             base_defense = self.magic_resist
-        elif kind == 'physical':
+        elif kind == 'armour':
             base_defense = self.armour
 
         return base_defense * 2 if self.is_defending() else base_defense
@@ -241,13 +243,14 @@ class Player(IPlayer):
             if found_side_effect:
                 self.side_effects.remove(next(found_side_effect))
 
-    def get_attribute_real_value(self, attribute: str) -> int:
+    def get_attribute_real_value(self, attribute: str, usage: str = 'all') -> int:
         """
         This method it's used for getting the real value of an attribute
         computing and considering buffs/debuffs from side-effects, as well as
         items equipped to him.
 
         :param str attribute: Attribute to be computed.
+        :param str usage: If it will get melee, ranged or all equipments.
         :rtype: int
         """
         try:
@@ -256,6 +259,12 @@ class Player(IPlayer):
             for effect in self.side_effects:
                 if effect.attribute == attribute and effect.occurrence == 'constant':
                     result = result + effect.base
+
+            result = result + self.equipment.get_attribute_addition(attribute, usage)
+
+            if attribute == 'armour' or attribute == 'magic_resist':
+                result = result + self.get_defense_value(attribute)
+
             return result
         except:
             logger = get_logger()

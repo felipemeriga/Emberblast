@@ -93,7 +93,8 @@ class Move(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: IPlayer) -> Optional[bool]:
-        possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position, player.move_speed)
+        move_speed = player.get_attribute_real_value('move_speed')
+        possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position, move_speed)
         print_moving_possibilities(player.position, possibilities, self.game.game_map.graph.matrix,
                                    self.game.game_map.size)
         selected_place = ask_where_to_move(possibilities)
@@ -151,8 +152,9 @@ class Attack(Action):
             return False
         dice_result = self.game.roll_the_dice()
         print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
-        damage = math.ceil(player.strength + (dice_result / self.game.dice_sides) * 5
-                           - enemy_to_attack.get_defense_value('physical'))
+        damage = math.ceil(player.get_attribute_real_value('strength', player.job.attack_type) + (
+                dice_result / self.game.dice_sides) * 5
+                           - enemy_to_attack.get_attribute_real_value('armour'))
         if damage > 0:
             enemy_to_attack.suffer_damage(damage)
             print_suffer_damage(player, enemy_to_attack, damage)

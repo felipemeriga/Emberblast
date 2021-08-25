@@ -125,6 +125,7 @@ job_section_configuration_schema = {
     'attack_type': {
         'required': True,
         'type': 'string',
+        'allowed': ['melee', 'ranged']
     },
 }
 
@@ -242,6 +243,11 @@ equipment_item_validation_schema = {
         'required': True,
         'type': 'string',
         'allowed': ['all', 'melee', 'ranged']
+    },
+    'wielding': {
+        'required': False,
+        'type': 'number',
+        'allowed': [1, 2]
     },
 }
 

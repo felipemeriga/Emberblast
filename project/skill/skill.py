@@ -56,7 +56,7 @@ class Skill(ISkill):
         if self.kind == 'inflict':
             for foe in foes:
                 damage = math.ceil(self.base + dice_norm_result * player.intelligence
-                                   - foe.get_defense_value('magic'))
+                                   - foe.get_defense_value('magic_resist'))
                 if damage > 0:
                     foe.suffer_damage(damage)
                     print_suffer_damage(player, foe, damage)

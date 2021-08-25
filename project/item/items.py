@@ -65,7 +65,7 @@ class RecoveryItem(IRecoveryItem, Item):
 class EquipmentItem(IEquipmentItem, Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int,
-                 side_effects: List[ISideEffect], category: str, usage: str) -> None:
+                 side_effects: List[ISideEffect], category: str, usage: str, wielding: int = 1) -> None:
         """
         Constructor of EquipmentItem
 
@@ -77,6 +77,7 @@ class EquipmentItem(IEquipmentItem, Item):
         :param int base: The value of that attribute that this equip will improve.
         :param List[ISideEffect] side_effects: The side effects of that equipment.
         :param str category: The category of the equipment.
+        :param str usage: If the equipment attributes apply to all the cases, to melee attack only or ranged only.
 
         :rtype: None
         """
@@ -85,6 +86,7 @@ class EquipmentItem(IEquipmentItem, Item):
         self.side_effects = side_effects
         self.category = category
         self.usage = usage
+        self.wielding = wielding
         super().__init__(name, tier, description, weight)
 
 
@@ -143,4 +145,5 @@ def get_random_item(tier: str, item_type: str) -> Item:
                              base=item_dict.get('base'),
                              side_effects=side_effects,
                              category=item_dict.get('category'),
-                             usage=item_dict.get('usage'))
+                             usage=item_dict.get('usage'),
+                             wielding=item_dict.get('wielding', 0))

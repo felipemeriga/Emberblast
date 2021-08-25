@@ -49,6 +49,7 @@ class IEquipmentItem(IItem):
     side_effects: List[ISideEffect]
     category: str
     usage: str
+    wielding: int
 
 
 class IBag(ABC):
@@ -87,7 +88,7 @@ class IEquipment(ABC):
         pass
 
     @abstractmethod
-    def get_attribute_addition(self, attribute: str) -> int:
+    def get_attribute_addition(self, attribute: str, usage: str = 'all') -> int:
         pass
 
     @abstractmethod
@@ -113,7 +114,7 @@ class IJob:
     armour: int
     magic_resist: int
     will: int
-    attack_type: int
+    attack_type: str
 
     @abstractmethod
     def get_name(self):
@@ -236,7 +237,7 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def get_attribute_real_value(self, attribute: str) -> int:
+    def get_attribute_real_value(self, attribute: str, usage: str = 'all') -> int:
         pass
 
     @abstractmethod
