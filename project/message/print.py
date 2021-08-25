@@ -269,14 +269,25 @@ def print_area_damage(skill: ISkill, affected_players: List[IPlayer]) -> None:
 
 def print_spent_mana(name: str, amount: int, skill_name: str) -> None:
     """
-    Print that the player healed himself or another one.
+    Print that the player spent mana when casting a skill.
 
-    :param IPlayer healer: The healer.
-    :param IPlayer foe: The healed.
-    :param int amount: The amount of life healed.
+    :param str name: Name of the player.
+    :param int amount: The amount spent.
+    :param str skill_name: The name of the skill.
     :rtype: None
     """
     print('{player} casted {skill} for {amount} of mana.'.format(player=name, skill=skill_name, amount=amount))
+
+
+def print_player_low_mana(player: IPlayer) -> None:
+    """
+    Print that the player is running out of mana.
+
+    :param IPlayer player: Current player.
+    :rtype: None
+    """
+    print('{name} has {mana} of mana, considering healing it for casting skills. '.format(name=player.name,
+                                                                                          mana=player.mana))
 
 
 def print_heal(healer: IPlayer, foe: IPlayer, amount: int) -> None:

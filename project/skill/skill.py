@@ -69,6 +69,7 @@ class Skill(ISkill):
                 print_heal(player, foe, recover_result)
                 print('\n')
 
+
 instantiated_skills: Dict = {}
 
 
@@ -153,7 +154,8 @@ def get_player_available_skills(player: IPlayer) -> List[ISkill]:
     available_skills: List[ISkill] = []
 
     for key, value in skill_dicts.items():
-        if player.job.get_name() == value.get('job') and player.level == value.get('level_requirement'):
+        if player.job.get_name() == value.get('job') and player.level == value.get(
+                'level_requirement') and player.mana > value.get('cost'):
             available_skills.append(get_instantiated_skill({key: value}))
 
     return available_skills

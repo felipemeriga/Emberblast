@@ -20,7 +20,7 @@ from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to
     confirm_item_selection, display_equipment_choices, confirm_use_item_on_you, ask_enemy_to_attack, select_skill
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_foes_attack, \
-    print_no_foes_skill, print_area_damage, print_missed
+    print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana
 from project.interface import IGame, IPlayer, IAction
 from project.skill import get_player_available_skills
 
@@ -181,6 +181,10 @@ class Skill(Action):
     def act(self, player: IPlayer) -> Optional[bool]:
         foes = []
         possible_foes = []
+
+        # Warn the current player that he is running out of mana, and should consider healing it.
+        if player.mana <= 5:
+            print_player_low_mana(player)
 
         available_skills = get_player_available_skills(player)
         selected_skill = select_skill(available_skills)
