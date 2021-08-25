@@ -48,6 +48,7 @@ class IEquipmentItem(IItem):
     base: int
     side_effects: List[ISideEffect]
     category: str
+    usage: str
 
 
 class IBag(ABC):

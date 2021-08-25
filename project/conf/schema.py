@@ -237,7 +237,12 @@ equipment_item_validation_schema = {
         'required': True,
         'type': 'string',
         'allowed': ['weapon', 'boots', 'accessory', 'armour', 'shield']
-    }
+    },
+    'usage': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['all', 'melee', 'ranged']
+    },
 }
 
 skills_validation_schema = {

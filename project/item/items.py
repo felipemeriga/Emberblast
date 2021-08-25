@@ -65,7 +65,7 @@ class RecoveryItem(IRecoveryItem, Item):
 class EquipmentItem(IEquipmentItem, Item):
 
     def __init__(self, name: str, tier: str, description: str, weight: float, attribute: str, base: int,
-                 side_effects: List[ISideEffect], category: str) -> None:
+                 side_effects: List[ISideEffect], category: str, usage: str) -> None:
         """
         Constructor of EquipmentItem
 
@@ -84,6 +84,7 @@ class EquipmentItem(IEquipmentItem, Item):
         self.base = base
         self.side_effects = side_effects
         self.category = category
+        self.usage = usage
         super().__init__(name, tier, description, weight)
 
 
@@ -141,4 +142,5 @@ def get_random_item(tier: str, item_type: str) -> Item:
                              attribute=item_dict.get('attribute'),
                              base=item_dict.get('base'),
                              side_effects=side_effects,
-                             category=item_dict.get('category'))
+                             category=item_dict.get('category'),
+                             usage=item_dict.get('usage'))

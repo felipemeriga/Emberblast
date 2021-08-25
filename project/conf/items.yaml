@@ -39,6 +39,7 @@ steel_sword:
   weight: 1
   side-effects: [ ]
   category: weapon
+  usage: melee
 war_hammer:
   name: War Hammer
   type: equipment
@@ -49,6 +50,7 @@ war_hammer:
   weight: 1
   side-effects: [ ]
   category: weapon
+  usage: melee
 mega_potion:
   name: Mega Potion
   type: healing
@@ -67,6 +69,7 @@ magic_jewel:
   weight: 0.05
   side-effects: [ ]
   category: accessory
+  usage: all
 sandals_of_hermes:
   name: Sandals of Hermes
   type: equipment
@@ -77,6 +80,7 @@ sandals_of_hermes:
   weight: 0.3
   side-effects: [ ]
   category: boots
+  usage: all
 loki_scepter_stone:
   name: Loki Scepter Stone
   type: equipment
@@ -87,6 +91,7 @@ loki_scepter_stone:
   weight: 0.2
   side-effects: [ ]
   category: accessory
+  usage: all
 excalibur:
   name: Excalibur
   type: equipment
@@ -97,6 +102,7 @@ excalibur:
   weight: 2
   side-effects: [ haste ]
   category: weapon
+  usage: melee
 masamune:
   name: Masamune
   type: equipment
@@ -107,3 +113,4 @@ masamune:
   weight: 0.7
   side-effects: [ ]
   category: weapon
+  usage: melee
