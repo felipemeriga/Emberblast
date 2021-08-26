@@ -55,8 +55,17 @@ class Skill(ISkill):
         print_spent_mana(player.name, self.cost, self.name)
         if self.kind == 'inflict':
             for foe in foes:
-                damage = math.ceil(self.base + dice_norm_result * player.intelligence
-                                   - foe.get_defense_value('magic_resist'))
+                # Skills can be magical, based on intelligence, and physical, based on strength
+                # For magical skills, foe will use magic resist and for physical, armour
+                if self.base_attribute == 'strength':
+                    defense_attribute = 'armour'
+                else:
+                    defense_attribute = 'magic_resist'
+
+                damage = self.base + dice_norm_result * player.get_attribute_real_value(
+                    self.base_attribute) + player.get_attribute_real_value(self.base_attribute) / 2
+                defense = foe.get_defense_value(defense_attribute)
+                damage = math.ceil(damage - defense)
                 if damage > 0:
                     foe.suffer_damage(damage)
                     print_suffer_damage(player, foe, damage)
@@ -65,7 +74,8 @@ class Skill(ISkill):
                 print('\n')
         elif self.kind == 'recover':
             for foe in foes:
-                recover_result = math.ceil(self.base + dice_norm_result * player.intelligence)
+                recover_result = math.ceil(
+                    self.base + dice_norm_result * player.get_attribute_real_value('intelligence'))
                 foe.heal('health_points', recover_result)
                 print_heal(player, foe, recover_result)
                 print('\n')
