@@ -374,6 +374,23 @@ class IMap(ABC):
         pass
 
 
+class ITurnStatistics(ABC):
+    killer: bool
+    healer: bool
+    damage_caused: float
+    healed_damage: float
+    critical_hit: bool
+    hidden: bool
+    defended_damage: float
+    multiple_foes_count: int
+    item_found_tier: str
+    tiles_moved: int
+
+
+class IStatistics(ABC):
+    turn_statistics: Dict[int, Dict[str, ITurnStatistics]]
+
+
 class IGame(ABC):
     main_player: IPlayer
     bots: List[IPlayer]
