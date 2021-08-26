@@ -92,7 +92,11 @@ class IEquipment(ABC):
         pass
 
     @abstractmethod
-    def remove_equipment(self, category: str):
+    def remove_equipment(self, category: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_previous_equipped_item(self, category: str) -> Union[None, IEquipmentItem]:
         pass
 
     @abstractmethod
@@ -100,7 +104,11 @@ class IEquipment(ABC):
         pass
 
     @abstractmethod
-    def check_and_remove(self, selected_item: IItem):
+    def check_and_remove(self, selected_item: IItem) -> None:
+        pass
+
+    @abstractmethod
+    def remove_side_effect(self, side_effect: ISideEffect) -> None:
         pass
 
 
@@ -238,6 +246,10 @@ class IPlayer(ABC):
 
     @abstractmethod
     def get_attribute_real_value(self, attribute: str, usage: str = 'all') -> int:
+        pass
+
+    @abstractmethod
+    def remove_side_effects(self, side_effects: List[ISideEffect]) -> None:
         pass
 
     @abstractmethod

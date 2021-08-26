@@ -21,7 +21,7 @@ from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_foes_attack, \
     print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana
-from project.interface import IGame, IPlayer, IAction
+from project.interface import IGame, IPlayer, IAction, IEquipmentItem
 from project.skill import get_player_available_skills
 
 
@@ -243,7 +243,9 @@ class Drop(Action):
         selected_item = select_item(player.bag.items)
         confirm = confirm_item_selection()
         if confirm:
-            player.equipment.check_and_remove(selected_item)
+            if isinstance(selected_item, IEquipmentItem):
+                player.remove_side_effects(selected_item.side_effects)
+                player.equipment.check_and_remove(selected_item)
             player.bag.remove_item(selected_item)
             self.game.game_map.add_item_to_map(player.position, selected_item)
         return
@@ -254,8 +256,16 @@ class Equip(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: IPlayer) -> Optional[bool]:
-        equipment = display_equipment_choices(player)
-        player.equipment.equip(equipment)
+        equipment_item = display_equipment_choices(player)
+        if equipment_item is None:
+            return False
+        if player.equipment.is_equipped(equipment_item):
+            return False
+        previous_equipment = player.equipment.get_previous_equipped_item(equipment_item.category)
+        if previous_equipment is not None:
+            player.remove_side_effects(previous_equipment.side_effects)
+        player.equipment.equip(equipment_item)
+        player.side_effects.extend(equipment_item.side_effects)
         return
 
 

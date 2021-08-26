@@ -89,6 +89,10 @@ def display_equipment_choices(player: IPlayer) -> Union[str, bool, list, IEquipm
                                                                              equipped_string=equipped_string)),
             'value': equip
         })
+    choices.append({
+        'name': emojis.encode('Cancel :x: '),
+        'value': None
+    })
 
     equipment_questions = [
         {

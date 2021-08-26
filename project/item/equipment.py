@@ -1,5 +1,5 @@
 from typing import Union
-from project.interface import IEquipment, IEquipmentItem, IItem
+from project.interface import IEquipment, IEquipmentItem, IItem, ISideEffect
 
 
 class Equipment(IEquipment):
@@ -37,7 +37,7 @@ class Equipment(IEquipment):
 
         :param str attribute: The string of the attribute to look for increments
         :param str usage: If it will get melee, ranged or all equipments.
-        :rtype: str
+        :rtype: int
         """
         result = 0
         for item in list(self.__dict__.values()):
@@ -47,7 +47,7 @@ class Equipment(IEquipment):
 
         return result
 
-    def remove_equipment(self, category: str):
+    def remove_equipment(self, category: str) -> None:
         """
         This function is used to remove an equipment, it might be used when the user drops the item.
 
@@ -56,18 +56,28 @@ class Equipment(IEquipment):
         """
         self.__setattr__(category, None)
 
+    def get_previous_equipped_item(self, category: str) -> Union[None, IEquipmentItem]:
+        """
+        When equipping an item, the previous equipped item needs to be retrieved, to compute the
+        removal of possible side effects on player.
+
+        :param category: str: The string of the category of equipment to get.
+        :rtype: Union[None, IEquipmentItem]
+        """
+        return self.__getattribute__(category)
+
     def is_equipped(self, equipment: IEquipmentItem) -> bool:
         """
         This function will check if an item it's equipped on the player.
 
         :param IEquipmentItem equipment: The equipment to identify.
-        :rtype: None
+        :rtype: bool
         """
         if self.__getattribute__(equipment.category) == equipment:
             return True
         return False
 
-    def check_and_remove(self, selected_item: IItem):
+    def check_and_remove(self, selected_item: IItem) -> None:
         """
         Check if item it's equipped, and remove it.
 
@@ -78,3 +88,16 @@ class Equipment(IEquipment):
             for item in list(self.__dict__.values()):
                 if item == selected_item:
                     self.remove_equipment(selected_item.category)
+
+    def remove_side_effect(self, side_effect: ISideEffect) -> None:
+        """
+        Remove a side-effect from an equipment, when the duration has gone.
+
+        :param ISideEffect side_effect: Side effect to be removed.
+        :rtype: None
+        """
+        for item in list(self.__dict__.values()):
+            if item is not None:
+                for item_side_effect in item.side_effects:
+                    if item_side_effect == side_effect:
+                        item.side_effects.remove(side_effect)

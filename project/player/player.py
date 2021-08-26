@@ -1,9 +1,9 @@
 import math
-from typing import Union
+from typing import Union, List
 
 from project.conf import get_logger
 from project.effect import SideEffect
-from project.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag, IJob, IRace, IEquipment
+from project.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag, IJob, IRace, IEquipment, ISideEffect
 from project.skill import get_player_available_skills
 
 
@@ -269,6 +269,17 @@ class Player(IPlayer):
             logger.warn(f'Attribute: {attribute} does not exist, provide a valid one')
             return 0
 
+    def remove_side_effects(self, side_effects: List[ISideEffect]) -> None:
+        """
+        Method for helping removing a list of side effects from player.
+
+        :param List[SideEffect] side_effects: side effects to be removed.
+        :rtype: None
+        """
+        for side_effect in side_effects:
+            if side_effect in self.side_effects:
+                self.side_effects.remove(side_effect)
+
     def compute_iterated_side_effects(self) -> None:
         """
         There are side effects that are iterated, which means that each turn they will buff/debuff
@@ -300,6 +311,7 @@ class Player(IPlayer):
             side_effect.duration = side_effect.duration - 1
             if side_effect.duration <= 0:
                 self.side_effects.remove(side_effect)
+                self.equipment.remove_side_effect(side_effect)
 
     def refresh_skills_list(self) -> None:
         """

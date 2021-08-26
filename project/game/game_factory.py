@@ -2,6 +2,7 @@ from random import randrange
 from typing import List
 
 from project.conf import get_configuration
+from project.effect import SideEffect
 from project.game import DeathMatch
 from project.map import MapFactory
 from project.orchestrator import DeathMatchOrchestrator
@@ -9,7 +10,7 @@ from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races
 from project.questions import perform_game_create_questions, perform_first_question
 from project.questions import get_saved_game
 from project.save import get_normalized_saved_files_dict, recover_saved_game_orchestrator
-from project.item import Bag
+from project.item import Bag, EquipmentItem
 from project.utils import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator import generate_name
 from project.item import Equipment
@@ -83,11 +84,41 @@ class GameFactory:
         """
         bag = Bag()
         equipment = Equipment()
-        return ControlledPlayer(self.begin_question_results.get('nickname'),
-                                dynamic_jobs_classes[self.begin_question_results.get('job')](),
-                                dynamic_races_classes[self.begin_question_results.get('race')](),
-                                bag,
-                                equipment)
+        bag.add_item(EquipmentItem(name='Excalibur',
+                                   tier='legendary',
+                                   description='',
+                                   weight=2,
+                                   attribute='strength',
+                                   base=6,
+                                   side_effects=[SideEffect(
+                                       name='haste',
+                                       effect_type='buff',
+                                       attribute='move_speed',
+                                       duration=3,
+                                       occurrence='constant',
+                                       base=1
+                                   )],
+                                   category='weapon',
+                                   usage='melee',
+                                   wielding=2))
+        bag.add_item(EquipmentItem(name='Inscra Sword',
+                                   tier='legendary',
+                                   description='',
+                                   weight=2,
+                                   attribute='strength',
+                                   base=15,
+                                   side_effects=[],
+                                   category='weapon',
+                                   usage='melee',
+                                   wielding=2))
+
+        controlledPlayer = ControlledPlayer(self.begin_question_results.get('nickname'),
+                                            dynamic_jobs_classes[self.begin_question_results.get('job')](),
+                                            dynamic_races_classes[self.begin_question_results.get('race')](),
+                                            bag,
+                                            equipment)
+        controlledPlayer.add_side_effect()
+        return controlledPlayer
 
     def init_bots(self) -> List[IBotPlayer]:
         """
