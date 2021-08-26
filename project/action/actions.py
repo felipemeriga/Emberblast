@@ -116,7 +116,10 @@ class Hide(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: IPlayer) -> Optional[bool]:
-        result = self.game.chose_probability(additional=[0.7])
+        current_accuracy = player.get_attribute_real_value('accuracy')
+        additional = (current_accuracy / 5 * 10) / 100
+
+        result = self.game.chose_probability(additional=[additional])
         player.set_hidden(result)
         return
 

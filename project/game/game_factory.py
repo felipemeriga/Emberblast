@@ -2,7 +2,6 @@ from random import randrange
 from typing import List
 
 from project.conf import get_configuration
-from project.effect import SideEffect
 from project.game import DeathMatch
 from project.map import MapFactory
 from project.orchestrator import DeathMatchOrchestrator

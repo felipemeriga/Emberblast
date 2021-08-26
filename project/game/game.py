@@ -84,7 +84,7 @@ class Game(IGame):
             additional = [0]
         dice_result = self.roll_the_dice()
         positive_percentage = ((1 / self.dice_sides) * dice_result) + functools.reduce(lambda a, b: a + b, additional)
-        negative_percentage = max(0, 1 - int(positive_percentage))
+        negative_percentage = max(0, 1 - positive_percentage)
         return \
             choice([True, False], 1, p=[positive_percentage if positive_percentage <= 1 else 1, negative_percentage])[
                 0]
