@@ -1,6 +1,8 @@
-from typing import List, Set, Dict
+import math
+from typing import List, Set, Dict, Tuple, Union
 
-from project.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, convert_number_to_letter
+from project.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, convert_number_to_letter, \
+    convert_letter_to_number
 from project.interface import IGraph, IVertex, IEdge
 
 
@@ -275,10 +277,77 @@ class Graph(IGraph):
         """
         return len([x for x in filter(lambda vertex: vertex.value == 1, list(self.graph_dict.values()))])
 
-    def get_walkable_nodes(self) -> Dict[str, Vertex]:
+    def get_walkable_nodes(self) -> Dict[str, IVertex]:
         """
         Get the dictionary of only the valid nodes(vertexes).
 
-        :rtype: int
+        :rtype: Dict[str, IVertex]
         """
         return {k: v for (k, v) in self.graph_dict.items() if v.value == 1}
+
+    def fill_infinite_distance_dict(self, distances: Dict[str, float]) -> None:
+        """
+        When performing Dijkstra algorithm, in a first step all the distances to possible vertexes needs to be set
+        to infinite.
+
+        :param  Dict[str, float] distances: The dictionary of the distances between source vertex and another vertexes.
+        :rtype: None
+        """
+        for key in self.get_walkable_nodes().keys():
+            distances[key] = math.inf
+
+    def get_shortest_path(self, source_position: str) -> Dict[str, float]:
+        """
+        Core method for Dijkstra algorithm, for getting each of the distances, and finding the shortest path to all
+        the another available vertex in the map, starting from a source vertex.
+
+        Dijkstra strategy works on presuming that you don't know all the distances to all the possible destinations,
+        setting them to infinite, and start filling up them, and adding only the ones are lesser than the existing
+        one.
+
+        :param  str source_position: The source vertex to start it.
+        :rtype: None
+        """
+        distances = {source_position: 0}
+        self.fill_infinite_distance_dict(distances)
+        distances[source_position] = 0
+        starting_node = self.graph_dict.get(source_position)
+        unsettled_nodes: List[IVertex] = [starting_node]
+        settled_nodes: List[IVertex] = []
+
+        while len(unsettled_nodes) != 0:
+            current = unsettled_nodes.pop(0)
+
+            for edge in current.edges:
+                neighbour_vertex = self.graph_dict.get(edge.destination)
+                self.compute_distance(current, neighbour_vertex, edge.weight, distances)
+                if neighbour_vertex not in settled_nodes:
+                    unsettled_nodes.append(neighbour_vertex)
+            settled_nodes.append(current)
+        return distances
+
+    @staticmethod
+    def compute_distance(source_vertex: IVertex, destination_vertex: IVertex, edge_weight: float,
+                         distances: Dict[str, float]) -> None:
+        """
+        Check if the current measured edge weight it's lesser that the distance that already exists in the distances
+        dictionary to the destination vertex. In the case it's smaller, it will replace the existing value.
+
+        :param  IVertex source_vertex: The source vertex to start it.
+        :param  IVertex destination_vertex: Destination vertex.
+        :param  float edge_weight: The edge weight.
+        :param  Dict[str, float] distances: The dictionaries of distances.
+        :rtype: None
+        """
+        computed_distance = distances.get(source_vertex.vertex_id) + edge_weight
+        if computed_distance < distances[destination_vertex.vertex_id]:
+            distances[destination_vertex.vertex_id] = computed_distance
+
+    def get_average_distance_source_destinations(self, source: str, positions: List[str]) -> None:
+        distances = self.get_shortest_path(source)
+        total_distance = 0
+
+        for position in positions:
+            total_distance = total_distance + distances.get(position, 0)
+
+        return total_distance / len(positions)

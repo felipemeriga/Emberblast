@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+from enum import Enum
 from typing import List, Union, Dict, Optional, Set, Callable
 
 
@@ -439,6 +440,18 @@ class IAction:
     @abstractmethod
     def compute_analytics(self) -> None:
         pass
+
+
+class IPlayingMode(Enum):
+    NEUTRAL = 0
+    AGGRESSIVE = 1
+    DEFENSIVE = 2
+
+
+class IBotDecisioning(ABC):
+    game: IGame
+    current_bot: Union[None, IPlayer]
+    current_play_style: IPlayingMode
 
 
 class IGameOrchestrator:

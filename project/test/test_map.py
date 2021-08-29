@@ -4,6 +4,7 @@ from typing import Callable
 from .test import BaseTestCase
 from project.map import Map, Graph
 from project.utils import convert_number_to_letter
+from project.message import print_plain_matrix
 
 
 def mock_map() -> Callable:
@@ -17,6 +18,7 @@ def mock_map() -> Callable:
     return wrapper
 
 
+@mock_map()
 class TestModuleMap(BaseTestCase):
     def test_graph_generation(self) -> None:
         size = random.randint(0, 10)
@@ -40,3 +42,11 @@ class TestModuleMap(BaseTestCase):
     def test_map_attributes(self) -> None:
         size = random.randint(0, 10)
         new_map = Map(name='test_map', map_type='test', size=size)
+
+    def test_get_shortest_path(self) -> None:
+        walkable_nodes = self.mock_map.graph.get_walkable_nodes()
+        key_list = list(walkable_nodes.keys())
+        source = walkable_nodes[key_list[0]]
+
+        print_plain_matrix(self.mock_map.graph.matrix)
+        distance = self.mock_map.graph.get_shortest_path(source.vertex_id)

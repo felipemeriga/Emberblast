@@ -138,7 +138,18 @@ class DeathMatchOrchestrator(GameOrchestrator):
         :param IPlayer player: The bot that is currently playing.
         :rtype: None.
         """
-        pass
+        # TODO - Merge this in a single code.
+        # The strategy here it's to first decide the
+        # self.actions_left = list(self.actions.keys())
+        # player.compute_iterated_side_effects()
+        # while len(self.actions_left) > 2:
+        #     # ADD Bot Decision
+        #
+        #     self.clear()
+        #     if action.act(player) is None:
+        #         self.compute_player_decisions(action, chosen_action_string)
+        # else:
+        #     player.compute_side_effect_duration()
 
     def hide_invalid_actions(self, player: IPlayer) -> List[str]:
         """
