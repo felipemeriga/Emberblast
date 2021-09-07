@@ -1,6 +1,11 @@
-from unittest import TestCase
+import os
+from unittest import TestCase, skipIf
 
 HAS_ATTR_MESSAGE = '{} should have an attribute {}'
+
+
+def manual_test(func):
+    return skipIf('MANUAL_TESTS' not in os.environ, 'Skipping slow test')(func)
 
 
 class BaseTestCase(TestCase):

@@ -13,10 +13,10 @@ from project.item import Bag, EquipmentItem, RecoveryItem
 from project.utils import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator import generate_name
 from project.item import Equipment
-from project.interface import IMap, IControlledPlayer, IBotPlayer, IGameOrchestrator
+from project.interface import IMap, IControlledPlayer, IBotPlayer, IGameOrchestrator, IGameFactory
 
 
-class GameFactory:
+class GameFactory(IGameFactory):
     def __init__(self):
         """
         Constructor of the class, responsible for creating the game, and performing the proper questions.

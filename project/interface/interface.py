@@ -346,6 +346,22 @@ class IGraph(ABC):
     def get_walkable_nodes(self) -> Dict[str, IVertex]:
         pass
 
+    @abstractmethod
+    def fill_infinite_distance_dict(self, distances: Dict[str, float]) -> None:
+        pass
+
+    @abstractmethod
+    def get_shortest_distance_between_positions(self, s1: str, s2: str) -> float:
+        pass
+
+    @abstractmethod
+    def get_shortest_path(self, source_position: str) -> Dict[str, float]:
+        pass
+
+    @abstractmethod
+    def get_average_distance_source_destinations(self, source: str, positions: List[str]) -> None:
+        pass
+
 
 class IMap(ABC):
     name: str
@@ -471,4 +487,28 @@ class IGameOrchestrator:
 
     @abstractmethod
     def initialize_players_skills(self) -> None:
+        pass
+
+
+class IGameFactory:
+    begin_question_results: Union[Union[str, bool, list, dict], None]
+
+    @abstractmethod
+    def pre_initial_settings(self) -> IGameOrchestrator:
+        pass
+
+    @abstractmethod
+    def new_game(self) -> IGameOrchestrator:
+        pass
+
+    @abstractmethod
+    def init_map(self, map_size: int) -> IMap:
+        pass
+
+    @abstractmethod
+    def init_players(self) -> IControlledPlayer:
+        pass
+
+    @abstractmethod
+    def init_bots(self) -> List[IBotPlayer]:
         pass

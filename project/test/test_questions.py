@@ -1,22 +1,17 @@
 import os
 from unittest import skipIf
 
-from .test import BaseTestCase
+from .test import BaseTestCase, manual_test
 from .test_player import mock_player
 from project.questions import ask_check_action, ask_actions_questions, select_item, ask_enemy_to_check, \
     confirm_item_selection, confirm_use_item_on_you, display_equipment_choices, ask_where_to_move, \
     perform_game_create_questions, perform_first_question, ask_attributes_to_improve
 from .test_item import mock_healing_item, mock_recovery_item, mock_equipment_item
 from .test_map import mock_map
-from project.interface import IItem, IEquipmentItem
+from project.interface import IItem, IEquipmentItem, IPlayer
 
 # All of the test under this test file are meant to be run manually only, for testing each of the
 # questions asked in the game
-from ..player import Player
-
-
-def manual_test(func):
-    return skipIf('MANUAL_TESTS' not in os.environ, 'Skipping slow test')(func)
 
 
 @manual_test
@@ -46,7 +41,7 @@ class TestModuleQuestions(BaseTestCase):
 
     def test_ask_enemy_to_check(self) -> None:
         result = ask_enemy_to_check([self.mock_player])
-        assert isinstance(result, Player)
+        assert isinstance(result, IPlayer)
 
     def test_confirm_item_selection(self) -> None:
         result = confirm_item_selection()

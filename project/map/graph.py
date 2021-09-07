@@ -296,6 +296,19 @@ class Graph(IGraph):
         for key in self.get_walkable_nodes().keys():
             distances[key] = math.inf
 
+    def get_average_distance_source_destinations(self, source: str, positions: List[str]) -> None:
+        distances = self.get_shortest_path(source)
+        total_distance = 0
+
+        for position in positions:
+            total_distance = total_distance + distances.get(position, 0)
+
+        return total_distance / len(positions)
+
+    def get_shortest_distance_between_positions(self, s1: str, s2: str) -> float:
+        distances = self.get_shortest_path(s1)
+        return distances.get(s2, 0)
+
     def get_shortest_path(self, source_position: str) -> Dict[str, float]:
         """
         Core method for Dijkstra algorithm, for getting each of the distances, and finding the shortest path to all
@@ -342,12 +355,3 @@ class Graph(IGraph):
         computed_distance = distances.get(source_vertex.vertex_id) + edge_weight
         if computed_distance < distances[destination_vertex.vertex_id]:
             distances[destination_vertex.vertex_id] = computed_distance
-
-    def get_average_distance_source_destinations(self, source: str, positions: List[str]) -> None:
-        distances = self.get_shortest_path(source)
-        total_distance = 0
-
-        for position in positions:
-            total_distance = total_distance + distances.get(position, 0)
-
-        return total_distance / len(positions)
