@@ -359,7 +359,12 @@ class IGraph(ABC):
         pass
 
     @abstractmethod
-    def get_average_distance_source_destinations(self, source: str, positions: List[str]) -> None:
+    def get_average_distance_source_destinations(self, source: str, positions: List[str]) -> float:
+        pass
+
+    @abstractmethod
+    def get_average_distances_sources_destinations_map(self, sources: List[str],
+                                                       positions: List[str]) -> Dict[str, float]:
         pass
 
 

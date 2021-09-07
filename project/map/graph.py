@@ -296,7 +296,17 @@ class Graph(IGraph):
         for key in self.get_walkable_nodes().keys():
             distances[key] = math.inf
 
-    def get_average_distance_source_destinations(self, source: str, positions: List[str]) -> None:
+    def get_average_distances_sources_destinations_map(self, sources: List[str],
+                                                       positions: List[str]) -> Dict[str, float]:
+        averages_map = {}
+        for source in sources:
+            average_distance = self.get_average_distance_source_destinations(source,
+                                                                             positions)
+            averages_map[source] = average_distance
+
+        return averages_map
+
+    def get_average_distance_source_destinations(self, source: str, positions: List[str]) -> float:
         distances = self.get_shortest_path(source)
         total_distance = 0
 
