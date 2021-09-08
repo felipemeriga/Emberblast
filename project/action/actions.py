@@ -155,9 +155,12 @@ class Attack(Action):
             return False
         dice_result = self.game.roll_the_dice()
         print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
-        damage = math.ceil(player.get_attribute_real_value('strength', player.job.attack_type) + (
+
+        targeted_defense = 'armour' if player.job.damage_vector == 'strength' else 'magic_resist'
+
+        damage = math.ceil(player.get_attribute_real_value(player.job.damage_vector, player.job.attack_type) + (
                 dice_result / self.game.dice_sides) * 5
-                           - enemy_to_attack.get_attribute_real_value('armour'))
+                           - enemy_to_attack.get_attribute_real_value(targeted_defense))
         if damage > 0:
             enemy_to_attack.suffer_damage(damage)
             print_suffer_damage(player, enemy_to_attack, damage)

@@ -127,6 +127,11 @@ job_section_configuration_schema = {
         'type': 'string',
         'allowed': ['melee', 'ranged']
     },
+    'damage_vector': {
+        'required': True,
+        'type': 'string',
+        'allowed': ['strength', 'intelligence']
+    }
 }
 
 race_section_configuration_schema = {

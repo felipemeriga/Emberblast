@@ -124,6 +124,7 @@ class IJob:
     magic_resist: int
     will: int
     attack_type: str
+    damage_vector: str
 
     @abstractmethod
     def get_name(self):
@@ -140,7 +141,6 @@ class IRace:
     armour: int
     magic_resist: int
     will: int
-    attack_type: int
 
     @abstractmethod
     def get_name(self):

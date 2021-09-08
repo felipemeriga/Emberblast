@@ -18,7 +18,8 @@ class JobMeta(type):
                              jobs_attributes.get('armour', 0),
                              jobs_attributes.get('magic_resist', 0),
                              jobs_attributes.get('will', 0),
-                             jobs_attributes.get('attack_type', None),
+                             jobs_attributes.get('attack_type', 'melee'),
+                             jobs_attributes.get('damage_vector', 'strength'),
                              )
 
 
@@ -33,7 +34,8 @@ class Job(IJob, metaclass=JobMeta):
                  armour,
                  magic_resist,
                  will,
-                 attack_type):
+                 attack_type,
+                 damage_vector):
         self.health_points = health_points
         self.magic_points = magic_points
         self.move_speed = move_speed
@@ -44,6 +46,7 @@ class Job(IJob, metaclass=JobMeta):
         self.magic_resist = magic_resist
         self.will = will
         self.attack_type = attack_type
+        self.damage_vector = damage_vector
 
     def get_name(self):
         return self.__class__.__name__

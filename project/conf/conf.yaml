@@ -28,6 +28,7 @@ game:
       armour: 4
       magic_resist: 0
       will: 1
+      damage_vector: strength
     Wizard:
       attack_type: ranged
       health_points: 3
@@ -39,6 +40,7 @@ game:
       armour: 1
       magic_resist: 5
       will: 1
+      damage_vector: intelligence
     Rogue:
       attack_type: melee
       health_points: 6
@@ -50,6 +52,7 @@ game:
       armour: 2
       magic_resist: 2
       will: 3
+      damage_vector: strength
     Archer:
       attack_type: ranged
       health_points: 6
@@ -61,6 +64,7 @@ game:
       armour: 2
       magic_resist: 3
       will: 2
+      damage_vector: strength
     Priest:
       attack_type: ranged
       health_points: 5
@@ -72,6 +76,7 @@ game:
       armour: 3
       magic_resist: 3
       will: 4
+      damage_vector: intelligence
   races:
     Human:
       health_points: 1

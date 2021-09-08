@@ -45,6 +45,9 @@ class BotDecisioning(IBotDecisioning):
         self.prioritized_foes = list(
             collections.OrderedDict(sorted(priorities_map.items(), key=lambda item: item[1])).keys())
 
+    def attack(self) -> None:
+        pass
+
     def move(self) -> None:
         remaining_players_positions = self.get_remaining_players_position()
         move_speed = self.current_bot.get_attribute_real_value('move_speed')
@@ -106,8 +109,16 @@ class BotDecisioning(IBotDecisioning):
             self.current_play_style = IPlayingMode.DEFENSIVE
 
     def decide(self, player: IPlayer, actions_left: Dict[str, IAction]) -> None:
-        # move phase
+        actions_calls = []
         self.current_bot = player
         self.sort_foes_by_priority()
         self.select_playing_mode()
-        self.move()
+
+        if self.current_play_style == IPlayingMode.AGGRESSIVE and \
+                self.prioritized_foes[0].position == self.current_bot.position:
+            self.attack()
+            self.move()
+        else:
+            self.move()
+            self.attack()
+

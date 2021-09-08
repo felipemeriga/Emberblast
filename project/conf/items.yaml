@@ -118,3 +118,27 @@ masamune:
   category: weapon
   usage: melee
   wielding: 2
+wodden_bow:
+  name: Wodden Bow
+  type: equipment
+  tier: common
+  description: A common bow, that can be found in any store
+  attribute: strength
+  base: 4
+  weight: 0.7
+  side-effects: [ ]
+  category: weapon
+  usage: ranged
+  wielding: 2
+magical_wand:
+  name: Magical Wand
+  type: equipment
+  tier: common
+  description: A common wand, that usually new wizards use
+  attribute: intelligence
+  base: 4
+  weight: 0.2
+  side-effects: [ ]
+  category: weapon
+  usage: ranged
+  wielding: 2
