@@ -463,6 +463,18 @@ class IAction:
         pass
 
 
+class ISkillAction(IAction):
+
+    @abstractmethod
+    def get_affected_players_area_skill(self, target_player: IPlayer, remaining_players: List[IPlayer],
+                                        skill_affected_area):
+        pass
+
+    @abstractmethod
+    def act(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+
 class IPlayingMode(Enum):
     NEUTRAL = 0
     AGGRESSIVE = 1

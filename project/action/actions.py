@@ -21,7 +21,7 @@ from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_foes_attack, \
     print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana
-from project.interface import IGame, IPlayer, IAction, IEquipmentItem
+from project.interface import IGame, IPlayer, IAction, IEquipmentItem, ISkillAction
 from project.skill import get_player_available_skills
 
 
@@ -169,7 +169,7 @@ class Attack(Action):
         return
 
 
-class Skill(Action):
+class Skill(Action, ISkillAction):
     def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 

@@ -2,12 +2,13 @@ import collections
 import functools
 import math
 import random
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from project.item import EquipmentItem
-from project.message import print_map_info
+from project.message import print_map_info, print_dice_result, print_suffer_damage, print_missed, print_area_damage
 
-from project.interface import IBotDecisioning, IGame, IAction, IPlayer, IPlayingMode, ISkill, IEquipmentItem
+from project.interface import IBotDecisioning, IGame, IAction, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
+    ISkillAction
 
 
 class BotDecisioning(IBotDecisioning):
@@ -89,7 +90,7 @@ class BotDecisioning(IBotDecisioning):
         self.prioritized_foes = list(
             collections.OrderedDict(sorted(priorities_map.items(), key=lambda item: item[1])).keys())
 
-    def attack(self) -> None:
+    def attack(self, skill_action: Union[ISkillAction, IAction]) -> None:
         if self.possible_foe is None:
             self.current_play_style = IPlayingMode.DEFENSIVE
             return
@@ -117,11 +118,36 @@ class BotDecisioning(IBotDecisioning):
 
         sorted_attack_possibilities_tuple = sorted(attack_possibilities_dict.items(), key=lambda x: x[1], reverse=True)
         best_attack = next(iter(sorted_attack_possibilities_tuple))[0]
+        dice_result = self.game.roll_the_dice()
 
         if best_attack == 'attack':
-            pass
+            print_dice_result(self.current_bot.name, dice_result, 'attack', self.game.dice_sides)
+
+            targeted_defense = 'armour' if self.current_bot.job.damage_vector == 'strength' else 'magic_resist'
+
+            damage = math.ceil(
+                self.current_bot.get_attribute_real_value(self.current_bot.job.damage_vector,
+                                                          self.current_bot.job.attack_type) + (
+                        dice_result / self.game.dice_sides) * 5
+                - self.possible_foe.get_attribute_real_value(targeted_defense))
+            if damage > 0:
+                self.possible_foe.suffer_damage(damage)
+                print_suffer_damage(self.current_bot, self.possible_foe, damage)
+            else:
+                print_missed(self.current_bot, self.possible_foe)
+            return
         elif isinstance(best_attack, ISkill):
-            pass
+            foes = []
+            if best_attack.area > 0:
+                foes = skill_action.get_affected_players_area_skill(self.possible_foe, self.prioritized_foes,
+                                                                    best_attack.area)
+                if len(foes) > 0:
+                    print_area_damage(best_attack, foes)
+            else:
+                foes.append(self.possible_foe)
+            print_dice_result(self.current_bot.name, dice_result, 'attack', self.game.dice_sides)
+            dice_result_normalized = dice_result / self.game.dice_sides
+            best_attack.execute(self.current_bot, foes, dice_result_normalized)
         else:
             self.current_play_style = IPlayingMode.DEFENSIVE
 
@@ -231,6 +257,9 @@ class BotDecisioning(IBotDecisioning):
         self.current_bot = player
         self.sort_foes_by_priority()
         self.select_playing_mode()
+        skill_action = actions.get('skill')
+        if skill_action is None:
+            return
         # print_map_info(self.current_bot, self.prioritized_foes, self.game.game_map.graph.matrix,
         #                self.game.game_map.size)
 
@@ -238,13 +267,13 @@ class BotDecisioning(IBotDecisioning):
 
         if self.current_play_style == IPlayingMode.AGGRESSIVE and \
                 self.possible_foe is not None:
-            self.attack()
+            self.attack(skill_action)
             self.current_play_style = IPlayingMode.NEUTRAL
             self.move()
         elif self.current_play_style == IPlayingMode.AGGRESSIVE and \
                 self.possible_foe is None:
             self.move()
-            self.attack()
+            self.attack(skill_action)
         else:
             self.move()
 
