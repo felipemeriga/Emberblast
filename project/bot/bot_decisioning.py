@@ -3,9 +3,11 @@ import functools
 import math
 import random
 from typing import Dict, List, Optional
+
+from project.item import EquipmentItem
 from project.message import print_map_info
 
-from project.interface import IBotDecisioning, IGame, IAction, IPlayer, IPlayingMode, ISkill
+from project.interface import IBotDecisioning, IGame, IAction, IPlayer, IPlayingMode, ISkill, IEquipmentItem
 
 
 class BotDecisioning(IBotDecisioning):
@@ -171,6 +173,46 @@ class BotDecisioning(IBotDecisioning):
                 return True
         return False
 
+    def select_best_equipment(self, equipped: IEquipmentItem,
+                              new_equipment: IEquipmentItem) -> Optional[IEquipmentItem]:
+        best_choice = {
+            equipped: 0,
+            new_equipment: 0
+        }
+        if equipped.category != new_equipment.category:
+            return None
+
+        if equipped.category == 'weapon':
+            if new_equipment.attribute != self.current_bot.job.damage_vector:
+                best_choice[equipped] = best_choice.get(equipped, 0) + 1
+
+        if new_equipment.base > equipped.base:
+            best_choice[new_equipment] = best_choice.get(new_equipment, 0) + 1
+        else:
+            best_choice[equipped] = best_choice.get(equipped, 0) + 1
+
+        if len(new_equipment.side_effects) > len(equipped.side_effects):
+            best_choice[new_equipment] = best_choice.get(new_equipment, 0) + 1
+        else:
+            best_choice[equipped] = best_choice.get(equipped, 0) + 1
+
+        sorted_choice_tuple = sorted(best_choice.items(), key=lambda x: x[1], reverse=True)
+        return next(iter(sorted_choice_tuple))[0]
+
+    def equip_item(self) -> None:
+        equipments = self.current_bot.bag.get_equipments()
+
+        for equipment in equipments:
+            if self.current_bot.equipment.is_equipped(equipment):
+                continue
+            if self.current_bot.equipment.__getattribute__(equipment.category) is None:
+                self.current_bot.equipment.equip(equipment)
+            else:
+                best_equip = self.select_best_equipment(self.current_bot.equipment.__getattribute__(equipment.category),
+                                                        equipment)
+                if best_equip is not None:
+                    self.current_bot.equipment.equip(best_equip)
+
     def select_playing_mode(self) -> None:
         remaining_players = self.game.get_remaining_players(player=self.current_bot, include_hidden=True)
         low_life_level = self.current_bot.life * 0.3
@@ -185,7 +227,7 @@ class BotDecisioning(IBotDecisioning):
         else:
             self.current_play_style = IPlayingMode.DEFENSIVE
 
-    def decide(self, player: IPlayer, actions_left: Dict[str, IAction]) -> None:
+    def decide(self, player: IPlayer, actions: Dict[str, IAction]) -> None:
         self.current_bot = player
         self.sort_foes_by_priority()
         self.select_playing_mode()
@@ -205,3 +247,13 @@ class BotDecisioning(IBotDecisioning):
             self.attack()
         else:
             self.move()
+
+        if self.current_play_style == IPlayingMode.DEFENSIVE:
+            pass
+
+        search_action = actions.get('search', None)
+
+        if search_action is not None:
+            search_action.act(self.current_bot)
+
+        self.equip_item()
