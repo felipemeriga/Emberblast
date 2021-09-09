@@ -12,5 +12,6 @@ class TestModuleBot(BaseTestCase):
     def test_bot_turn_decision(self) -> None:
         self.mock_game.game_map.define_player_initial_position_random(self.mock_game.get_all_players())
         bot_decisioning = BotDecisioning(self.mock_game)
-        bot_decisioning.decide(self.mock_game.bots[0])
+        for bot in self.mock_game.bots:
+            bot_decisioning.decide(bot)
         pass

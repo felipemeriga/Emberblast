@@ -210,6 +210,9 @@ class BotDecisioning(IBotDecisioning):
                     skill.base_attribute
                 ) + skill.base
 
+        if len(attack_possibilities_dict) < 1:
+            self.current_play_style = IPlayingMode.DEFENSIVE
+            return
         sorted_attack_possibilities_tuple = sorted(attack_possibilities_dict.items(), key=lambda x: x[1], reverse=True)
         best_attack = next(iter(sorted_attack_possibilities_tuple))[0]
         dice_result = self.game.roll_the_dice()
