@@ -339,6 +339,10 @@ class IGraph(ABC):
         pass
 
     @abstractmethod
+    def is_target_in_range(self, position: str, radius: int, target_position: str) -> bool:
+        pass
+
+    @abstractmethod
     def get_number_of_walkable_nodes(self) -> int:
         pass
 

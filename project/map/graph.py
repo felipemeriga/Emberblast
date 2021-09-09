@@ -269,6 +269,12 @@ class Graph(IGraph):
             available_nodes_list.remove(position)
         return available_nodes_list
 
+    def is_target_in_range(self, position: str, radius: int, target_position: str) -> bool:
+        available_nodes = self.get_available_nodes_in_range(position, radius)
+        if target_position in available_nodes:
+            return True
+        return False
+
     def get_number_of_walkable_nodes(self) -> int:
         """
         Get the number of the walkable(valid) nodes of the map.

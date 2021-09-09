@@ -31,6 +31,28 @@ Heal:
   area: 0
   job: Priest
   base_attribute: intelligence
+Heal2:
+  name: Heal2
+  description: Launches a heavy charged blow with your bow
+  base: 2
+  cost: 2
+  kind: recover
+  level_requirement: 1
+  ranged: 1
+  area: 0
+  job: Archer
+  base_attribute: intelligence
+Heal3:
+  name: Heal2
+  description: Launches a heavy charged blow with your bow
+  base: 2
+  cost: 2
+  kind: recover
+  level_requirement: 1
+  ranged: 1
+  area: 0
+  job: Wizard
+  base_attribute: intelligence
 Steal:
   name: Steal
   description: Steal an item from a foe
