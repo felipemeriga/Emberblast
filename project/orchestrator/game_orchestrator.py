@@ -8,6 +8,7 @@ from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Chec
 from project.questions import ask_actions_questions
 from project.utils import PASS_ACTION_NAME
 from project.interface import IGame, IControlledPlayer, IPlayer, IAction, IGameOrchestrator
+from project.bot import BotDecisioning
 
 
 class GameOrchestrator(IGameOrchestrator):
@@ -24,6 +25,7 @@ class GameOrchestrator(IGameOrchestrator):
         self.game = game
         self.actions = {}
         self.init_actions()
+        self.bot_controller = BotDecisioning(game)
         """
         The actions left, it's an array of the available actions of a player on a turn,
         for each player and each turn, this array is modified.
@@ -99,6 +101,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
             # player turn, and continue from there, if it's a new game, it will only game the first turn, which is the
             # first and the only element of the turns dictionary.
             turn_list = [list(self.game.turns.copy().keys())[-1]]
+            self.game.players[1]._alive = False
             for turn in turn_list:
                 self.clear()
                 print(Fore.GREEN + emojis.encode(
@@ -139,17 +142,15 @@ class DeathMatchOrchestrator(GameOrchestrator):
         :rtype: None.
         """
         # TODO - Merge this in a single code.
-        # The strategy here it's to first decide the
-        # self.actions_left = list(self.actions.keys())
-        # player.compute_iterated_side_effects()
-        # while len(self.actions_left) > 2:
-        #     # ADD Bot Decision
-        #
-        #     self.clear()
-        #     if action.act(player) is None:
-        #         self.compute_player_decisions(action, chosen_action_string)
-        # else:
-        #     player.compute_side_effect_duration()
+        player.compute_iterated_side_effects()
+        try:
+            self.bot_controller.decide(player)
+
+        except Exception as err:
+            print(err)
+            print(Fore.RED + 'System shutdown with unexpected error')
+
+        player.compute_side_effect_duration()
 
     def hide_invalid_actions(self, player: IPlayer) -> List[str]:
         """

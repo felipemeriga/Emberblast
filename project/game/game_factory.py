@@ -9,7 +9,7 @@ from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races
 from project.questions import perform_game_create_questions, perform_first_question
 from project.questions import get_saved_game
 from project.save import get_normalized_saved_files_dict, recover_saved_game_orchestrator
-from project.item import Bag, EquipmentItem, RecoveryItem
+from project.item import Bag
 from project.utils import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator import generate_name
 from project.item import Equipment
@@ -51,15 +51,18 @@ class GameFactory(IGameFactory):
 
         :rtype: IGameOrchestrator.
         """
+        players = []
         self.begin_question_results = perform_game_create_questions()
         main_player = self.init_players()
+        players.append(main_player)
 
         bots = self.init_bots()
+        players.extend(bots)
 
         game_map = self.init_map(len(bots) + 3)
 
         if self.begin_question_results.get('game') == 'Deathmatch':
-            game = DeathMatch(main_player, bots, game_map)
+            game = DeathMatch(players, game_map)
             game.calculate_turn_order()
             game.game_map.define_player_initial_position_random(game.get_all_players())
             game.game_map.distribute_random_items()

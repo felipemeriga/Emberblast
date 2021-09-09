@@ -19,10 +19,11 @@ def save_game_state_on_exit(orchestrator_object: IGameOrchestrator) -> None:
     """
     now = datetime.now()
     current_time = now.strftime("%m-%d-%Y-%H:%M:%S")
+    main_player = orchestrator_object.game.players[0]
     save_file_name = '{date}-saved-game-{name}-{job}.pckl'.format(
         date=current_time,
-        name=orchestrator_object.game.main_player.name,
-        job=orchestrator_object.game.main_player.job.get_name(),
+        name=main_player.name,
+        job=main_player.job.get_name(),
     )
 
     save_file_path = '{working_directory}/saved_games/{file}'.format(working_directory=str(get_project_root()),

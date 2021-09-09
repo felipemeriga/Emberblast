@@ -418,8 +418,7 @@ class IStatistics(ABC):
 
 
 class IGame(ABC):
-    main_player: IPlayer
-    bots: List[IPlayer]
+    players: List[IPlayer]
     game_map: IMap
     turns: Dict[int, List[IPlayer]]
     dice_sides: int

@@ -2,13 +2,12 @@ import collections
 import functools
 import math
 import random
-from typing import Dict, List, Optional, Union
+from typing import List, Optional
 
-from project.item import HealingItem
 from project.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage, print_found_item
 
-from project.interface import IBotDecisioning, IGame, IAction, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
-    ISkillAction, IHealingItem
+from project.interface import IBotDecisioning, IGame, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
+    IHealingItem
 
 
 class BotDecisioning(IBotDecisioning):
@@ -19,6 +18,11 @@ class BotDecisioning(IBotDecisioning):
         self.current_play_style = IPlayingMode.NEUTRAL
         self.prioritized_foes = []
         self.possible_foe: Optional[IPlayer] = None
+
+    def reset_attributes(self) -> None:
+        self.prioritized_foes = []
+        self.possible_foe = None
+        self.current_play_style = IPlayingMode.NEUTRAL
 
     def get_skills_average_range(self) -> int:
         self.current_bot.refresh_skills_list()
@@ -39,6 +43,8 @@ class BotDecisioning(IBotDecisioning):
         possible_foe = None
         attack_range_possibilities = [self.current_bot.position]
 
+
+        # REMOVE HIDDEN
         attack_range = self.current_bot.get_ranged_attack_area()
         if self.current_bot.job.attack_type == 'ranged':
             attack_range_possibilities.extend(self.game.game_map.graph.get_available_nodes_in_range(
@@ -87,7 +93,7 @@ class BotDecisioning(IBotDecisioning):
         return possible_foe
 
     def sort_foes_by_priority(self) -> None:
-        remaining_players = self.game.get_remaining_players(self.current_bot)
+        remaining_players = self.game.get_remaining_players(self.current_bot, include_hidden=False)
         priorities_map = {}
         for player in remaining_players:
             distance = self.game.game_map.graph.get_shortest_distance_between_positions(self.current_bot.position,
@@ -341,6 +347,7 @@ class BotDecisioning(IBotDecisioning):
             self.current_play_style = IPlayingMode.DEFENSIVE
 
     def decide(self, player: IPlayer) -> None:
+        self.reset_attributes()
         self.current_bot = player
         self.sort_foes_by_priority()
         self.select_playing_mode()

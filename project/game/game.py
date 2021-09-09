@@ -11,18 +11,16 @@ from project.interface import IPlayer, IMap, IGame
 
 class Game(IGame):
 
-    def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: IMap) -> None:
+    def __init__(self, players: List[IPlayer], game_map: IMap) -> None:
         """
         Base constructor of this class, for creating the game, remember that the constructor arguments of this class
         are instantiated by the Game Factory.
 
-        :param IPlayer main_player: The main controlled player.
-        :param List[IPlayer] bots: The list of bots that will play.
+        :param List[IPlayer] players: The list of players that will play.
         :param IMap game_map: Generated map of the game.
         :rtype: None
         """
-        self.main_player = main_player
-        self.bots = bots
+        self.players = players
         self.game_map = game_map
         self.turns = {}
         self.dice_sides = get_configuration(GAME_SECTION).get('dice_sides', 6)
@@ -47,7 +45,7 @@ class Game(IGame):
 
         :rtype: None
         """
-        players = []
+        players = [x for x in filter(lambda player: player.is_alive(), self.players)]
         turn = 0
         if not self.turns:
             turn = 1
@@ -55,8 +53,6 @@ class Game(IGame):
         else:
             turn = list(self.turns)[-1] + 1
             self.turns[turn] = []
-        players.extend(self.bots)
-        players.append(self.main_player)
         players.sort(key=self.calculate_turn_key,
                      reverse=True)
         self.turns[turn] = players
@@ -113,9 +109,7 @@ class Game(IGame):
 
         :rtype: List[IPlayer].
         """
-        players = [self.main_player]
-        players.extend(self.bots)
-        return players
+        return self.players
 
     def get_remaining_players(self, player: IPlayer, include_hidden: bool = False) -> List[IPlayer]:
         """
@@ -137,13 +131,13 @@ class Game(IGame):
 
 class DeathMatch(Game):
 
-    def __init__(self, main_player: IPlayer, bots: List[IPlayer], game_map: IMap):
+    def __init__(self, players: List[IPlayer], game_map: IMap) -> None:
         """
         There must be many kinds of game, DeathMatch it's basically all vs all,
         and this class represents the implementation of Game.
 
-        :param IPlayer main_player: The main player of the game.
-        :param List[IPlayer] bots: The bots whom you are playing against.
+        :param List[IPlayer] players: The list of players that will play.
+        :param IMap game_map: Generated map of the game.
         :rtype: None.
         """
-        super(DeathMatch, self).__init__(main_player, bots, game_map)
+        super(DeathMatch, self).__init__(players, game_map)
