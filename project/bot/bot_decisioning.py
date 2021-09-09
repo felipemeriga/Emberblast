@@ -5,7 +5,7 @@ import random
 from typing import Dict, List, Optional, Union
 
 from project.item import HealingItem
-from project.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage
+from project.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage, print_found_item
 
 from project.interface import IBotDecisioning, IGame, IAction, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
     ISkillAction, IHealingItem
@@ -56,6 +56,17 @@ class BotDecisioning(IBotDecisioning):
                 break
         return possible_foe
 
+    def search_on_map(self):
+        found_items = self.game.game_map.check_item_in_position(self.current_bot.position)
+        if found_items is not None:
+            for item in found_items:
+                self.current_bot.bag.add_item(item)
+                print_found_item(player_name=self.current_bot.name, found=True, item_tier=item.tier,
+                                 item_name=item.name)
+        else:
+            print_found_item(player_name=self.current_bot.name)
+        return
+
     def find_foes(self, movement_possibilities: List[str]) -> Optional[IPlayer]:
         possible_foe = None
         attack_range = self.current_bot.get_ranged_attack_area()
@@ -90,7 +101,20 @@ class BotDecisioning(IBotDecisioning):
         self.prioritized_foes = list(
             collections.OrderedDict(sorted(priorities_map.items(), key=lambda item: item[1])).keys())
 
-    def prepare_execute_skill(self, skill: ISkill, skill_action: Union[ISkillAction, IAction]) -> None:
+    def get_affected_players_area_skill(self, target_player: IPlayer, remaining_players: List[IPlayer],
+                                        skill_affected_area):
+        area_foes = [target_player]
+        remaining_players.remove(target_player)
+        position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(target_player.position,
+                                                                                       skill_affected_area)
+
+        for player in remaining_players:
+            if player.position in position_possibilities:
+                area_foes.append(player)
+
+        return area_foes
+
+    def prepare_execute_skill(self, skill: ISkill) -> None:
         dice_result = self.game.roll_the_dice()
         foes = []
         prefix = 'attack'
@@ -99,8 +123,8 @@ class BotDecisioning(IBotDecisioning):
             foes = [self.current_bot]
             prefix = 'recover'
         if skill.area > 0:
-            foes = skill_action.get_affected_players_area_skill(self.possible_foe, self.prioritized_foes,
-                                                                skill.area)
+            foes = self.get_affected_players_area_skill(self.possible_foe, self.prioritized_foes,
+                                                        skill.area)
             if len(foes) > 0:
                 print_area_damage(skill, foes)
         elif skill.area == 0 and skill.kind == 'inflict':
@@ -110,19 +134,30 @@ class BotDecisioning(IBotDecisioning):
         dice_result_normalized = dice_result / self.game.dice_sides
         skill.execute(self.current_bot, foes, dice_result_normalized)
 
-    def decide_best_defensive_action(self, skill_action: Union[ISkillAction, IAction]) -> None:
+    def decide_best_defensive_action(self) -> None:
         recovery_choices = {}
         items = self.current_bot.bag.get_usable_items()
         healing_skills = [x for x in filter(lambda skill: skill.kind == 'recover', self.current_bot.skills)]
         low_mana_level = self.current_bot.magic_points * 0.3
         low_life_level = self.current_bot.health_points * 0.3
+        recover_attribute = ''
+        remaining_quantity = 0
 
         if self.current_bot.mana <= low_mana_level and self.current_bot.job.damage_vector == 'intelligence':
             recover_attribute = 'magic_points'
             remaining_quantity = self.current_bot.magic_points - self.current_bot.mana
-        else:
+        elif self.current_bot.life <= low_life_level:
             recover_attribute = 'health_points'
             remaining_quantity = self.current_bot.health_points - self.current_bot.life
+        elif self.current_bot.accuracy > self.current_bot.armour:
+            current_accuracy = self.current_bot.get_attribute_real_value('accuracy')
+            additional = (current_accuracy / 5 * 10) / 100
+            result = self.game.chose_probability(additional=[additional])
+            self.current_bot.set_hidden(result)
+            return
+        else:
+            self.current_bot.set_defense_mode(True)
+            return
 
         for item in items:
             if isinstance(item, IHealingItem):
@@ -135,6 +170,8 @@ class BotDecisioning(IBotDecisioning):
                 closer_value = abs(remaining_quantity - skill.base)
                 recovery_choices[skill] = closer_value
 
+        if len(recovery_choices) < 1:
+            return
         sorted_recovery_possibilities = sorted(recovery_choices.items(), key=lambda x: x[1], reverse=False)
         best_option = next(iter(sorted_recovery_possibilities))[0]
 
@@ -142,9 +179,9 @@ class BotDecisioning(IBotDecisioning):
             self.current_bot.use_item(best_option)
             self.current_bot.bag.remove_item(best_option)
         elif isinstance(best_option, ISkill):
-            self.prepare_execute_skill(best_option, skill_action)
+            self.prepare_execute_skill(best_option)
 
-    def attack(self, skill_action: Union[ISkillAction, IAction]) -> None:
+    def attack(self) -> None:
         if self.possible_foe is None:
             self.current_play_style = IPlayingMode.DEFENSIVE
             return
@@ -194,7 +231,7 @@ class BotDecisioning(IBotDecisioning):
                 print_missed(self.current_bot, self.possible_foe)
             return
         elif isinstance(best_attack, ISkill):
-            self.prepare_execute_skill(best_attack, skill_action)
+            self.prepare_execute_skill(best_attack)
         else:
             self.current_play_style = IPlayingMode.DEFENSIVE
 
@@ -300,35 +337,28 @@ class BotDecisioning(IBotDecisioning):
         else:
             self.current_play_style = IPlayingMode.DEFENSIVE
 
-    def decide(self, player: IPlayer, actions: Dict[str, IAction]) -> None:
+    def decide(self, player: IPlayer) -> None:
         self.current_bot = player
         self.sort_foes_by_priority()
         self.select_playing_mode()
-
-        skill_action = actions.get('skill')
-        if skill_action is None:
-            return
 
         self.possible_foe = self.find_foes_within_damage_range()
 
         if self.current_play_style == IPlayingMode.AGGRESSIVE and \
                 self.possible_foe is not None:
-            self.attack(skill_action)
+            self.attack()
             self.current_play_style = IPlayingMode.NEUTRAL
             self.move()
         elif self.current_play_style == IPlayingMode.AGGRESSIVE and \
                 self.possible_foe is None:
             self.move()
-            self.attack(skill_action)
+            self.attack()
         else:
             self.move()
 
         if self.current_play_style == IPlayingMode.DEFENSIVE:
-            self.decide_best_defensive_action(skill_action)
+            self.decide_best_defensive_action()
 
-        search_action = actions.get('search', None)
-
-        if search_action is not None:
-            search_action.act(self.current_bot)
+        self.search_on_map()
 
         self.equip_item()
