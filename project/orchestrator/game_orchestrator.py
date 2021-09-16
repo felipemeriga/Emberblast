@@ -101,7 +101,6 @@ class DeathMatchOrchestrator(GameOrchestrator):
             # player turn, and continue from there, if it's a new game, it will only game the first turn, which is the
             # first and the only element of the turns dictionary.
             turn_list = [list(self.game.turns.copy().keys())[-1]]
-            self.game.players[1]._alive = False
             for turn in turn_list:
                 self.clear()
                 print(Fore.GREEN + emojis.encode(
@@ -189,7 +188,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         while len(self.actions_left) > 2:
             chosen_action_string = ask_actions_questions(self.hide_invalid_actions(player))
             action = self.actions[chosen_action_string]
-            self.clear()
+            # self.clear()
             if action.act(player) is None:
                 self.compute_player_decisions(action, chosen_action_string)
         else:

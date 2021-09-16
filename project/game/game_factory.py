@@ -6,13 +6,15 @@ from project.game import DeathMatch
 from project.map import MapFactory
 from project.orchestrator import DeathMatchOrchestrator
 from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, BotPlayer
-from project.questions import perform_game_create_questions, perform_first_question
+from project.questions import perform_game_create_questions, perform_first_question, \
+    perform_character_creation_questions
 from project.questions import get_saved_game
 from project.save import get_normalized_saved_files_dict, recover_saved_game_orchestrator
 from project.item import Bag
 from project.utils import JOBS_SECTION, RACES_SECTION
 from project.utils.name_generator import generate_name
 from project.item import Equipment
+from project.message import print_create_new_character
 from project.interface import IMap, IControlledPlayer, IBotPlayer, IGameOrchestrator, IGameFactory
 
 
@@ -53,8 +55,8 @@ class GameFactory(IGameFactory):
         """
         players = []
         self.begin_question_results = perform_game_create_questions()
-        main_player = self.init_players()
-        players.append(main_player)
+        controlled_players = self.init_players()
+        players.extend(controlled_players)
 
         bots = self.init_bots()
         players.extend(bots)
@@ -78,21 +80,29 @@ class GameFactory(IGameFactory):
         """
         return MapFactory().create_map(map_size)
 
-    def init_players(self) -> IControlledPlayer:
+    def init_players(self) -> List[IControlledPlayer]:
         """
         Method used for generating the controlled players.
 
         :rtype: IControlledPlayer.
         """
-        bag = Bag()
-        equipment = Equipment()
+        controlled_players = []
 
-        controlled_player = ControlledPlayer(self.begin_question_results.get('nickname'),
-                                             dynamic_jobs_classes[self.begin_question_results.get('job')](),
-                                             dynamic_races_classes[self.begin_question_results.get('race')](),
-                                             bag,
-                                             equipment)
-        return controlled_player
+        for i in range(int(self.begin_question_results.get('controlled_players_number', 1))):
+            bag = Bag()
+            equipment = Equipment()
+            print_create_new_character(i)
+            existing_names = [x for x in map(lambda player: player.name, controlled_players)]
+
+            new_character_responses = perform_character_creation_questions(existing_names)
+            controlled_player = ControlledPlayer(new_character_responses.get('nickname'),
+                                                 dynamic_jobs_classes[new_character_responses.get('job')](),
+                                                 dynamic_races_classes[new_character_responses.get('race')](),
+                                                 bag,
+                                                 equipment)
+            controlled_players.append(controlled_player)
+
+        return controlled_players
 
     def init_bots(self) -> List[IBotPlayer]:
         """

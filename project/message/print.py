@@ -369,6 +369,20 @@ def print_use_item(player_name: str, item_name: str, target_name: str) -> None:
                                                             target=target_name))
 
 
+def print_create_new_character(number: int) -> None:
+    """
+    Print the status, that someone is currently creating one character.
+
+    :param int number: Number of the player.
+    :rtype: None
+    """
+    color = 'green'
+    attrs = ['bold', 'blink']
+
+    print(colored('Creating controlled character number: {number}... \n'.format(number=number), color, attrs=attrs),
+          end="")
+
+
 def print_check_item(item: IItem) -> None:
     """
     Print Item information that was selected by the player

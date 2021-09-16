@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 
 import emojis
 from InquirerPy import prompt
@@ -7,6 +7,48 @@ from prompt_toolkit.validation import Validator, ValidationError
 
 from project.conf import get_configuration
 from project.utils import GAME_SECTION, RACES_SECTION, JOBS_SECTION
+
+
+class DuplicatedNamesValidator(Validator):
+
+    def __init__(self, existing_names: List[str]) -> None:
+        self.existing_names = existing_names
+        super().__init__()
+
+    def validate(self, document: Document):
+        if not 0 < len(document.text) < 20:
+            raise ValidationError(
+                message="minimum of 1 letters, max of 20 letters",
+                cursor_position=document.cursor_position,
+            )
+        for name in self.existing_names:
+            if document.text == name:
+                raise ValidationError(
+                    message="There is already a player with name: {name}".format(name=name),
+                    cursor_position=document.cursor_position,
+                )
+
+
+class MaxPlayersValidator(Validator):
+    def validate(self, document: Document):
+        """
+        This function is used for validating  the number of bots inserted, when creating a new game.
+
+        :param Document document: The document to be validated.
+        :rtype: None.
+        """
+        if not document.text.isnumeric():
+            raise ValidationError(
+                message="Input should be a number",
+                cursor_position=document.cursor_position,
+            )
+        else:
+            if int(document.text) > 3 or int(document.text) <= 0:
+                raise ValidationError(
+                    message="The number of controlled players needs to be minimum 1 and maximum {maximum}".format(
+                        maximum=3),
+                    cursor_position=document.cursor_position,
+                )
 
 
 class MaxBotsInputValidator(Validator):
@@ -47,31 +89,20 @@ BEGIN_GAME_QUESTIONS = [
     },
     {
         "type": "input",
+        "message": emojis.encode(':computer: How many controlled players are playing '),
+        "validate": MaxPlayersValidator(),
+        "invalid_message": "Input should be number.",
+        "default": "1",
+        "name": "controlled_players_number"
+    },
+    {
+        "type": "input",
         "message": emojis.encode(':computer: How many bots are you playing against '),
         "validate": MaxBotsInputValidator(),
         "invalid_message": "Input should be number.",
         "default": "4",
         "name": "bots_number"
-    },
-    {
-        "type": "input",
-        "message": emojis.encode(':man: Please enter your character name '),
-        "validate": lambda input_value: 0 < len(input_value) < 20,
-        "invalid_message": "minimum of 1 letters, max of 20 letters",
-        "name": "nickname"
-    },
-    {
-        "type": "list",
-        "message": emojis.encode(':skull: Please enter your character race? '),
-        "choices": get_configuration(RACES_SECTION).keys(),
-        "name": "race"
-    },
-    {
-        "type": "list",
-        "message": emojis.encode(':name_badge: Please enter your character job? '),
-        "choices": get_configuration(JOBS_SECTION).keys(),
-        "name": "job"
-    },
+    }
 ]
 
 
@@ -112,3 +143,34 @@ def perform_game_create_questions() -> Union[str, bool, list, dict]:
     :rtype: Union[str, bool, list, dict].
     """
     return prompt(BEGIN_GAME_QUESTIONS)
+
+
+def perform_character_creation_questions(existing_names: List[str]) -> Union[str, bool, list, dict]:
+    """
+    This function is used when creating a new character.
+
+    :rtype: Union[str, bool, list, dict].
+    """
+    questions = [
+        {
+            "type": "input",
+            "message": emojis.encode(':man: Please enter your character name '),
+            "validate": DuplicatedNamesValidator(existing_names),
+            "invalid_message": "minimum of 1 letters, max of 20 letters",
+            "name": "nickname"
+        },
+        {
+            "type": "list",
+            "message": emojis.encode(':skull: Please enter your character race? '),
+            "choices": get_configuration(RACES_SECTION).keys(),
+            "name": "race"
+        },
+        {
+            "type": "list",
+            "message": emojis.encode(':name_badge: Please enter your character job? '),
+            "choices": get_configuration(JOBS_SECTION).keys(),
+            "name": "job"
+        },
+    ]
+
+    return prompt(questions)
