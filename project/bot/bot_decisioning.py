@@ -200,6 +200,7 @@ class BotDecisioning(IBotDecisioning):
             self.current_bot.position,
             attack_range)
 
+        # TODO: Fix the values with the damage with melee, ranged or magic
         if (self.current_bot.job.attack_type == 'melee' and self.possible_foe.position == self.current_bot.position) \
                 or (
                 self.current_bot.job.attack_type == 'ranged'
@@ -228,11 +229,23 @@ class BotDecisioning(IBotDecisioning):
 
             targeted_defense = 'armour' if self.current_bot.job.damage_vector == 'strength' else 'magic_resist'
 
-            damage = math.ceil(
-                self.current_bot.get_attribute_real_value(self.current_bot.job.damage_vector,
-                                                          self.current_bot.job.attack_type) + (
-                        dice_result / self.game.dice_sides) * 5
-                - self.possible_foe.get_attribute_real_value(targeted_defense))
+            damage = 0
+            if self.current_bot.job.damage_vector == 'intelligence':
+                damage = (self.current_bot.get_attribute_real_value(self.current_bot.job.damage_vector,
+                                                                    self.current_bot.job.attack_type) / 2) + (
+                                 dice_result / self.game.dice_sides) * 5
+            elif self.current_bot.job.damage_vector == 'strength' and self.current_bot.job.attack_type == 'ranged':
+                damage = self.current_bot.get_attribute_real_value(self.current_bot.job.damage_vector,
+                                                                   self.current_bot.job.attack_type) \
+                         + self.current_bot.get_attribute_real_value(
+                    'accuracy') + (
+                                 dice_result / self.game.dice_sides) * 5
+            else:
+                damage = self.current_bot.get_attribute_real_value(self.current_bot.job.damage_vector,
+                                                                   self.current_bot.job.attack_type) + (
+                                 dice_result / self.game.dice_sides) * 5
+
+            damage = math.ceil(damage - self.possible_foe.get_attribute_real_value(targeted_defense))
             if damage > 0:
                 self.possible_foe.suffer_damage(damage)
                 print_suffer_damage(self.current_bot, self.possible_foe, damage)

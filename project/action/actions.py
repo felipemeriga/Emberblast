@@ -143,6 +143,23 @@ class Attack(Action):
     def __init__(self, independent: bool, repeatable: bool, game: IGame) -> None:
         super().__init__(independent, repeatable, game)
 
+    def calculate_damage(self, player: IPlayer, foe: IPlayer, dice_result: int) -> int:
+        targeted_defense = 'armour' if player.job.damage_vector == 'strength' else 'magic_resist'
+        damage = 0
+        if player.job.damage_vector == 'intelligence':
+            damage = (player.get_attribute_real_value(player.job.damage_vector, player.job.attack_type) / 2) + (
+                    dice_result / self.game.dice_sides) * 5
+        elif player.job.damage_vector == 'strength' and player.job.attack_type == 'ranged':
+            damage = player.get_attribute_real_value(player.job.damage_vector,
+                                                     player.job.attack_type) + player.get_attribute_real_value(
+                'accuracy') / 2 + (
+                             dice_result / self.game.dice_sides) * 5
+        else:
+            damage = player.get_attribute_real_value(player.job.damage_vector, player.job.attack_type) + (
+                    dice_result / self.game.dice_sides) * 5
+
+        return math.ceil(damage - foe.get_attribute_real_value(targeted_defense))
+
     def act(self, player: IPlayer) -> Optional[bool]:
         players = self.game.get_remaining_players(player)
         attack_range = player.get_ranged_attack_area()
@@ -156,11 +173,8 @@ class Attack(Action):
         dice_result = self.game.roll_the_dice()
         print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
 
-        targeted_defense = 'armour' if player.job.damage_vector == 'strength' else 'magic_resist'
+        damage = self.calculate_damage(player, enemy_to_attack, dice_result)
 
-        damage = math.ceil(player.get_attribute_real_value(player.job.damage_vector, player.job.attack_type) + (
-                dice_result / self.game.dice_sides) * 5
-                           - enemy_to_attack.get_attribute_real_value(targeted_defense))
         if damage > 0:
             enemy_to_attack.suffer_damage(damage)
             print_suffer_damage(player, enemy_to_attack, damage)
