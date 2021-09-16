@@ -106,6 +106,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 self.clear()
                 print(Fore.GREEN + emojis.encode(
                     ':fire: Starting Turn {turn}! Embrace Yourselves! :fire: \n\n'.format(turn=turn)))
+                print(Fore.RESET)
 
                 if not len(self.turn_remaining_players) > 0:
                     # Making a copy of the dict, because dicts are mutable, and without a copy, would alter

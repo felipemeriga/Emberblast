@@ -20,7 +20,7 @@ from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to
     confirm_item_selection, display_equipment_choices, confirm_use_item_on_you, ask_enemy_to_attack, select_skill
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_foes_attack, \
-    print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana
+    print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana, print_use_item
 from project.interface import IGame, IPlayer, IAction, IEquipmentItem, ISkillAction
 from project.skill import get_player_available_skills
 
@@ -226,6 +226,7 @@ class Item(Action):
         super().__init__(independent, repeatable, game)
 
     def act(self, player: IPlayer) -> Optional[bool]:
+        using_player = player.name
         usable_items = player.bag.get_usable_items()
         selected_item = select_item(usable_items)
         if selected_item is None:
@@ -235,7 +236,9 @@ class Item(Action):
             if not confirm_use_item_on_you():
                 player = ask_enemy_to_attack(another_players_in_position)
         if confirm_item_selection():
+            target_player = player.name
             player.use_item(selected_item)
+            print_use_item(using_player, selected_item.name, target_player)
             player.bag.remove_item(selected_item)
         else:
             return True

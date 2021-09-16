@@ -353,6 +353,22 @@ def print_dice_result(name: str, result: int, kind: str, max_sides: int) -> None
         print('It is a critical {kind}! You will execute a massive amount of damage!'.format(kind=kind))
 
 
+def print_use_item(player_name: str, item_name: str, target_name: str) -> None:
+    """
+    Notify another players, that someone used an item.
+
+    :param str player_name: The player name that is currently using an item.
+    :param str item_name: The item name that is being used.
+    :param str target_name: The name of who is the item used on.
+    :rtype: None
+    """
+    if target_name == player_name:
+        target_name = 'himself'
+    print('{name} used an item: {item}, on {target}'.format(name=player_name,
+                                                            item=item_name,
+                                                            target=target_name))
+
+
 def print_check_item(item: IItem) -> None:
     """
     Print Item information that was selected by the player

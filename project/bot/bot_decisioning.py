@@ -4,7 +4,8 @@ import math
 import random
 from typing import List, Optional
 
-from project.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage, print_found_item
+from project.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage, print_found_item, \
+    print_use_item
 
 from project.interface import IBotDecisioning, IGame, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
     IHealingItem
@@ -42,7 +43,6 @@ class BotDecisioning(IBotDecisioning):
     def find_foes_within_damage_range(self) -> Optional[IPlayer]:
         possible_foe = None
         attack_range_possibilities = [self.current_bot.position]
-
 
         # REMOVE HIDDEN
         attack_range = self.current_bot.get_ranged_attack_area()
@@ -183,6 +183,7 @@ class BotDecisioning(IBotDecisioning):
 
         if isinstance(best_option, IHealingItem):
             self.current_bot.use_item(best_option)
+            print_use_item(self.current_bot.name, best_option.name, self.current_bot.name)
             self.current_bot.bag.remove_item(best_option)
         elif isinstance(best_option, ISkill):
             self.prepare_execute_skill(best_option)
