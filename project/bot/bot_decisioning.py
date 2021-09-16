@@ -17,7 +17,7 @@ class BotDecisioning(IBotDecisioning):
         self.game = game
         self.current_bot: Optional[IPlayer] = None
         self.current_play_style = IPlayingMode.NEUTRAL
-        self.prioritized_foes = []
+        self.prioritized_foes: List[IPlayer] = []
         self.possible_foe: Optional[IPlayer] = None
 
     def reset_attributes(self) -> None:
@@ -44,7 +44,6 @@ class BotDecisioning(IBotDecisioning):
         possible_foe = None
         attack_range_possibilities = [self.current_bot.position]
 
-        # REMOVE HIDDEN
         attack_range = self.current_bot.get_ranged_attack_area()
         if self.current_bot.job.attack_type == 'ranged':
             attack_range_possibilities.extend(self.game.game_map.graph.get_available_nodes_in_range(
@@ -56,8 +55,8 @@ class BotDecisioning(IBotDecisioning):
             skill_range)
 
         for foe in self.prioritized_foes:
-            if foe.position in attack_range_possibilities or \
-                    foe.position in skill_range_possibilities:
+            if foe.position in attack_range_possibilities and foe.is_hidden() is False or \
+                    foe.position in skill_range_possibilities and foe.is_hidden() is False:
                 possible_foe = foe
                 break
         return possible_foe
