@@ -9,6 +9,7 @@ from project.questions import ask_actions_questions
 from project.utils import PASS_ACTION_NAME
 from project.interface import IGame, IControlledPlayer, IPlayer, IAction, IGameOrchestrator
 from project.bot import BotDecisioning
+from project.message import print_player_won
 
 
 class GameOrchestrator(IGameOrchestrator):
@@ -128,6 +129,12 @@ class DeathMatchOrchestrator(GameOrchestrator):
                     else:
                         self.bot_decisioning(player)
                     self.turn_remaining_players.remove(player)
+
+                alive_players = self.game.get_all_alive_players()
+                if len(alive_players) < 2:
+                    self.clear()
+                    print_player_won(alive_players[0].name)
+                    break
 
                 self.game.calculate_turn_order()
                 turn_list.append(turn + 1)

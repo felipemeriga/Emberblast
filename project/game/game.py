@@ -111,6 +111,14 @@ class Game(IGame):
         """
         return self.players
 
+    def get_all_alive_players(self) -> List[IPlayer]:
+        """
+        Returns the list of all alive players of the game.
+
+        :rtype: List[IPlayer].
+        """
+        return [x for x in self.players if x.is_alive()]
+
     def get_remaining_players(self, player: IPlayer, include_hidden: bool = False) -> List[IPlayer]:
         """
         Returns the list of all players alive, apart from the current player.

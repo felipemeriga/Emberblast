@@ -369,6 +369,20 @@ def print_use_item(player_name: str, item_name: str, target_name: str) -> None:
                                                             target=target_name))
 
 
+def print_player_won(name: str) -> None:
+    """
+    Print the player that won the game.
+
+    :param str name: Name of the player.
+    :rtype: None
+    """
+    color = 'green'
+    attrs = ['bold', 'blink']
+
+    print(colored('Player {player} won the game! \n'.format(player=name), color, attrs=attrs),
+          end="")
+
+
 def print_create_new_character(number: int) -> None:
     """
     Print the status, that someone is currently creating one character.

@@ -448,6 +448,10 @@ class IGame(ABC):
         pass
 
     @abstractmethod
+    def get_all_alive_players(self) -> List[IPlayer]:
+        pass
+
+    @abstractmethod
     def get_remaining_players(self, player: IPlayer, include_hidden: bool = False) -> List[IPlayer]:
         pass
 
