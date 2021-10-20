@@ -76,10 +76,11 @@ class Action(IAction, metaclass=SingletonAction):
                 if player.position == foe.position:
                     possible_foes.append(foe)
         elif attack_range > 0:
-            position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position,
-                                                                                           attack_range)
+            ranged_attack_possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position,
+                                                                                                attack_range)
+            ranged_attack_possibilities.append(player.position)
             for foe in players:
-                if foe.position in position_possibilities:
+                if foe.position in ranged_attack_possibilities:
                     possible_foes.append(foe)
 
         return possible_foes
@@ -193,6 +194,7 @@ class Skill(Action, ISkillAction):
         remaining_players.remove(target_player)
         position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(target_player.position,
                                                                                        skill_affected_area)
+        position_possibilities.append(target_player.position)
 
         for player in remaining_players:
             if player.position in position_possibilities:

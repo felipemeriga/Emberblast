@@ -1,12 +1,45 @@
 Fireball:
   name: Fireball
   description: launches a fireball in the nearby enemy
+  base: 6
+  cost: 2
+  kind: inflict
+  level_requirement: 1
+  ranged: 1
+  area: 0
+  job: Wizard
+  base_attribute: intelligence
+Frost:
+  name: Frost
+  description: Ice magic, that can paralyze an enemy
   base: 4
   cost: 2
   kind: inflict
   level_requirement: 1
   ranged: 1
   area: 0
+  job: Wizard
+  base_attribute: intelligence
+Thunder:
+  name: Thunder
+  description: Cast a thunderbolt in the enemy
+  base: 4
+  cost: 2
+  kind: inflict
+  level_requirement: 1
+  ranged: 2
+  area: 0
+  job: Wizard
+  base_attribute: intelligence
+Firestorm:
+  name: Firestorm
+  description: A big firestorm that falls from the air, damaging many foes
+  base: 3
+  cost: 5
+  kind: inflict
+  level_requirement: 1
+  ranged: 2
+  area: 2
   job: Wizard
   base_attribute: intelligence
 Pierce:
@@ -30,28 +63,6 @@ Heal:
   ranged: 1
   area: 0
   job: Priest
-  base_attribute: intelligence
-Heal2:
-  name: Heal2
-  description: Launches a heavy charged blow with your bow
-  base: 2
-  cost: 2
-  kind: recover
-  level_requirement: 1
-  ranged: 1
-  area: 0
-  job: Archer
-  base_attribute: intelligence
-Heal3:
-  name: Heal2
-  description: Launches a heavy charged blow with your bow
-  base: 2
-  cost: 2
-  kind: recover
-  level_requirement: 1
-  ranged: 1
-  area: 0
-  job: Wizard
   base_attribute: intelligence
 Steal:
   name: Steal
