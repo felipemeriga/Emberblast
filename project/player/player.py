@@ -22,7 +22,7 @@ class Player(IPlayer):
         self.job = job
         self.race = race
         self.name = name
-        self.health_points = 10
+        self.health_points = 25
         self.magic_points = 10
         self.move_speed = 0
         self.strength = 2

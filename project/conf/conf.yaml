@@ -31,7 +31,7 @@ game:
       damage_vector: strength
     Wizard:
       attack_type: ranged
-      health_points: 3
+      health_points: 4
       magic_points: 10
       move_speed: 1
       strength: 0
