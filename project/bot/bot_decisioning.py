@@ -199,6 +199,7 @@ class BotDecisioning(IBotDecisioning):
         attack_range_possibilities = self.game.game_map.graph.get_available_nodes_in_range(
             self.current_bot.position,
             attack_range)
+        attack_range_possibilities.append(self.current_bot.position)
 
         # TODO: Fix the values with the damage with melee, ranged or magic
         if (self.current_bot.job.attack_type == 'melee' and self.possible_foe.position == self.current_bot.position) \
