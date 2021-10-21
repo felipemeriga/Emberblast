@@ -1,7 +1,8 @@
+# Wizard
 Fireball:
   name: Fireball
   description: launches a fireball in the nearby enemy
-  base: 6
+  base: 5
   cost: 2
   kind: inflict
   level_requirement: 1
@@ -37,26 +38,93 @@ Firestorm:
   base: 3
   cost: 5
   kind: inflict
-  level_requirement: 1
+  level_requirement: 2
   ranged: 2
   area: 2
   job: Wizard
   base_attribute: intelligence
+Leech:
+  name: Leech
+  description: Inflicts damage into a player and recover itself
+  base: 2
+  cost: 5
+  kind: inflict
+  level_requirement: 2
+  ranged: 2
+  area: 2
+  job: Wizard
+  base_attribute: intelligence
+Windblast:
+  name: Windblast
+  description: A huge blow of wind in the enemy
+  base: 8
+  cost: 5
+  kind: inflict
+  level_requirement: 3
+  ranged: 2
+  area: 0
+  job: Wizard
+  base_attribute: intelligence
+Thunderstorm:
+  name: Thunderstorm
+  description: A thunderstorm that inflicts area damage
+  base: 5
+  cost: 8
+  kind: inflict
+  level_requirement: 4
+  ranged: 2
+  area: 2
+  job: Wizard
+  base_attribute: intelligence
+# Archer
 Pierce:
   name: Pierce Arrow
   description: Launches a heavy charged blow with your bow
   base: 4
-  cost: 2
+  cost: 3
   kind: inflict
   level_requirement: 1
   ranged: 2
   area: 0
   job: Archer
   base_attribute: strength
+Longshot:
+  name: Longshot
+  description: Charges the bow to reach incredible range
+  base: 2
+  cost: 3
+  kind: inflict
+  level_requirement: 1
+  ranged: 4
+  area: 0
+  job: Archer
+  base_attribute: strength
+ExplosiveArrow:
+  name: Explosive Arrow
+  description: An explosive arrow that can hit multiple targets
+  base: 3
+  cost: 5
+  kind: inflict
+  level_requirement: 2
+  ranged: 2
+  area: 2
+  job: Archer
+  base_attribute: strength
+FocusedBlow:
+  name: Focused Blow
+  description: Focus all its energy to one single hit, doing great damage, but being exhaust in the next turn
+  base: 7
+  cost: 4
+  kind: inflict
+  level_requirement: 2
+  ranged: 1
+  area: 0
+  job: Archer
+  base_attribute: strength
 Heal:
   name: Heal
-  description: Launches a heavy charged blow with your bow
-  base: 2
+  description: basic healing magic
+  base: 4
   cost: 2
   kind: recover
   level_requirement: 1

@@ -25,8 +25,8 @@ game:
       strength: 5
       intelligence: 0
       accuracy: 2
-      armour: 4
-      magic_resist: 0
+      armour: 5
+      magic_resist: 4
       will: 1
       damage_vector: strength
     Wizard:
@@ -38,7 +38,7 @@ game:
       intelligence: 5
       accuracy: 2
       armour: 1
-      magic_resist: 5
+      magic_resist: 3
       will: 1
       damage_vector: intelligence
     Rogue:

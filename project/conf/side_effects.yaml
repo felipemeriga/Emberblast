@@ -16,6 +16,12 @@ slow:
   base: 1
   duration: 3
   occurrence: constant
+exhaust:
+  type: debuff
+  attribute: move_speed
+  base: 2
+  duration: 1
+  occurrence: constant
 blind:
   type: debuff
   attribute: accuracy

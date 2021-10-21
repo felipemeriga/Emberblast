@@ -50,21 +50,32 @@ class Skill(ISkill):
         self.job = job
         self.base_attribute = base_attribute
 
+    def calculate_damage(self, player: IPlayer, dice_norm_result: float) -> float:
+        return self.base + dice_norm_result * player.get_attribute_real_value(
+            self.base_attribute) + player.get_attribute_real_value(self.base_attribute) / 2
+
+    def calculate_defense(self, foe: IPlayer, ) -> int:
+        # Skills can be magical, based on intelligence, and physical, based on strength
+        # For magical skills, foe will use magic resist and for physical, armour
+        if self.base_attribute == 'strength':
+            defense_attribute = 'armour'
+        else:
+            defense_attribute = 'magic_resist'
+
+        return foe.get_defense_value(defense_attribute)
+
+    def calculate_recover(self, player: IPlayer, dice_norm_result: float) -> int:
+        return math.ceil(
+            self.base + dice_norm_result * player.get_attribute_real_value('intelligence'))
+
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         player.spend_mana(self.cost)
         print_spent_mana(player.name, self.cost, self.name)
         if self.kind == 'inflict':
             for foe in foes:
-                # Skills can be magical, based on intelligence, and physical, based on strength
-                # For magical skills, foe will use magic resist and for physical, armour
-                if self.base_attribute == 'strength':
-                    defense_attribute = 'armour'
-                else:
-                    defense_attribute = 'magic_resist'
 
-                damage = self.base + dice_norm_result * player.get_attribute_real_value(
-                    self.base_attribute) + player.get_attribute_real_value(self.base_attribute) / 2
-                defense = foe.get_defense_value(defense_attribute)
+                damage = self.calculate_damage(player, dice_norm_result)
+                defense = self.calculate_defense(foe)
                 damage = math.ceil(damage - defense)
                 if damage > 0:
                     foe.suffer_damage(damage)
@@ -74,8 +85,7 @@ class Skill(ISkill):
                 print('\n')
         elif self.kind == 'recover':
             for foe in foes:
-                recover_result = math.ceil(
-                    self.base + dice_norm_result * player.get_attribute_real_value('intelligence'))
+                recover_result = self.calculate_recover(player, dice_norm_result)
                 foe.heal('health_points', recover_result)
                 print_heal(player, foe, recover_result)
                 print('\n')
@@ -198,3 +208,21 @@ class Steal(Skill):
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         pass
+
+
+class Leech(Skill):
+
+    def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
+                 ranged: int, area: int, job: str, base_attribute: str) -> None:
+        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job, base_attribute)
+
+    def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
+        player.spend_mana(self.cost)
+        print_spent_mana(player.name, self.cost, self.name)
+        foe = foes[0]
+        damage = int(self.calculate_damage(player, dice_norm_result))
+        defense = self.calculate_defense(foe)
+        foe.suffer_damage(damage - defense)
+        print_suffer_damage(player, foe, damage)
+        player.heal('health_points', damage)
+        print_heal(player, player, damage)
