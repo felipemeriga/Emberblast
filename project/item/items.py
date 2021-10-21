@@ -125,7 +125,7 @@ def get_random_item(tier: str, item_type: str) -> Item:
         effects and also in the bag. 
         
         '''
-        side_effects = instantiate_side_effects(item_dict.get('side-effects'))
+        side_effects = instantiate_side_effects(item_dict.get('side_effects'))
 
         return EquipmentItem(name=item_dict.get('name'),
                              tier=item_dict.get('tier'),

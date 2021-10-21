@@ -37,7 +37,7 @@ steel_sword:
   attribute: strength
   base: 1
   weight: 1
-  side-effects: [ ]
+  side_effects: [ ]
   category: weapon
   usage: melee
   wielding: 1
@@ -49,7 +49,7 @@ war_hammer:
   attribute: strength
   base: 3
   weight: 1
-  side-effects: [ ]
+  side_effects: [ ]
   category: weapon
   usage: melee
   wielding: 2
@@ -69,7 +69,7 @@ magic_jewel:
   attribute: intelligence
   base: 1
   weight: 0.05
-  side-effects: [ ]
+  side_effects: [ ]
   category: accessory
   usage: all
 sandals_of_hermes:
@@ -80,7 +80,7 @@ sandals_of_hermes:
   attribute: move_speed
   base: 2
   weight: 0.3
-  side-effects: [ ]
+  side_effects: [ ]
   category: boots
   usage: all
 loki_scepter_stone:
@@ -91,7 +91,7 @@ loki_scepter_stone:
   attribute: intelligence
   base: 6
   weight: 0.2
-  side-effects: [ ]
+  side_effects: [ ]
   category: accessory
   usage: all
 excalibur:
@@ -102,7 +102,7 @@ excalibur:
   attribute: strength
   base: 6
   weight: 2
-  side-effects: [ haste ]
+  side_effects: [ haste ]
   category: weapon
   usage: melee
   wielding: 2
@@ -114,7 +114,7 @@ masamune:
   attribute: strength
   base: 4
   weight: 0.7
-  side-effects: [ ]
+  side_effects: [ ]
   category: weapon
   usage: melee
   wielding: 2
@@ -126,7 +126,7 @@ wodden_bow:
   attribute: strength
   base: 4
   weight: 0.7
-  side-effects: [ ]
+  side_effects: [ ]
   category: weapon
   usage: ranged
   wielding: 2
@@ -138,7 +138,7 @@ magical_wand:
   attribute: intelligence
   base: 4
   weight: 0.2
-  side-effects: [ ]
+  side_effects: [ ]
   category: weapon
   usage: ranged
   wielding: 2

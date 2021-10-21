@@ -131,8 +131,8 @@ class Configuration(object):
                 if not validator.validate(value, schema):
                     self.error_handler(validator.errors, key)
 
-                if 'side-effects' in list(value.keys()):
-                    for element in value.get('side-effects', []):
+                if 'side_effects' in list(value.keys()):
+                    for element in value.get('side_effects', []):
                         if element not in self.side_effects.keys():
                             self._logger.warn(
                                 'Item: {item} has an unknown side effect attached to that'.format(item=key))
@@ -242,8 +242,8 @@ class Configuration(object):
                 error_string = 'The skill {skill} has an unknown job assigned to it.'.format(skill=value.get('name'))
                 self._logger.error(error_string)
                 raise ConfigFileError(error_string)
-            if 'side-effects' in list(value.keys()):
-                for element in value.get('side-effects', []):
+            if 'side_effects' in list(value.keys()):
+                for element in value.get('side_effects', []):
                     if element not in self.side_effects.keys():
                         error_string = 'The skill {skill} has an unknown side-effect assigned to it.'.format(
                             skill=value.get('name'))

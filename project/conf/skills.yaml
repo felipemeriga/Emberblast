@@ -10,7 +10,7 @@ Fireball:
   area: 0
   job: Wizard
   base_attribute: intelligence
-  side-effects: [ ]
+  side_effects: [ ]
 Frost:
   name: Frost
   description: Ice magic, that can paralyze an enemy
@@ -22,7 +22,7 @@ Frost:
   area: 0
   job: Wizard
   base_attribute: intelligence
-  side-effects: [ ]
+  side_effects: [ ]
 Thunder:
   name: Thunder
   description: Cast a thunderbolt in the enemy
@@ -34,7 +34,7 @@ Thunder:
   area: 0
   job: Wizard
   base_attribute: intelligence
-  side-effects: [ ]
+  side_effects: [ ]
 Firestorm:
   name: Firestorm
   description: A big firestorm that falls from the air, damaging many foes
@@ -46,7 +46,7 @@ Firestorm:
   area: 2
   job: Wizard
   base_attribute: intelligence
-  side-effects: [ ]
+  side_effects: [ ]
 Leech:
   name: Leech
   description: Inflicts damage into a player and recover itself
@@ -58,7 +58,7 @@ Leech:
   area: 2
   job: Wizard
   base_attribute: intelligence
-  side-effects: [ ]
+  side_effects: [ ]
 Windblast:
   name: Windblast
   description: A huge blow of wind in the enemy
@@ -70,7 +70,7 @@ Windblast:
   area: 0
   job: Wizard
   base_attribute: intelligence
-  side-effects: [ ]
+  side_effects: [ ]
 Thunderstorm:
   name: Thunderstorm
   description: A thunderstorm that inflicts area damage
@@ -82,7 +82,7 @@ Thunderstorm:
   area: 2
   job: Wizard
   base_attribute: intelligence
-  side-effects: [ ]
+  side_effects: [ ]
 # Archer
 Pierce:
   name: Pierce Arrow
@@ -95,7 +95,7 @@ Pierce:
   area: 0
   job: Archer
   base_attribute: strength
-  side-effects: [ ]
+  side_effects: [ ]
 Longshot:
   name: Longshot
   description: Charges the bow to reach incredible range
@@ -107,7 +107,7 @@ Longshot:
   area: 0
   job: Archer
   base_attribute: strength
-  side-effects: [ ]
+  side_effects: [ ]
 ExplosiveArrow:
   name: Explosive Arrow
   description: An explosive arrow that can hit multiple targets
@@ -119,7 +119,7 @@ ExplosiveArrow:
   area: 2
   job: Archer
   base_attribute: strength
-  side-effects: [ ]
+  side_effects: [ ]
 FocusedBlow:
   name: Focused Blow
   description: Focus all its energy to one single hit, doing great damage, but being exhaust in the next turn
@@ -131,7 +131,8 @@ FocusedBlow:
   area: 0
   job: Archer
   base_attribute: strength
-  side-effects: [ ]
+  side_effects: [ ]
+# Priest
 Heal:
   name: Heal
   description: basic healing magic
@@ -143,7 +144,8 @@ Heal:
   area: 0
   job: Priest
   base_attribute: intelligence
-  side-effects: [ ]
+  side_effects: [ ]
+# Rogue
 Steal:
   name: Steal
   description: Steal an item from a foe
@@ -155,4 +157,4 @@ Steal:
   area: 0
   job: Rogue
   base_attribute: strength
-  side-effects: [ ]
+  side_effects: [ ]

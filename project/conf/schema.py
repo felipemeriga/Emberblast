@@ -235,7 +235,7 @@ equipment_item_validation_schema = {
         'allowed': ['health_points', 'magic_points', 'move_speed', 'strength', 'intelligence', 'accuracy', 'armour',
                     'magic_resist', 'will']
     },
-    'side-effects': {
+    'side_effects': {
         'required': False,
         'type': 'list', 'schema': {'type': 'string'}
     },
@@ -299,7 +299,7 @@ skills_validation_schema = {
         'required': True,
         'allowed': ['intelligence', 'strength']
     },
-    'side-effects': {
+    'side_effects': {
         'required': False,
         'type': 'list', 'schema': {'type': 'string'}
     },
