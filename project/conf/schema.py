@@ -298,5 +298,9 @@ skills_validation_schema = {
         'type': 'string',
         'required': True,
         'allowed': ['intelligence', 'strength']
-    }
+    },
+    'side-effects': {
+        'required': False,
+        'type': 'list', 'schema': {'type': 'string'}
+    },
 }

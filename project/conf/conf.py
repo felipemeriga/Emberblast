@@ -239,7 +239,16 @@ class Configuration(object):
             if not v.validate(value, skills_validation_schema):
                 self.error_handler(v.errors, key)
             if not value.get('job', None) in self.jobs:
-                self.error_handler(None, 'job')
+                error_string = 'The skill {skill} has an unknown job assigned to it.'.format(skill=value.get('name'))
+                self._logger.error(error_string)
+                raise ConfigFileError(error_string)
+            if 'side-effects' in list(value.keys()):
+                for element in value.get('side-effects', []):
+                    if element not in self.side_effects.keys():
+                        error_string = 'The skill {skill} has an unknown side-effect assigned to it.'.format(
+                            skill=value.get('name'))
+                        self._logger.error(error_string)
+                        raise ConfigFileError(error_string)
 
     def validate_items_probabilities_attributes(self) -> None:
         """

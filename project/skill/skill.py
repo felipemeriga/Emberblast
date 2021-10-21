@@ -3,7 +3,7 @@ import sys
 from typing import Dict, List
 
 from project.conf import get_configuration
-from project.interface import IPlayer, ISkill
+from project.interface import IPlayer, ISkill, ISideEffect
 from project.utils import SKILLS_SECTION
 from project.message import print_suffer_damage, print_heal, print_missed, print_spent_mana
 
@@ -28,7 +28,8 @@ extents that.
 
 class Skill(ISkill):
     def __init__(self, name: str, description: str, base: int, cost: int,
-                 kind: str, level_requirement: int, ranged: int, area: int, job: str, base_attribute: str) -> None:
+                 kind: str, level_requirement: int, ranged: int, area: int, job: str,
+                 base_attribute: str, side_effects: List[ISideEffect]) -> None:
         """
         Constructor of the Skill parent class.
 
@@ -49,6 +50,7 @@ class Skill(ISkill):
         self.area = area
         self.job = job
         self.base_attribute = base_attribute
+        self.side_effects = side_effects
 
     def calculate_damage(self, player: IPlayer, dice_norm_result: float) -> float:
         return self.base + dice_norm_result * player.get_attribute_real_value(

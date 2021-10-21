@@ -2,7 +2,7 @@ import random
 from typing import List
 from project.conf import get_configuration
 from project.utils import ITEMS_SECTION
-from project.effect import SideEffect
+from project.effect import SideEffect, instantiate_side_effects
 from project.interface import IItem, IHealingItem, IRecoveryItem, IEquipmentItem, ISideEffect
 
 
@@ -125,18 +125,8 @@ def get_random_item(tier: str, item_type: str) -> Item:
         effects and also in the bag. 
         
         '''
-        # Dictionary of all side-effects in game
-        side_effects_library_dict = get_configuration('side_effects')
-        side_effects: List[SideEffect] = []
-        for side_effect_string in item_dict.get('side-effects'):
-            side_effect_dict = side_effects_library_dict.get(side_effect_string)
-            side_effect = SideEffect(name=side_effect_string,
-                                     effect_type=side_effect_dict.get('type'),
-                                     attribute=side_effect_dict.get('attribute'),
-                                     base=side_effect_dict.get('base'),
-                                     duration=side_effect_dict.get('duration'),
-                                     occurrence=side_effect_dict.get('occurrence'))
-            side_effects.append(side_effect)
+        side_effects = instantiate_side_effects(item_dict.get('side-effects'))
+
         return EquipmentItem(name=item_dict.get('name'),
                              tier=item_dict.get('tier'),
                              description=item_dict.get('description'),
