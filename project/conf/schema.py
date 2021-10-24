@@ -301,6 +301,7 @@ skills_validation_schema = {
     },
     'side_effects': {
         'required': False,
+        'default': [],
         'type': 'list', 'schema': {'type': 'string'}
     },
 }

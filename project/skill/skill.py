@@ -3,6 +3,7 @@ import sys
 from typing import Dict, List
 
 from project.conf import get_configuration
+from project.effect import instantiate_side_effects
 from project.interface import IPlayer, ISkill, ISideEffect
 from project.utils import SKILLS_SECTION
 from project.message import print_suffer_damage, print_heal, print_missed, print_spent_mana
@@ -129,12 +130,14 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
     :rtype: ISkill.
     """
     custom_skill = None
-    skill_key = list(skill_dict.keys())[0]
-    if skill_key not in instantiated_skills:
-        skill_values = skill_dict.get(skill_key)
+    skill_name = list(skill_dict.keys())[0]
+    if skill_name not in instantiated_skills:
+        skill_values = skill_dict.get(skill_name)
         skill_pkg = sys.modules[__package__].__getattribute__('skill')
-        if skill_key in skill_pkg.__dict__:
-            prev_defined_class = getattr(skill_pkg, skill_key)
+        side_effects = instantiate_side_effects(skill_values.get('side_effects'))
+
+        if skill_name in skill_pkg.__dict__:
+            prev_defined_class = getattr(skill_pkg, skill_name)
             custom_skill = prev_defined_class(
                 name=skill_values.get('name'),
                 description=skill_values.get('description'),
@@ -145,10 +148,10 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                 ranged=skill_values.get('ranged'),
                 area=skill_values.get('area'),
                 job=skill_values.get('job'),
-                base_attribute=skill_values.get('base_attribute')
-            )
+                base_attribute=skill_values.get('base_attribute'),
+                side_effects=side_effects)
         else:
-            dynamic_skill_class = dynamic_skill_class_factory(skill_key, list(skill_values), Skill)
+            dynamic_skill_class = dynamic_skill_class_factory(skill_name, list(skill_values), Skill)
             custom_skill = dynamic_skill_class(name=skill_values.get('name'),
                                                description=skill_values.get('description'),
                                                base=skill_values.get('base'),
@@ -158,11 +161,11 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                                                ranged=skill_values.get('ranged'),
                                                area=skill_values.get('area'),
                                                job=skill_values.get('job'),
-                                               base_attribute=skill_values.get('base_attribute')
-                                               )
-        instantiated_skills[skill_key] = custom_skill
+                                               base_attribute=skill_values.get('base_attribute'),
+                                               side_effects=side_effects)
+        instantiated_skills[skill_name] = custom_skill
     else:
-        custom_skill = instantiated_skills[skill_key]
+        custom_skill = instantiated_skills[skill_name]
 
     return custom_skill
 
@@ -205,8 +208,9 @@ making possible from a player to steal the item from another one.
 class Steal(Skill):
 
     def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
-                 ranged: int, area: int, job: str, base_attribute: str) -> None:
-        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job, base_attribute)
+                 ranged: int, area: int, job: str, base_attribute: str, side_effects: List[ISideEffect]) -> None:
+        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job,
+                         base_attribute, side_effects)
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         pass
@@ -215,8 +219,9 @@ class Steal(Skill):
 class Leech(Skill):
 
     def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
-                 ranged: int, area: int, job: str, base_attribute: str) -> None:
-        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job, base_attribute)
+                 ranged: int, area: int, job: str, base_attribute: str, side_effects: List[ISideEffect]) -> None:
+        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job, base_attribute,
+                         side_effects)
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         player.spend_mana(self.cost)

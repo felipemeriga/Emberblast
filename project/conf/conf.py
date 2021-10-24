@@ -235,20 +235,26 @@ class Configuration(object):
         :rtype: None
         """
         v = Validator(skills_validation_schema)
+
         for key, value in self.skills.items():
+
             if not v.validate(value, skills_validation_schema):
                 self.error_handler(v.errors, key)
-            if not value.get('job', None) in self.jobs:
-                error_string = 'The skill {skill} has an unknown job assigned to it.'.format(skill=value.get('name'))
+
+            normalized_skill = v.normalized(value)
+
+            if not normalized_skill.get('job', None) in self.jobs:
+                error_string = 'The skill {skill} has an unknown job assigned to it.'.format(skill=normalized_skill.get('name'))
                 self._logger.error(error_string)
                 raise ConfigFileError(error_string)
-            if 'side_effects' in list(value.keys()):
-                for element in value.get('side_effects', []):
+            if 'side_effects' in list(normalized_skill.keys()):
+                for element in normalized_skill.get('side_effects', []):
                     if element not in self.side_effects.keys():
                         error_string = 'The skill {skill} has an unknown side-effect assigned to it.'.format(
-                            skill=value.get('name'))
+                            skill=normalized_skill.get('name'))
                         self._logger.error(error_string)
                         raise ConfigFileError(error_string)
+            self.skills[key] = normalized_skill
 
     def validate_items_probabilities_attributes(self) -> None:
         """
