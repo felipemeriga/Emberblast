@@ -35,8 +35,17 @@ def ask_enemy_to_check(enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer
     return selected_enemy
 
 
-def ask_enemy_to_attack(enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
+def ask_enemy_to_attack(enemies: List[IPlayer], skill_type: str) -> Union[str, bool, list, IPlayer]:
     choices = []
+    action_type = 'attack: :punch:'
+
+    if skill_type == 'recover':
+        action_type = 'recover: :green_heart:'
+    elif skill_type == 'buff':
+        action_type = 'buff:'
+    elif skill_type == 'debuff':
+        action_type = 'debuff:'
+
     for enemy in enemies:
         choices.append({
             'name': '{enemy} ({job}) (life: {life})'.format(enemy=enemy.name,
@@ -51,7 +60,7 @@ def ask_enemy_to_attack(enemies: List[IPlayer]) -> Union[str, bool, list, IPlaye
     enemies_questions = [
         {
             'type': 'list',
-            'message': emojis.encode('Select an enemy to attack: :punch:'),
+            'message': emojis.encode('Select an enemy to {action}'.format(action=action_type)),
             'choices': choices,
             'invalid_message': 'You need to select at least one enemy to attack!',
             'show_cursor': True,

@@ -16,7 +16,6 @@ def select_skill(available_skills: List[ISkill]) -> Union[str, bool, list, ISkil
     choices = []
     for skill in available_skills:
         area_range_string = ''
-
         if skill.ranged == 0:
             area_range_string = '/ melee skill'
         elif skill.ranged > 0 and skill.area == 0:

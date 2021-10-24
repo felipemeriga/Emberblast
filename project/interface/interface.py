@@ -3,6 +3,15 @@ from enum import Enum
 from typing import List, Union, Dict, Optional, Set, Callable
 
 
+class ISideEffect(ABC):
+    name: str
+    effect_type: str
+    attribute: str
+    base: int
+    duration: int
+    occurrence: str
+
+
 class ISkill:
     name: str
     description: str
@@ -14,18 +23,12 @@ class ISkill:
     area: int
     job: str
     base_attribute: str
+    side_effects: List[ISideEffect]
+    applies_caster_only: bool
+    punishment_side_effect: ISideEffect
 
     def execute(self, player: 'IPlayer', foes: List['IPlayer'], dice_norm_result: float) -> None:
         pass
-
-
-class ISideEffect(ABC):
-    name: str
-    effect_type: str
-    attribute: str
-    base: int
-    duration: int
-    occurrence: str
 
 
 class IItem(ABC):
@@ -238,7 +241,7 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def add_side_effect(self):
+    def add_side_effect(self, side_effect: ISideEffect) -> None:
         pass
 
     @abstractmethod

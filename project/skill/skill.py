@@ -6,7 +6,7 @@ from project.conf import get_configuration
 from project.effect import instantiate_side_effects
 from project.interface import IPlayer, ISkill, ISideEffect
 from project.utils import SKILLS_SECTION
-from project.message import print_suffer_damage, print_heal, print_missed, print_spent_mana
+from project.message import print_suffer_damage, print_heal, print_missed, print_spent_mana, print_add_side_effect
 
 """
 This is the base class for defining a Skill, as all the skills are defined dynamically on the skills.yaml file, 
@@ -30,14 +30,19 @@ extents that.
 class Skill(ISkill):
     def __init__(self, name: str, description: str, base: int, cost: int,
                  kind: str, level_requirement: int, ranged: int, area: int, job: str,
-                 base_attribute: str, side_effects: List[ISideEffect]) -> None:
+                 base_attribute: str, side_effects: List[ISideEffect], applies_caster_only: bool,
+                 punishment_side_effects: List[ISideEffect]) -> None:
         """
         Constructor of the Skill parent class.
 
         :param str name: The name of the skill.
-        :param str name: The name of the skill.
-        :param str name: The name of the skill.
-        :param str name: The name of the skill.
+        :param str description: Description of the skill.
+        :param int base: Base damage/recover capacity if the skill.
+        :param int cost: Amount of mana to cast/execute.
+        :param str base_attribute: The base attribute that will be evaluated when calculating damage/recover result.
+        :param List[ISideEffect] side_effects: Side effects that the skill applies.
+        :param List[ISideEffect] punishment_side_effects: Some skills punish the player to execute it, inflicting
+        negative side effects on him.
 
         :rtype: None.
         """
@@ -52,6 +57,8 @@ class Skill(ISkill):
         self.job = job
         self.base_attribute = base_attribute
         self.side_effects = side_effects
+        self.applies_caster_only = applies_caster_only
+        self.punishment_side_effects = punishment_side_effects
 
     def calculate_damage(self, player: IPlayer, dice_norm_result: float) -> float:
         return self.base + dice_norm_result * player.get_attribute_real_value(
@@ -74,9 +81,8 @@ class Skill(ISkill):
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         player.spend_mana(self.cost)
         print_spent_mana(player.name, self.cost, self.name)
-        if self.kind == 'inflict':
-            for foe in foes:
-
+        for foe in foes:
+            if self.kind == 'inflict':
                 damage = self.calculate_damage(player, dice_norm_result)
                 defense = self.calculate_defense(foe)
                 damage = math.ceil(damage - defense)
@@ -85,13 +91,17 @@ class Skill(ISkill):
                     print_suffer_damage(player, foe, damage)
                 else:
                     print_missed(player, foe)
-                print('\n')
-        elif self.kind == 'recover':
-            for foe in foes:
+            elif self.kind == 'recover':
                 recover_result = self.calculate_recover(player, dice_norm_result)
                 foe.heal('health_points', recover_result)
                 print_heal(player, foe, recover_result)
-                print('\n')
+            for side_effect in self.side_effects:
+                foe.add_side_effect(side_effect)
+                print_add_side_effect(foe.name, side_effect)
+            for side_effect in self.punishment_side_effects:
+                player.add_side_effect(side_effect)
+                print_add_side_effect(player.name, side_effect)
+            print('\n')
 
 
 instantiated_skills: Dict = {}
@@ -135,6 +145,7 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
         skill_values = skill_dict.get(skill_name)
         skill_pkg = sys.modules[__package__].__getattribute__('skill')
         side_effects = instantiate_side_effects(skill_values.get('side_effects'))
+        punishment_side_effects = instantiate_side_effects(skill_values.get('punishment_side_effects'))
 
         if skill_name in skill_pkg.__dict__:
             prev_defined_class = getattr(skill_pkg, skill_name)
@@ -149,7 +160,9 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                 area=skill_values.get('area'),
                 job=skill_values.get('job'),
                 base_attribute=skill_values.get('base_attribute'),
-                side_effects=side_effects)
+                side_effects=side_effects,
+                applies_caster_only=skill_values.get('applies_caster_only'),
+                punishment_side_effects=punishment_side_effects)
         else:
             dynamic_skill_class = dynamic_skill_class_factory(skill_name, list(skill_values), Skill)
             custom_skill = dynamic_skill_class(name=skill_values.get('name'),
@@ -162,7 +175,9 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
                                                area=skill_values.get('area'),
                                                job=skill_values.get('job'),
                                                base_attribute=skill_values.get('base_attribute'),
-                                               side_effects=side_effects)
+                                               side_effects=side_effects,
+                                               applies_caster_only=skill_values.get('applies_caster_only'),
+                                               punishment_side_effects=punishment_side_effects)
         instantiated_skills[skill_name] = custom_skill
     else:
         custom_skill = instantiated_skills[skill_name]
@@ -208,9 +223,10 @@ making possible from a player to steal the item from another one.
 class Steal(Skill):
 
     def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
-                 ranged: int, area: int, job: str, base_attribute: str, side_effects: List[ISideEffect]) -> None:
+                 ranged: int, area: int, job: str, base_attribute: str, side_effects: List[ISideEffect],
+                 applies_caster_only: bool, punishment_side_effects: List[ISideEffect]) -> None:
         super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job,
-                         base_attribute, side_effects)
+                         base_attribute, side_effects, applies_caster_only, punishment_side_effects)
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         pass
@@ -219,9 +235,10 @@ class Steal(Skill):
 class Leech(Skill):
 
     def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
-                 ranged: int, area: int, job: str, base_attribute: str, side_effects: List[ISideEffect]) -> None:
+                 ranged: int, area: int, job: str, base_attribute: str, side_effects: List[ISideEffect],
+                 applies_caster_only: bool, punishment_side_effects: List[ISideEffect]) -> None:
         super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job, base_attribute,
-                         side_effects)
+                         side_effects, applies_caster_only, punishment_side_effects)
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         player.spend_mana(self.cost)

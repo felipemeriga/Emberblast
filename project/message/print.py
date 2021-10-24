@@ -4,7 +4,7 @@ import timg
 from emojis import emojis
 from termcolor import colored
 
-from project.interface import IPlayer, IItem, IEquipmentItem, IRecoveryItem, IHealingItem, ISkill
+from project.interface import IPlayer, IItem, IEquipmentItem, IRecoveryItem, IHealingItem, ISkill, ISideEffect
 from project.utils import get_project_root, convert_number_to_letter
 
 
@@ -277,6 +277,66 @@ def print_spent_mana(name: str, amount: int, skill_name: str) -> None:
     :rtype: None
     """
     print('{player} casted {skill} for {amount} of mana.'.format(player=name, skill=skill_name, amount=amount))
+
+
+def print_add_side_effect(name: str, side_effect: ISideEffect) -> None:
+    """
+    Print that the player has got a side-effect.
+
+    :param str name: Name of the player.
+    :param ISideEffect side_effect: The side-effect that will be applied.
+    :rtype: None
+    """
+    if side_effect.effect_type == 'debuff' and side_effect.occurrence == 'constant':
+        side_effect_status = 'debuffed'
+    elif side_effect.effect_type == 'debuff' and side_effect.occurrence == 'iterated':
+        side_effect_status = 'inflicted'
+    else:
+        side_effect_status = 'buffed'
+
+    print('{player} has been {status} with {effect} side-effect. '.format(player=name,
+                                                                          status=side_effect_status,
+                                                                          effect=side_effect.name))
+
+
+def print_side_effect_ended(name: str, side_effect: ISideEffect) -> None:
+    """
+    Print that a side-effect duration has ended for a player.
+
+    :param str name: Name of the player.
+    :param ISideEffect side_effect: The side-effect that has ended.
+    :rtype: None
+    """
+    print('Side-effect: {effect} has ended for player: {name} \n'.format(effect=side_effect.name,
+                                                                         name=name))
+
+
+def print_iterated_side_effect_apply(name: str, side_effect: ISideEffect) -> None:
+    """
+    Print that the player passed its turn, and suffered/buffed from an iterated side-effect.
+
+    :param str name: Name of the player.
+    :param ISideEffect side_effect: The side-effect that will be applied.
+    :rtype: None
+    """
+    if side_effect.effect_type == 'buff':
+        status = 'increase'
+    else:
+        status = 'decrease'
+
+    if side_effect.attribute == 'health_points':
+        attribute = 'life'
+    elif side_effect.attribute == 'magic_points':
+        attribute = 'mana'
+    else:
+        attribute = side_effect.attribute
+    print('{name} has affected by {effect} side-effect, that will {status} player\'s {attribute} by {value} per turn. '
+          'More {turns} are left until the effect ends. \n'.format(name=name,
+                                                                   effect=side_effect.name,
+                                                                   status=status,
+                                                                   attribute=attribute,
+                                                                   value=side_effect.base,
+                                                                   turns=side_effect.duration))
 
 
 def print_player_low_mana(player: IPlayer) -> None:

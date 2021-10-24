@@ -215,13 +215,14 @@ class Skill(Action, ISkillAction):
         remaining_players = self.game.get_remaining_players(player)
         if selected_skill is None:
             return False
-        if selected_skill.kind == 'recover':
+        if selected_skill.kind == 'recover' or selected_skill.kind == 'buff':
             possible_foes = [player]
-        possible_foes.extend(self.get_attack_possibilities(selected_skill.ranged, player, remaining_players))
+        if not selected_skill.applies_caster_only:
+            possible_foes.extend(self.get_attack_possibilities(selected_skill.ranged, player, remaining_players))
         if len(possible_foes) == 0:
             print_no_foes_skill(selected_skill.ranged, player.position)
             return False
-        enemy_to_attack = ask_enemy_to_attack(possible_foes)
+        enemy_to_attack = ask_enemy_to_attack(possible_foes, selected_skill.kind)
         if enemy_to_attack is None:
             return False
         if selected_skill.area > 0:

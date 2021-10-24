@@ -276,7 +276,7 @@ skills_validation_schema = {
     'kind': {
         'type': 'string',
         'required': True,
-        'allowed': ['inflict', 'recover']
+        'allowed': ['inflict', 'recover', 'debuff', 'buff']
     },
     'ranged': {
         'type': 'number',
@@ -304,4 +304,14 @@ skills_validation_schema = {
         'default': [],
         'type': 'list', 'schema': {'type': 'string'}
     },
+    'applies_caster_only': {
+        'required': False,
+        'default': False,
+        'type': 'boolean',
+    },
+    'punishment_side_effects': {
+        'required': False,
+        'default': [],
+        'type': 'list', 'schema': {'type': 'string'}
+    }
 }

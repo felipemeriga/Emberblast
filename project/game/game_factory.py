@@ -61,7 +61,7 @@ class GameFactory(IGameFactory):
         bots = self.init_bots()
         players.extend(bots)
 
-        game_map = self.init_map(len(bots) + 3)
+        game_map = self.init_map(len(bots) + 4)
 
         if self.begin_question_results.get('game') == 'Deathmatch':
             game = DeathMatch(players, game_map)

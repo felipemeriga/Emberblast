@@ -1,8 +1,14 @@
 poison:
   type: debuff
   attribute: health_points
-  base: 1
-  duration: 10
+  base: 2
+  duration: 4
+  occurrence: iterated
+regen:
+  type: buff
+  attribute: health_points
+  base: 2
+  duration: 4
   occurrence: iterated
 haste:
   type: buff
@@ -26,7 +32,7 @@ blind:
   type: debuff
   attribute: accuracy
   base: 1
-  duration: 5
+  duration: 4
   occurrence: constant
 protect:
   type: buff
@@ -39,4 +45,28 @@ shell:
   attribute: magic_resist
   base: 3
   duration: 3
+  occurrence: constant
+burn:
+  type: debuff
+  attribute: health_points
+  base: 2
+  duration: 1
+  occurrence: iterated
+curse:
+  type: debuff
+  attribute: will
+  base: 2
+  duration: 2
+  occurrence: constant
+focus:
+  type: buff
+  attribute: accuracy
+  base: 2
+  duration: 2
+  occurrence: constant
+pray:
+  type: buff
+  attribute: will
+  base: 1
+  duration: 1
   occurrence: constant

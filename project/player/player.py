@@ -5,6 +5,7 @@ from project.conf import get_logger
 from project.effect import SideEffect
 from project.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag, IJob, IRace, IEquipment, ISideEffect
 from project.skill import get_player_available_skills
+from project.message import print_iterated_side_effect_apply, print_side_effect_ended
 
 
 class Player(IPlayer):
@@ -218,15 +219,13 @@ class Player(IPlayer):
 
         return base_defense * 2 if self.is_defending() else base_defense
 
-    def add_side_effect(self):
+    def add_side_effect(self, side_effect: ISideEffect) -> None:
         """
        To add a new side effect in the player.
 
         :rtype: None
         """
-        side = SideEffect(name="poison", effect_type="debuff", attribute="health_points", base=1, duration=3,
-                          occurrence="iterated")
-        self.side_effects.append(side)
+        self.side_effects.append(side_effect)
 
     def use_item(self, item: IItem) -> None:
         """
@@ -291,6 +290,7 @@ class Player(IPlayer):
                                  filter(lambda effect: effect.occurrence == 'iterated', self.side_effects)]
 
         for side_effect in iterated_side_effects:
+            print_iterated_side_effect_apply(self.name, side_effect)
             if side_effect.effect_type == 'buff':
                 self.heal(side_effect.attribute, side_effect.base)
             elif side_effect.effect_type == 'debuff':
@@ -311,6 +311,7 @@ class Player(IPlayer):
             side_effect.duration = side_effect.duration - 1
             if side_effect.duration <= 0:
                 self.side_effects.remove(side_effect)
+                print_side_effect_ended(self.name, side_effect)
                 self.equipment.remove_side_effect(side_effect)
 
     def refresh_skills_list(self) -> None:
