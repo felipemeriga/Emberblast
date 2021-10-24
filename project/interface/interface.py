@@ -25,7 +25,7 @@ class ISkill:
     base_attribute: str
     side_effects: List[ISideEffect]
     applies_caster_only: bool
-    punishment_side_effect: ISideEffect
+    punishment_side_effect: List[ISideEffect]
 
     def execute(self, player: 'IPlayer', foes: List['IPlayer'], dice_norm_result: float) -> None:
         pass
