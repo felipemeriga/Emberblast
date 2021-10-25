@@ -43,6 +43,8 @@ class Action(IAction, metaclass=SingletonAction):
         :param bool repeatable: If it's True, can be performed many times in a single turn.
         :param Game game: The current Game object, where the actions are going to be placed.
         :rtype: None
+
+
         """
         self.independent = independent
         self.repeatable = repeatable
