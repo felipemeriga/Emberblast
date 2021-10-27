@@ -142,5 +142,10 @@ class MapFactory:
         :rtype: Map.
         """
         game_map = Map('test', 'wind', map_size)
-        game_map.graph.init_graph()
+        invalid_map = True
+
+        while invalid_map:
+            game_map.graph.init_graph()
+            invalid_map = game_map.graph.is_graph_defective()
+
         return game_map

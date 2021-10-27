@@ -290,6 +290,14 @@ class Graph(IGraph):
         return len([x for x in filter(lambda vertex: vertex.value == 1, list(self.graph_dict.values()))])
 
     def is_graph_defective(self) -> bool:
+        """
+        Whether the graph is defective or not. A map is considered not defective, when starting from a valid(walkable)
+        node, all another walkable nodes can be reached. But in the case when a valid node, can't reach another node,
+        regardless the distance, is can say that there are "islands" on the map, where players could not access another
+        areas of the map.
+
+        :rtype: Dict[str, IVertex]
+        """
         walkable_nodes = self.get_walkable_nodes()
         for key in walkable_nodes.keys():
             distances = self.get_shortest_path(key)
