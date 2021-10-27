@@ -58,7 +58,7 @@ game:
       health_points: 6
       magic_points: 5
       move_speed: 1
-      strength: 3
+      strength: 2
       intelligence: 1
       accuracy: 4
       armour: 2

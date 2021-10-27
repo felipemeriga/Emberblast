@@ -118,7 +118,7 @@ Pierce:
 Longshot:
   name: Longshot
   description: Charges the bow to reach incredible range
-  base: 2
+  base: 1
   cost: 3
   kind: inflict
   level_requirement: 1
@@ -143,7 +143,7 @@ FocusedBlow:
   base: 7
   cost: 4
   kind: inflict
-  level_requirement: 1
+  level_requirement: 3
   ranged: 2
   area: 0
   job: Archer

@@ -35,7 +35,7 @@ def ask_enemy_to_check(enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer
     return selected_enemy
 
 
-def ask_enemy_to_attack(enemies: List[IPlayer], skill_type: str) -> Union[str, bool, list, IPlayer]:
+def ask_enemy_to_attack(enemies: List[IPlayer], skill_type: str = '') -> Union[str, bool, list, IPlayer]:
     choices = []
     action_type = 'attack: :punch:'
 
