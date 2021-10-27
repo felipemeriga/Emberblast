@@ -304,7 +304,7 @@ class IGraph(ABC):
     matrix: List[List]
 
     @abstractmethod
-    def init_graph(self) -> None:
+    def init_graph(self, fixed_matrix: List[List[int]] = None) -> None:
         pass
 
     @abstractmethod
@@ -347,6 +347,10 @@ class IGraph(ABC):
 
     @abstractmethod
     def get_number_of_walkable_nodes(self) -> int:
+        pass
+
+    @abstractmethod
+    def is_graph_defective(self) -> bool:
         pass
 
     @abstractmethod

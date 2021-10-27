@@ -2,7 +2,7 @@ import math
 from typing import List, Set, Dict, Tuple, Union
 
 from project.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, convert_number_to_letter, \
-    convert_letter_to_number
+    convert_letter_to_number, is_square_matrix
 from project.interface import IGraph, IVertex, IEdge
 
 
@@ -69,15 +69,21 @@ class Graph(IGraph):
         self.graph_dict: Dict[str, Vertex] = graph_dict
         self.matrix = [[]]
 
-    def init_graph(self) -> None:
+    def init_graph(self, fixed_matrix: List[List[int]] = None) -> None:
         """
         Simple proxy function, that calls another functions responsible to build an adjacent matrix, and transform it
         into a graph.
 
         :rtype: None.
         """
+        if fixed_matrix is not None:
+            if is_square_matrix(fixed_matrix):
+                self.matrix = fixed_matrix
+                self.size = len(fixed_matrix)
+        else:
+            self.matrix = generate_random_adjacent_matrix(self.size)
+
         visited = generate_visited_default_matrix(self.size)
-        self.matrix = generate_random_adjacent_matrix(self.size)
         self._create_matrix_dfs_traverse(self.matrix, 0, 0, visited)
 
     def _create_matrix_dfs_traverse(self, matrix: List[List[int]], row: int, column: int,
@@ -282,6 +288,15 @@ class Graph(IGraph):
         :rtype: int
         """
         return len([x for x in filter(lambda vertex: vertex.value == 1, list(self.graph_dict.values()))])
+
+    def is_graph_defective(self) -> bool:
+        walkable_nodes = self.get_walkable_nodes()
+        for key in walkable_nodes.keys():
+            distances = self.get_shortest_path(key)
+            for value in distances.values():
+                if value == math.inf:
+                    return True
+        return False
 
     def get_walkable_nodes(self) -> Dict[str, IVertex]:
         """

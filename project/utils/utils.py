@@ -28,6 +28,16 @@ def generate_random_adjacent_matrix(size: int) -> List[List[int]]:
     return [[random.choice(choices) for x in range(size)] for y in range(size)]
 
 
+def is_square_matrix(matrix: List[List[int]]) -> bool:
+    """
+    This is a basic validation function, to check whether a matrix has the same number of lines and columns.
+
+    :param List[List[int]] matrix: The matrix to be validated.
+    :rtype: bool
+    """
+    return len(matrix) == len(matrix[0])
+
+
 def generate_visited_default_matrix(size: int) -> List[List[bool]]:
     """
     This function will generate a square matrix where all the value of all the vertexes
