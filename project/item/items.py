@@ -106,14 +106,14 @@ def get_random_item(tier: str, item_type: str) -> Item:
 
     if item_dict.get('type') == 'healing':
         return HealingItem(name=item_dict.get('name'),
-                           tier=item_dict.get('type'),
+                           tier=item_dict.get('tier'),
                            description=item_dict.get('description'),
                            weight=item_dict.get('weight'),
                            attribute=item_dict.get('attribute'),
                            base=item_dict.get('base'))
     elif item_dict.get('type') == 'recovery':
         return RecoveryItem(name=item_dict.get('name'),
-                            tier=item_dict.get('type'),
+                            tier=item_dict.get('tier'),
                             description=item_dict.get('description'),
                             weight=item_dict.get('weight'),
                             status=item_dict.get('status'))

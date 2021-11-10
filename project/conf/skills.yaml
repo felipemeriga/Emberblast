@@ -257,3 +257,48 @@ Steal:
   area: 0
   job: Rogue
   base_attribute: strength
+ThrowStone:
+  name: Throw Stone
+  description: Throws a stone on the enemy
+  base: 1
+  cost: 2
+  kind: inflict
+  level_requirement: 1
+  ranged: 2
+  area: 0
+  job: Rogue
+  base_attribute: strength
+ThrowKnife:
+  name: Throw Knife
+  description: Throws a knife on the enemy
+  base: 3
+  cost: 3
+  kind: inflict
+  level_requirement: 2
+  ranged: 1
+  area: 0
+  job: Rogue
+  base_attribute: strength
+PoisonousBlow:
+  name: Poisonous blow
+  description: Strikes the enemy with a poisonous dagger, applying poison
+  base: 1
+  cost: 3
+  kind: inflict
+  level_requirement: 1
+  ranged: 0
+  area: 0
+  job: Rogue
+  base_attribute: strength
+SandBlow:
+  name: Sand blow
+  description: Throws sand into enemy's eyes
+  base: 1
+  cost: 4
+  kind: inflict
+  level_requirement: 2
+  ranged: 1
+  area: 0
+  job: Rogue
+  base_attribute: strength
+  side_effects: [ blind ]

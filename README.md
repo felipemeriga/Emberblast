@@ -59,3 +59,13 @@ For running the game:
 ```shell
 docker run -it emberblast:latest
 ```
+
+## TODO List
+
+- Add more skills for Rogue
+- Add more skills for knight
+- Add more custom skills
+- Add more side-effects
+- Add probability to side-effects
+- Turn level up, on
+

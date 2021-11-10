@@ -1,4 +1,5 @@
 import math
+import random
 import sys
 from typing import Dict, List
 
@@ -6,7 +7,8 @@ from project.conf import get_configuration
 from project.effect import instantiate_side_effects
 from project.interface import IPlayer, ISkill, ISideEffect
 from project.utils import SKILLS_SECTION
-from project.message import print_suffer_damage, print_heal, print_missed, print_spent_mana, print_add_side_effect
+from project.message import print_suffer_damage, print_heal, print_missed, print_spent_mana, print_add_side_effect, \
+    print_player_stole_item, print_player_fail_stole_item
 
 """
 This is the base class for defining a Skill, as all the skills are defined dynamically on the skills.yaml file, 
@@ -229,7 +231,15 @@ class Steal(Skill):
                          base_attribute, side_effects, applies_caster_only, punishment_side_effects)
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
-        pass
+        foe = foes[0]
+        items = foe.bag.items
+        if len(items) > 0:
+            stolen_item = random.choice(items)
+            foe.bag.remove_item(stolen_item)
+            player.bag.add_item(stolen_item)
+            print_player_stole_item(player.name, foe.name, stolen_item.name, stolen_item.tier)
+        else:
+            print_player_fail_stole_item(player.name, foe.name)
 
 
 class Leech(Skill):

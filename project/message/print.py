@@ -429,6 +429,34 @@ def print_use_item(player_name: str, item_name: str, target_name: str) -> None:
                                                             target=target_name))
 
 
+def print_player_fail_stole_item(name: str, foe_name: str) -> None:
+    """
+    Print that a player has failed in stealing an item
+
+    :param str name: Name of the player.
+    :param str foe_name: Name of the foe.
+    :rtype: None
+    """
+    print(f'Player {name} failed to steal an item from {foe_name} \n')
+
+
+def print_player_stole_item(name: str, foe_name: str, item_name: str, tier: str) -> None:
+    """
+    Print that a player has stolen an item
+
+    :param str name: Name of the player.
+    :param str foe_name: Name of the foe.
+    :param str item_name: Name of the stolen item.
+    :param str tier: tier of the item.
+    :rtype: None
+    """
+
+    print('Player {player} stole an item from {foe}! It was a {item}, of tier {tier}\n'.format(player=name,
+                                                                                               foe=foe_name,
+                                                                                               item=item_name,
+                                                                                               tier=tier))
+
+
 def print_player_won(name: str) -> None:
     """
     Print the player that won the game.
