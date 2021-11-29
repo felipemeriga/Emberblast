@@ -60,6 +60,9 @@ For running the game:
 docker run -it emberblast:latest
 ```
 
+Don't forget the ```-it```argument when starting the container, because as Emberblast it's a
+terminal interactive game, without this argument, you won't be able to interact with the console.
+
 ## TODO List
 
 - add capability of adding traps to the map
@@ -69,5 +72,8 @@ docker run -it emberblast:latest
 - Add more custom skills
 - Add more side-effects
 - Add probability to side-effects
-- Turn level up, on
+- Test Level up velocity
 
+
+
+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
