@@ -2,13 +2,13 @@ name: Docker Build
 # The difference between "released" and "published" is a "released" tag is not final, a "published" release is final
 env:
   REGISTRY: ghcr.io
-  REPO: ${{ format('ghcr.io/{0}/emberblast', github.repository_owner) }}
+  REPO: ${{ format('ghcr.io/{0}/Emberblast', github.repository_owner) }}
 on:
   release:
     types: [released]
   push:
     branches:
-      - main
+      - mainem
 jobs:
   push_to_registry:
     name: Push Docker image to GitHub Packages
