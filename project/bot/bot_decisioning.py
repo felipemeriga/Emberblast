@@ -4,11 +4,13 @@ import math
 import random
 from typing import List, Optional
 
+from project.conf import get_configuration
 from project.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage, print_found_item, \
     print_use_item
 
 from project.interface import IBotDecisioning, IGame, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
     IHealingItem
+from project.utils.constants import EXPERIENCE_EARNED_ACTION
 
 
 class BotDecisioning(IBotDecisioning):
@@ -250,6 +252,12 @@ class BotDecisioning(IBotDecisioning):
             if damage > 0:
                 self.possible_foe.suffer_damage(damage)
                 print_suffer_damage(self.current_bot, self.possible_foe, damage)
+                experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
+                self.current_bot.earn_xp(experience)
+
+                if not self.possible_foe.is_alive():
+                    experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
+                    self.current_bot.earn_xp(experience)
             else:
                 print_missed(self.current_bot, self.possible_foe)
             return

@@ -22,6 +22,28 @@ def print_greetings() -> None:
     print(emojis.encode(colored(':fire: Welcome to Emberblast! :fire: \n\n', 'red')))
 
 
+def print_player_earned_xp(player_name: str, xp: int) -> None:
+    """
+    Print that a player as leveled up.
+
+    :param str player_name: The name of the player.
+    :param int xp: The amount of experience earned.
+    :rtype: None
+    """
+    print(f'Player {player_name} earned {xp} of experience! \n')
+
+
+def print_player_level_up(player_name: str, level: int) -> None:
+    """
+    Print that a player as leveled up.
+
+    :param str player_name: The name of the player.
+    :param int level: New level.
+    :rtype: None
+    """
+    print(f'Player {player_name} level up to {level}! \n')
+
+
 def print_player_stats(player: IPlayer):
     """
     Print the current playing player stats and attributes.

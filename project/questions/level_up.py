@@ -48,9 +48,15 @@ def improve_attributes_automatically(job: IJob, race: IRace) -> Dict:
     sorted_list = iter(sorted(unsorted_attributes_dict, key=unsorted_attributes_dict.get, reverse=True))
     first_attribute = next(sorted_list)
     second_attribute = next(sorted_list)
+    not_allowed_together_list = ['magic_points', 'health_points']
 
-    chosen_attributes[first_attribute] = unsorted_attributes_dict.get(first_attribute, 0)
-    chosen_attributes[second_attribute] = unsorted_attributes_dict.get(second_attribute, 0)
+    # As HP and MP, always have a higher distribution percentage, most probably they will always be the first two
+    # elements of the sorted list, so to prevent all bots to always improve only these attributes, this IF is necessary.
+    if first_attribute in not_allowed_together_list and second_attribute in not_allowed_together_list:
+        second_attribute = next(sorted_list)
+
+    chosen_attributes[first_attribute] = level_up_increment_attributes.get(first_attribute, 0)
+    chosen_attributes[second_attribute] = level_up_increment_attributes.get(second_attribute, 0)
 
     return chosen_attributes
 

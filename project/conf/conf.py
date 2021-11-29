@@ -5,12 +5,13 @@ from cerberus import Validator, SchemaError
 from .schema import race_section_configuration_schema, game_section_configuration_schema, \
     job_section_configuration_schema, level_up_attributes_configuration_schema, side_effects_configuration_schema, \
     healing_item_validation_schema, recovery_item_validation_schema, equipment_item_validation_schema, \
-    items_probabilities_schema, skills_validation_schema
+    items_probabilities_schema, skills_validation_schema, experience_earned_action_configuration_schema
 from .logger import get_logger
 from project.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT, SIDE_EFFECTS_SECTION, \
     ITEMS_SECTION, ITEMS_PROBABILITIES_SECTION, SKILLS_SECTION
 from project.utils import get_project_root, deep_get
 from project.exception import ConfigFileError
+from ..utils.constants import EXPERIENCE_EARNED_ACTION
 
 
 class Configuration(object):
@@ -30,6 +31,7 @@ class Configuration(object):
         self.jobs = {}
         self.races = {}
         self.level_up_attributes_increment = {}
+        self.experience_earned_action = {}
         self.side_effects = {}
         self.items = {}
         self.skills = {}
@@ -94,6 +96,7 @@ class Configuration(object):
             self.validate_races_attributes()
             self.validate_level_up_increment_attributes()
             self.validate_items_probabilities_attributes()
+            self.validate_experience_earned_action()
         except ConfigFileError as err:
             raise SystemExit(str(err))
         except SchemaError as err:
@@ -216,6 +219,17 @@ class Configuration(object):
         v = Validator(level_up_attributes_configuration_schema)
         if not v.validate(self.level_up_attributes_increment, level_up_attributes_configuration_schema):
             self.error_handler(v.errors, LEVEL_UP_INCREMENT)
+
+    def validate_experience_earned_action(self):
+        """
+        Validates the experience earned in each action
+
+        :rtype: None
+        """
+        self.experience_earned_action = deep_get(self.game, EXPERIENCE_EARNED_ACTION)
+        v = Validator(experience_earned_action_configuration_schema)
+        if not v.validate(self.experience_earned_action, experience_earned_action_configuration_schema):
+            self.error_handler(v.errors, EXPERIENCE_EARNED_ACTION)
 
     def validate_side_effects(self) -> None:
         """

@@ -30,6 +30,10 @@ game_section_configuration_schema = {
         'required': True,
         'type': 'dict',
     },
+    "experience_earned_action": {
+        'required': True,
+        'type': 'dict',
+    },
     'items_probabilities': {
         'required': True,
         'type': 'dict',
@@ -140,6 +144,21 @@ race_section_configuration_schema = {
 
 level_up_attributes_configuration_schema = {
     **attribute_section_schema
+}
+
+experience_earned_action_configuration_schema = {
+    'attack': {
+        'required': True,
+        'type': 'number',
+        'min': 1,
+        'max': 100,
+    },
+    'kill': {
+        'required': True,
+        'type': 'number',
+        'min': 1,
+        'max': 100
+    },
 }
 
 side_effects_configuration_schema = {

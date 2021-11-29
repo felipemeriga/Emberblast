@@ -62,6 +62,8 @@ docker run -it emberblast:latest
 
 ## TODO List
 
+- add capability of adding traps to the map
+- implement skills to find items on the map
 - Add more skills for Rogue
 - Add more skills for knight
 - Add more custom skills

@@ -1,6 +1,7 @@
 from project.questions import improve_attributes_automatically
 from .player import Player
 from project.interface import IBag, IJob, IRace, IEquipment, IBotPlayer
+from project.message import print_player_level_up
 
 
 class BotPlayer(IBotPlayer, Player):
@@ -27,4 +28,6 @@ class BotPlayer(IBotPlayer, Player):
         """
         improvements = improve_attributes_automatically(self.job.get_name(), self.race.get_name())
         for key, value in improvements.items():
-            self.__setattr__(key, value + self.__getattribute__(value))
+            self.__setattr__(key, value + self.__getattribute__(key))
+        self.level = self.level + 1
+        print_player_level_up(self.name, self.level)

@@ -10,5 +10,6 @@ SKILLS_SECTION = 'skills'
 SIDE_EFFECTS_SECTION = 'side_effects'
 ITEMS_PROBABILITIES_SECTION = 'items_probabilities'
 LEVEL_UP_INCREMENT = 'level_up_attributes_increment'
+EXPERIENCE_EARNED_ACTION = 'experience_earned_action'
 PASS_ACTION_NAME = 'pass'
 

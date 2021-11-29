@@ -1,6 +1,9 @@
 game:
   dice_sides: 20
   max_number_bots: 8
+  experience_earned_action:
+    attack: 20
+    kill: 60
   level_up_attributes_increment:
     health_points: 5
     magic_points: 5

@@ -9,6 +9,7 @@ from project.interface import IPlayer, ISkill, ISideEffect
 from project.utils import SKILLS_SECTION
 from project.message import print_suffer_damage, print_heal, print_missed, print_spent_mana, print_add_side_effect, \
     print_player_stole_item, print_player_fail_stole_item
+from project.utils.constants import EXPERIENCE_EARNED_ACTION
 
 """
 This is the base class for defining a Skill, as all the skills are defined dynamically on the skills.yaml file, 
@@ -68,7 +69,8 @@ class Skill(ISkill):
 
     def calculate_defense(self, foe: IPlayer, ) -> int:
         # Skills can be magical, based on intelligence, and physical, based on strength
-        # For magical skills, foe will use magic resist and for physical, armour
+        # For magical skills,
+        # foe will use magic resist and for physical, armour
         if self.base_attribute == 'strength':
             defense_attribute = 'armour'
         else:
@@ -81,6 +83,8 @@ class Skill(ISkill):
             self.base + dice_norm_result * player.get_attribute_real_value('intelligence'))
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
+        kill = False
+        successful_skill = False
         player.spend_mana(self.cost)
         print_spent_mana(player.name, self.cost, self.name)
         for foe in foes:
@@ -89,6 +93,7 @@ class Skill(ISkill):
                 defense = self.calculate_defense(foe)
                 damage = math.ceil(damage - defense)
                 if damage > 0:
+                    successful_skill = True
                     foe.suffer_damage(damage)
                     print_suffer_damage(player, foe, damage)
                 else:
@@ -103,7 +108,19 @@ class Skill(ISkill):
             for side_effect in self.punishment_side_effects:
                 player.add_side_effect(side_effect)
                 print_add_side_effect(player.name, side_effect)
+            if not foe.is_alive():
+                kill = True
             print('\n')
+        self.check_experience(player, successful_skill, kill)
+
+    @staticmethod
+    def check_experience(player: IPlayer, successful_skill: bool, killed: bool) -> None:
+        if successful_skill:
+            experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
+            player.earn_xp(experience)
+        if killed:
+            experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
+            player.earn_xp(experience)
 
 
 instantiated_skills: Dict = {}
@@ -231,6 +248,7 @@ class Steal(Skill):
                          base_attribute, side_effects, applies_caster_only, punishment_side_effects)
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
+        successful_steal = False
         foe = foes[0]
         items = foe.bag.items
         if len(items) > 0:
@@ -238,8 +256,10 @@ class Steal(Skill):
             foe.bag.remove_item(stolen_item)
             player.bag.add_item(stolen_item)
             print_player_stole_item(player.name, foe.name, stolen_item.name, stolen_item.tier)
+            successful_steal = True
         else:
             print_player_fail_stole_item(player.name, foe.name)
+        self.check_experience(player, successful_steal, False)
 
 
 class Leech(Skill):
@@ -251,6 +271,9 @@ class Leech(Skill):
                          side_effects, applies_caster_only, punishment_side_effects)
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
+        successful_skill = False
+        kill = False
+
         player.spend_mana(self.cost)
         print_spent_mana(player.name, self.cost, self.name)
         foe = foes[0]
@@ -260,3 +283,10 @@ class Leech(Skill):
         print_suffer_damage(player, foe, damage)
         player.heal('health_points', damage)
         print_heal(player, player, damage)
+
+        if damage - defense > 0:
+            successful_skill = True
+        if not foe.is_alive():
+            kill = True
+
+        self.check_experience(player, successful_skill, kill)

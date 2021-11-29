@@ -5,7 +5,7 @@ from project.conf import get_logger
 from project.effect import SideEffect
 from project.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag, IJob, IRace, IEquipment, ISideEffect
 from project.skill import get_player_available_skills
-from project.message import print_iterated_side_effect_apply, print_side_effect_ended
+from project.message import print_iterated_side_effect_apply, print_side_effect_ended, print_player_earned_xp
 
 
 class Player(IPlayer):
@@ -80,6 +80,7 @@ class Player(IPlayer):
         :param int experience: Value to be computed.
         :rtype: None
         """
+        print_player_earned_xp(self.name, experience)
         self.experience = self.experience + experience
         if self.experience >= 100:
             self.experience = self.experience - 100

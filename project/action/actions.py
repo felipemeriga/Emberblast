@@ -16,6 +16,7 @@ functionalities
 import math
 from typing import List, Optional
 
+from project.conf import get_configuration
 from project.questions import ask_check_action, ask_enemy_to_check, ask_where_to_move, select_item, \
     confirm_item_selection, display_equipment_choices, confirm_use_item_on_you, ask_enemy_to_attack, select_skill
 from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
@@ -23,6 +24,7 @@ from project.message import print_player_stats, print_enemy_status, print_map_in
     print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana, print_use_item
 from project.interface import IGame, IPlayer, IAction, IEquipmentItem, ISkillAction
 from project.skill import get_player_available_skills
+from project.utils.constants import EXPERIENCE_EARNED_ACTION
 
 
 class SingletonAction(type):
@@ -181,6 +183,12 @@ class Attack(Action):
         if damage > 0:
             enemy_to_attack.suffer_damage(damage)
             print_suffer_damage(player, enemy_to_attack, damage)
+            experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
+            player.earn_xp(experience)
+
+            if not enemy_to_attack.is_alive():
+                experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
+                player.earn_xp(experience)
         else:
             print_missed(player, enemy_to_attack)
         return
