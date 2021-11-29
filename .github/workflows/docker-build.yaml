@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Validate build
         run: |
-          git config --global url."https://x-token-auth:${{ secrets.ACCESS_TOKEN_SECRET }}@github.com/felipemeriga".insteadOf "https://github.com/felipemeriga"
+          git config --global url."https://x-token-auth:${{ secrets.GITHUB_TOKEN }}@github.com/felipemeriga".insteadOf "https://github.com/felipemeriga"
       # This Push will not trigger a deployment because it uses github token
       # We don't want an event to fire for the container named for the branch, we only deploy containers tagged with the git sha
       # Released and Prereleased use this container, but dev deployment uses the lower
@@ -29,7 +29,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: felipemeriga
-          password: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3
@@ -61,4 +61,4 @@ jobs:
             ${{ steps.meta.outputs.tags }}
           build-args: COMMIT_HASH=${{ github.sha }},LAST_GIT_TAG=${{ github.ref }}
           secrets: |
-            "GITHUB_TOKEN=${{ secrets.ACCESS_TOKEN_SECRET }}"
+            "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
