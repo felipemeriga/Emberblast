@@ -62,6 +62,3 @@ jobs:
           build-args: COMMIT_HASH=${{ github.sha }},LAST_GIT_TAG=${{ github.ref }}
           secrets: |
             "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
-      - uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ format('ghcr.io/{0}/emberblast@{1}', github.repository_owner, steps.dockerbuild.outputs.digest ) }}
