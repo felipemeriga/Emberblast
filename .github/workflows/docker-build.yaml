@@ -28,7 +28,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.repository_owner }}
+          username: felipemeriga
           password: ${{ secrets.ACCESS_TOKEN_SECRET }}
       - name: Docker meta
         id: meta
