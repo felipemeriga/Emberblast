@@ -295,7 +295,7 @@ skills_validation_schema = {
     'kind': {
         'type': 'string',
         'required': True,
-        'allowed': ['inflict', 'recover', 'debuff', 'buff']
+        'allowed': ['inflict', 'recover', 'debuff', 'buff', 'trap']
     },
     'ranged': {
         'type': 'number',

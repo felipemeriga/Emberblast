@@ -357,6 +357,7 @@ BearTrap:
   description: The target is unable to play the next turn
   base: 0
   cost: 2
+  kind: trap
   level_requirement: 4
   ranged: 0
   area: 0

@@ -81,4 +81,4 @@ weaken:
   attribute: strength
   base: 5
   duration: 2
-  occurence: constant
+  occurrence: constant
