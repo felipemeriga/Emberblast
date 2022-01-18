@@ -406,6 +406,18 @@ class IMap(ABC):
     def add_item_to_map(self, position: str, item: IItem) -> None:
         pass
 
+    @abstractmethod
+    def add_trap_to_map(self, position: str, side_effects: List[ISideEffect]) -> None:
+        pass
+
+    @abstractmethod
+    def get_traps_from_position(self, position: str) -> List[ISideEffect]:
+        pass
+
+    @abstractmethod
+    def move_player(self, player: IPlayer, destination: str) -> None:
+        pass
+
 
 class ITurnStatistics(ABC):
     killer: bool

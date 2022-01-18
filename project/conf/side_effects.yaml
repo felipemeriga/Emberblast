@@ -16,6 +16,12 @@ haste:
   base: 1
   duration: 3
   occurrence: constant
+swift:
+  type: buff
+  attribute: move_speed
+  base: 2
+  duration: 1
+  occurrence: constant
 slow:
   type: debuff
   attribute: move_speed
@@ -70,3 +76,9 @@ pray:
   base: 1
   duration: 1
   occurrence: constant
+weaken:
+  type: debuff
+  attribute: strength
+  base: 5
+  duration: 2
+  occurence: constant

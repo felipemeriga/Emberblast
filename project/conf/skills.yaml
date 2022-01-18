@@ -257,6 +257,18 @@ Steal:
   area: 0
   job: Rogue
   base_attribute: strength
+PoisonousTrap:
+  name: Poisonous Trap
+  description: Places a hidden trap, inflicting poison to enemies that step into it
+  base: 0
+  cost: 2
+  kind: trap
+  level_requirement: 1
+  ranged: 0
+  area: 0
+  job: Rogue
+  base_attribute: strength
+  side_effects: [ blind ]
 ThrowStone:
   name: Throw Stone
   description: Throws a stone on the enemy
@@ -302,3 +314,52 @@ SandBlow:
   job: Rogue
   base_attribute: strength
   side_effects: [ blind ]
+Pitfalltrap:
+  name: Pitfall trap
+  description: Places a trap, so enemies can fall into it, applying poison and exhaust to them.
+  base: 0
+  cost: 3
+  kind: trap
+  level_requirement: 2
+  ranged: 0
+  area: 0
+  job: Rogue
+  base_attribute: strength
+  side_effects: [ poison, exhaust ]
+NinjaTrap:
+  name: Ninja Trap
+  description: Ninja trap, that applies poison, exhaust and blind on the foe
+  base: 0
+  cost: 5
+  kind: trap
+  level_requirement: 3
+  ranged: 0
+  area: 0
+  job: Rogue
+  base_attribute: strength
+  side_effects: [ poison, exhaust, blind ]
+EscapeIntoShadows:
+  name: Escape Into Shadows
+  description: you will have plus 2 points on movement speed for 1 turn, but will reduce your strength in 5
+  base: 0
+  cost: 5
+  kind: buff
+  level_requirement: 3
+  ranged: 0
+  area: 0
+  job: Rogue
+  base_attribute: strength
+  applies_caster_only: true
+  side_effects: [ swift ]
+  punishment_side_effects: [ weaken ]
+BearTrap:
+  name: Bear Trap
+  description: The target is unable to play the next turn
+  base: 0
+  cost: 2
+  level_requirement: 4
+  ranged: 0
+  area: 0
+  job: Rogue
+  base_attribute: strength
+

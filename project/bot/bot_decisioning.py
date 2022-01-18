@@ -277,7 +277,7 @@ class BotDecisioning(IBotDecisioning):
 
             sorted_safer_positions_tuple = sorted(safer_positions_map.items(), key=lambda x: x[1], reverse=True)
             safest_place = next(iter(sorted_safer_positions_tuple))[0]
-            self.current_bot.set_position(safest_place)
+            self.game.game_map.move_player(self.current_bot, safest_place)
         if self.current_play_style == IPlayingMode.AGGRESSIVE:
             possible_foe = self.find_foes(possibilities)
 
@@ -287,21 +287,21 @@ class BotDecisioning(IBotDecisioning):
                 sorted_aggressive_positions_tuple = sorted(aggressive_positions_map.items(), key=lambda x: x[1],
                                                            reverse=False)
                 best_place = next(iter(sorted_aggressive_positions_tuple))[0]
-                self.current_bot.set_position(best_place)
+                self.game.game_map.move_player(self.current_bot, best_place)
             else:
                 if self.current_bot.job.attack_type == 'melee':
-                    self.current_bot.set_position(possible_foe.position)
+                    self.game.game_map.move_player(self.current_bot, possible_foe.position)
                 elif self.current_bot.job.attack_type == 'ranged':
                     attack_range = self.current_bot.get_ranged_attack_area()
                     aggressive_possibilities = self.game.game_map.graph.get_available_nodes_in_range(
                         possible_foe.position,
                         attack_range)
                     best_position = random.choice(aggressive_possibilities)
-                    self.current_bot.set_position(best_position)
+                    self.game.game_map.move_player(self.current_bot, best_position)
                 self.possible_foe = possible_foe
         if self.current_play_style == IPlayingMode.NEUTRAL:
             random_position = random.choice(possibilities)
-            self.current_bot.set_position(random_position)
+            self.game.game_map.move_player(self.current_bot, random_position)
 
     def probability_of_damage(self, foe: IPlayer) -> bool:
         if self.current_bot.job.intelligence > self.current_bot.job.strength:

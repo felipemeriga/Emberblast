@@ -103,7 +103,7 @@ class Move(Action):
         print_moving_possibilities(player.position, possibilities, self.game.game_map.graph.matrix,
                                    self.game.game_map.size)
         selected_place = ask_where_to_move(possibilities)
-        player.set_position(selected_place)
+        self.game.game_map.move_player(player, selected_place)
         return
 
 
@@ -227,6 +227,9 @@ class Skill(Action, ISkillAction):
             return False
         if selected_skill.kind == 'recover' or selected_skill.kind == 'buff':
             possible_foes = [player]
+        if selected_skill.kind == 'trap':
+            self.game.game_map.add_trap_to_map(player.position, selected_skill.side_effects)
+            return
         if not selected_skill.applies_caster_only:
             possible_foes.extend(self.get_attack_possibilities(selected_skill.ranged, player, remaining_players))
         if len(possible_foes) == 0:

@@ -6,7 +6,7 @@ from .graph import Graph
 from project.utils import convert_number_to_letter
 from project.conf import get_configuration
 from project.item import get_random_item
-from project.interface import IPlayer, IItem, IMap
+from project.interface import IPlayer, IItem, IMap, ISideEffect
 
 
 class Map(IMap):
@@ -25,6 +25,7 @@ class Map(IMap):
         self.size = size
         self.graph = Graph(size=size)
         self.items: Dict[str, List[IItem]] = {}
+        self.traps: Dict[str, List[ISideEffect]] = {}
 
     def define_player_initial_position_random(self, players: List[IPlayer]) -> None:
         """
@@ -56,6 +57,19 @@ class Map(IMap):
             position = convert_number_to_letter(row) + str(column)
             if vertex_valid and position not in selected_positions:
                 return position
+
+    def get_traps_from_position(self, position: str) -> List[ISideEffect]:
+        if self.traps.get(position, None):
+            side_effects = self.traps.get(position)
+            self.traps[position] = []
+            return side_effects
+
+    def move_player(self, player: IPlayer, destination: str) -> None:
+        traps = self.get_traps_from_position(destination)
+        if len(traps) > 0:
+            for side_effect in traps:
+                player.add_side_effect(side_effect)
+        player.set_position(destination)
 
     def distribute_random_items(self) -> None:
         """
@@ -121,7 +135,7 @@ class Map(IMap):
         or when a character drops an item.
 
         :param str position: The position of the map, like "A2" or "C4" where item will be added.
-        :param Item IItem: Item object that will be added.
+        :param IItem item: Item object that will be added.
 
         :rtype: None.
         """
@@ -129,6 +143,20 @@ class Map(IMap):
             self.items.get(position).append(item)
         else:
             self.items[position] = [item]
+
+    def add_trap_to_map(self, position: str, side_effects: List[ISideEffect]) -> None:
+        """
+        Add a trap to map, usually thieves are the ones that are specialized on that kind of job.
+
+        :param str position: The position of the map, like "A2" or "C4" where the trap will be added.
+        :param List[ISideEffect] side_effects: Side effects list.
+
+        :rtype: None.
+        """
+        if self.traps.get(position, None):
+            self.traps.get(position).extend(side_effects)
+        else:
+            self.traps[position] = side_effects
 
 
 class MapFactory:
