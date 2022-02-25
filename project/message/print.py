@@ -402,6 +402,19 @@ def print_missed(player: IPlayer, foe: IPlayer) -> None:
     print('{name} tried to attack {foe_name} but missed it.'.format(name=player.name, foe_name=foe.name))
 
 
+def print_trap_activated(player: IPlayer, side_effects: List[ISideEffect]) -> None:
+    """
+    Print that a player has fallen into a trap
+
+    :param IPlayer player: The attacking player.
+    :param ISideEffect side_effects: Side effects that will be applied.
+    :rtype: None
+    """
+    print('{player} has fallen into a trap, and got the following side-effects: '.format(player=player.name))
+    for side_effect in side_effects:
+        print(side_effect.name)
+
+
 def print_suffer_damage(attacker: IPlayer, foe: IPlayer, damage: int) -> None:
     """
     Print whenever a player inflicts damages to another players.

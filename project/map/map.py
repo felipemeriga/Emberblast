@@ -7,6 +7,7 @@ from project.utils import convert_number_to_letter
 from project.conf import get_configuration
 from project.item import get_random_item
 from project.interface import IPlayer, IItem, IMap, ISideEffect
+from project.message import print_trap_activated
 
 
 class Map(IMap):
@@ -59,14 +60,31 @@ class Map(IMap):
                 return position
 
     def get_traps_from_position(self, position: str) -> List[ISideEffect]:
+        """
+        Checks if a position of the map, contains hidden traps, and return all the
+        side-effects of the traps.
+
+        :param str position: The position to check for hidden traps.
+        :rtype: List[ISideEffect]
+        """
         if self.traps.get(position, None):
             side_effects = self.traps.get(position)
             self.traps[position] = []
             return side_effects
+        else:
+            return []
 
     def move_player(self, player: IPlayer, destination: str) -> None:
+        """
+        Function to move players along the map, and check if some positions have hidden traps.
+
+        :param IPlayer player: The player that is currently moving.
+        :param str destination: The destination where player is going.
+        :rtype: None
+        """
         traps = self.get_traps_from_position(destination)
         if len(traps) > 0:
+            print_trap_activated(player, traps)
             for side_effect in traps:
                 player.add_side_effect(side_effect)
         player.set_position(destination)
