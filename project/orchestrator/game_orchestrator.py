@@ -1,17 +1,24 @@
+import math
 from os import system
-from typing import List
+from typing import List, Optional
 
 import emojis
 from colorama import Fore
 
-from project.action import Move, Defend, Hide, Search, Attack, Skill, Item, Check, Pass, Equip, Drop
-from project.questions import ask_actions_questions
+from project.conf import get_configuration
+from project.questions import improve_attributes_automatically, questioning_system_injector
+from project.skill import get_player_available_skills
 from project.utils import PASS_ACTION_NAME
-from project.interface import IGame, IControlledPlayer, IPlayer, IAction, IGameOrchestrator
+from project.interface import IGame, IControlledPlayer, IPlayer, IAction, IGameOrchestrator, IEquipmentItem
 from project.bot import BotDecisioning
+from project.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
+    print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_foes_attack, \
+    print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana, print_use_item
 from project.message import print_player_won
+from project.utils.constants import EXPERIENCE_EARNED_ACTION
 
 
+@questioning_system_injector()
 class GameOrchestrator(IGameOrchestrator):
 
     def __init__(self, game: IGame) -> None:
@@ -46,17 +53,18 @@ class GameOrchestrator(IGameOrchestrator):
 
         :rtype: None.
         """
-        self.actions['move'] = Move(True, False, self.game)
-        self.actions['defend'] = Defend(False, False, self.game)
-        self.actions['hide'] = Hide(False, False, self.game)
-        self.actions['search'] = Search(True, False, self.game)
-        self.actions['attack'] = Attack(False, False, self.game)
-        self.actions['skill'] = Skill(False, False, self.game)
-        self.actions['item'] = Item(False, False, self.game)
-        self.actions['equip'] = Equip(True, True, self.game)
-        self.actions['drop'] = Drop(True, True, self.game)
-        self.actions['check'] = Check(True, True, self.game)
-        self.actions['pass'] = Pass(True, False, self.game)
+
+        self.actions['move']: IAction = {'independent': True, 'repeatable': False, 'function': self.move}
+        self.actions['defend']: IAction = {'independent': False, 'repeatable': False, 'function': self.defend}
+        self.actions['hide']: IAction = {'independent': False, 'repeatable': False, 'function': self.hide}
+        self.actions['search']: IAction = {'independent': True, 'repeatable': False, 'function': self.search}
+        self.actions['attack']: IAction = {'independent': False, 'repeatable': False, 'function': self.attack}
+        self.actions['skill']: IAction = {'independent': False, 'repeatable': False, 'function': self.skill}
+        self.actions['item']: IAction = {'independent': False, 'repeatable': False, 'function': self.item}
+        self.actions['equip']: IAction = {'independent': True, 'repeatable': True, 'function': self.equip}
+        self.actions['drop']: IAction = {'independent': True, 'repeatable': True, 'function': self.drop}
+        self.actions['check']: IAction = {'independent': True, 'repeatable': True, 'function': self.check}
+        self.actions['pass']: IAction = {'independent': True, 'repeatable': False, 'function': self.pass_turn}
 
     def execute_game(self) -> None:
         """
@@ -76,6 +84,48 @@ class GameOrchestrator(IGameOrchestrator):
         """
         for player in self.game.get_all_players():
             player.refresh_skills_list()
+
+    def check_player_level_up(self, player: IPlayer) -> None:
+        if player.experience >= 100:
+            player.experience = player.experience - 100
+            if isinstance(player, IControlledPlayer):
+                attributes = self.questioning_system.level_up_questioner.ask_attributes_to_improve()
+            else:
+                attributes = improve_attributes_automatically(player.job.get_name(), player.race.get_name())
+            player.level_up(attributes)
+
+    def move(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def defend(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def hide(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def search(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def attack(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def skill(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def item(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def drop(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def equip(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def check(self, player: IPlayer) -> Optional[bool]:
+        pass
+
+    def pass_turn(self, player: IPlayer) -> Optional[bool]:
+        pass
 
 
 class DeathMatchOrchestrator(GameOrchestrator):
@@ -193,10 +243,12 @@ class DeathMatchOrchestrator(GameOrchestrator):
         player.compute_iterated_side_effects()
 
         while len(self.actions_left) > 2:
-            chosen_action_string = ask_actions_questions(self.hide_invalid_actions(player))
+            chosen_action_string = self.questioning_system.actions_questioner.ask_actions_questions(
+                self.hide_invalid_actions(player))
             action = self.actions[chosen_action_string]
+            action_function = action['function']
             # self.clear()
-            if action.act(player) is None:
+            if action_function(player) is None:
                 self.compute_player_decisions(action, chosen_action_string)
         else:
             player.compute_side_effect_duration()
@@ -211,11 +263,228 @@ class DeathMatchOrchestrator(GameOrchestrator):
         """
         if action_string == PASS_ACTION_NAME:
             self.actions_left.clear()
-        elif action.repeatable:
+        elif action['repeatable']:
             return
-        elif action.independent:
+        elif action['independent']:
             self.actions_left.remove(action_string)
         else:
             for key, value in self.actions.items():
-                if not value.independent:
+                if not value['independent']:
                     self.actions_left.remove(key)
+
+    def move(self, player: IPlayer) -> Optional[bool]:
+        move_speed = player.get_attribute_real_value('move_speed')
+        possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position, move_speed)
+        print_moving_possibilities(player.position, possibilities, self.game.game_map.graph.matrix,
+                                   self.game.game_map.size)
+        selected_place = self.questioning_system.movement_questioner.ask_where_to_move(possibilities)
+        self.game.game_map.move_player(player, selected_place)
+        return
+
+    def defend(self, player: IPlayer) -> Optional[bool]:
+        player.set_defense_mode(True)
+        return
+
+    def hide(self, player: IPlayer) -> Optional[bool]:
+        current_accuracy = player.get_attribute_real_value('accuracy')
+        additional = (current_accuracy / 5 * 10) / 100
+
+        result = self.game.chose_probability(additional=[additional])
+        player.set_hidden(result)
+        return
+
+    def search(self, player: IPlayer) -> Optional[bool]:
+        items = self.game.game_map.check_item_in_position(player.position)
+        if items is not None:
+            for item in items:
+                player.bag.add_item(item)
+                print_found_item(player_name=player.name, found=True, item_tier=item.tier, item_name=item.name)
+        else:
+            print_found_item(player_name=player.name)
+        return
+
+    def calculate_damage(self, player: IPlayer, foe: IPlayer, dice_result: int) -> int:
+        targeted_defense = 'armour' if player.job.damage_vector == 'strength' else 'magic_resist'
+        damage = 0
+        if player.job.damage_vector == 'intelligence':
+            damage = (player.get_attribute_real_value(player.job.damage_vector, player.job.attack_type) / 2) + (
+                    dice_result / self.game.dice_sides) * 5
+        elif player.job.damage_vector == 'strength' and player.job.attack_type == 'ranged':
+            damage = player.get_attribute_real_value(player.job.damage_vector,
+                                                     player.job.attack_type) + player.get_attribute_real_value(
+                'accuracy') / 2 + (
+                             dice_result / self.game.dice_sides) * 5
+        else:
+            damage = player.get_attribute_real_value(player.job.damage_vector, player.job.attack_type) + (
+                    dice_result / self.game.dice_sides) * 5
+
+        return math.ceil(damage - foe.get_attribute_real_value(targeted_defense))
+
+    def get_attack_possibilities(self, attack_range: int, player: IPlayer, players: List[IPlayer]) -> List[IPlayer]:
+        """
+        This function computes which enemies a player can attack, considering its attack style,
+        ranged or melee.
+
+        :param int attack_range: The range of skill/attack, zero means melee attack/skill.
+        :param Player player: The player that will execute the attack action.
+        :param List[Player] players: The another players playing against.
+        :rtype: List[Player] players: The list of enemies to attack.
+        """
+        possible_foes = []
+
+        if attack_range == 0:
+            for foe in players:
+                if player.position == foe.position:
+                    possible_foes.append(foe)
+        elif attack_range > 0:
+            ranged_attack_possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position,
+                                                                                                attack_range)
+            ranged_attack_possibilities.append(player.position)
+            for foe in players:
+                if foe.position in ranged_attack_possibilities:
+                    possible_foes.append(foe)
+
+        return possible_foes
+
+    def attack(self, player: IPlayer) -> Optional[bool]:
+        players = self.game.get_remaining_players(player)
+        attack_range = player.get_ranged_attack_area()
+        possible_foes = self.get_attack_possibilities(attack_range, player, players)
+        if len(possible_foes) == 0:
+            print_no_foes_attack(player)
+            return False
+        enemy_to_attack = self.questioning_system.enemies_questioner.ask_enemy_to_attack(possible_foes)
+        if enemy_to_attack is None:
+            return False
+        dice_result = self.game.roll_the_dice()
+        print_dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
+
+        damage = self.calculate_damage(player, enemy_to_attack, dice_result)
+
+        if damage > 0:
+            enemy_to_attack.suffer_damage(damage)
+            print_suffer_damage(player, enemy_to_attack, damage)
+            experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
+            player.earn_xp(experience)
+
+            if not enemy_to_attack.is_alive():
+                experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
+                player.earn_xp(experience)
+        else:
+            print_missed(player, enemy_to_attack)
+        return
+
+    def get_affected_players_area_skill(self, target_player: IPlayer, remaining_players: List[IPlayer],
+                                        skill_affected_area):
+        area_foes = [target_player]
+        remaining_players.remove(target_player)
+        position_possibilities = self.game.game_map.graph.get_available_nodes_in_range(target_player.position,
+                                                                                       skill_affected_area)
+        position_possibilities.append(target_player.position)
+
+        for player in remaining_players:
+            if player.position in position_possibilities:
+                area_foes.append(player)
+
+        return area_foes
+
+    def skill(self, player: IPlayer) -> Optional[bool]:
+        foes = []
+        possible_foes = []
+
+        # Warn the current player that he is running out of mana, and should consider healing it.
+        if player.mana <= 5:
+            print_player_low_mana(player)
+
+        available_skills = get_player_available_skills(player)
+        selected_skill = self.questioning_system.skills_questioner.select_skill(available_skills)
+        remaining_players = self.game.get_remaining_players(player)
+        if selected_skill is None:
+            return False
+        if selected_skill.kind == 'recover' or selected_skill.kind == 'buff':
+            possible_foes = [player]
+        if selected_skill.kind == 'trap':
+            self.game.game_map.add_trap_to_map(player.position, selected_skill.side_effects)
+            return
+        if not selected_skill.applies_caster_only:
+            possible_foes.extend(self.get_attack_possibilities(selected_skill.ranged, player, remaining_players))
+        if len(possible_foes) == 0:
+            print_no_foes_skill(selected_skill.ranged, player.position)
+            return False
+        enemy_to_attack = self.questioning_system.enemies_questioner.ask_enemy_to_attack(possible_foes,
+                                                                                         selected_skill.kind)
+        if enemy_to_attack is None:
+            return False
+        if selected_skill.area > 0:
+            foes = self.get_affected_players_area_skill(enemy_to_attack, remaining_players, selected_skill.area)
+            if len(foes) > 0:
+                print_area_damage(selected_skill, foes)
+        else:
+            foes.append(enemy_to_attack)
+        dice_result = self.game.roll_the_dice()
+        print_dice_result(player.name, dice_result, 'skill', self.game.dice_sides)
+        dice_result_normalized = dice_result / self.game.dice_sides
+        selected_skill.execute(player, foes, dice_result_normalized)
+        return
+
+    def item(self, player: IPlayer) -> Optional[bool]:
+        using_player = player.name
+        usable_items = player.bag.get_usable_items()
+        selected_item = self.questioning_system.items_questioner.select_item(usable_items)
+        if selected_item is None:
+            return False
+        another_players_in_position = self.game.check_another_players_in_position(player)
+        if len(another_players_in_position) > 0:
+            if not self.questioning_system.items_questioner.confirm_use_item_on_you():
+                player = self.questioning_system.enemies_questioner.ask_enemy_to_attack(another_players_in_position)
+        if self.questioning_system.items_questioner.confirm_item_selection():
+            target_player = player.name
+            player.use_item(selected_item)
+            print_use_item(using_player, selected_item.name, target_player)
+            player.bag.remove_item(selected_item)
+        else:
+            return True
+
+    def drop(self, player: IPlayer) -> Optional[bool]:
+        selected_item = self.questioning_system.items_questioner.select_item(player.bag.items)
+        if selected_item is None:
+            return False
+        confirm = self.questioning_system.items_questioner.confirm_item_selection()
+        if confirm:
+            if isinstance(selected_item, IEquipmentItem):
+                player.remove_side_effects(selected_item.side_effects)
+                player.equipment.check_and_remove(selected_item)
+            player.bag.remove_item(selected_item)
+            self.game.game_map.add_item_to_map(player.position, selected_item)
+        return
+
+    def equip(self, player: IPlayer) -> Optional[bool]:
+        equipment_item = self.questioning_system.items_questioner.display_equipment_choices(player)
+        if equipment_item is None:
+            return False
+        if player.equipment.is_equipped(equipment_item):
+            return False
+        previous_equipment = player.equipment.get_previous_equipped_item(equipment_item.category)
+        if previous_equipment is not None:
+            player.remove_side_effects(previous_equipment.side_effects)
+        player.equipment.equip(equipment_item)
+        player.side_effects.extend(equipment_item.side_effects)
+        return
+
+    def check(self, player: IPlayer) -> Optional[bool]:
+        check_option = self.questioning_system.actions_questioner.ask_check_action(
+            show_items=True if len(player.bag.items) > 0 else False)
+        if check_option == 'status':
+            print_player_stats(player)
+        elif check_option == 'map':
+            unhidden_foes = self.game.get_remaining_players(player, include_hidden=False)
+            print_map_info(player, unhidden_foes, self.game.game_map.graph.matrix, self.game.game_map.size)
+        elif check_option == 'enemy':
+            enemies = self.game.get_remaining_players(player, include_hidden=False)
+            enemy = self.questioning_system.enemies_questioner.ask_enemy_to_check(enemies)
+            print_enemy_status(enemy)
+        elif check_option == 'item':
+            item = self.questioning_system.items_questioner.select_item(player.bag.items)
+            print_check_item(item)
+        else:
+            return

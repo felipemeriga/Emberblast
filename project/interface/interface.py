@@ -1,6 +1,9 @@
 from abc import abstractmethod, ABC
 from enum import Enum
-from typing import List, Union, Dict, Optional, Set, Callable
+from pathlib import Path
+from typing import List, Union, Dict, Optional, Set, Callable, TypedDict
+
+
 
 
 class ISideEffect(ABC):
@@ -181,7 +184,7 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def _level_up(self):
+    def level_up(self, improvements: Union[List, Dict]):
         pass
 
     @abstractmethod
@@ -271,13 +274,13 @@ class IPlayer(ABC):
 
 class IControlledPlayer(IPlayer):
     @abstractmethod
-    def _level_up(self) -> None:
+    def level_up(self, improvements: Union[List, Dict]) -> None:
         pass
 
 
 class IBotPlayer(IPlayer):
     @abstractmethod
-    def _level_up(self) -> None:
+    def level_up(self, improvements: Union[List, Dict]) -> None:
         pass
 
 
@@ -475,30 +478,10 @@ class IGame(ABC):
         pass
 
 
-class IAction:
+class IAction(TypedDict):
     independent: bool
     repeatable: bool
-    game: IGame
-
-    @abstractmethod
-    def act(self, player: IPlayer) -> Optional[bool]:
-        pass
-
-    @abstractmethod
-    def compute_analytics(self) -> None:
-        pass
-
-
-class ISkillAction(IAction):
-
-    @abstractmethod
-    def get_affected_players_area_skill(self, target_player: IPlayer, remaining_players: List[IPlayer],
-                                        skill_affected_area):
-        pass
-
-    @abstractmethod
-    def act(self, player: IPlayer) -> Optional[bool]:
-        pass
+    function: Callable
 
 
 class IPlayingMode(Enum):
@@ -506,6 +489,179 @@ class IPlayingMode(Enum):
     AGGRESSIVE = 1
     DEFENSIVE = 2
 
+class IActionsQuestioner(ABC):
+
+    @abstractmethod
+    def ask_check_action(self, show_items: bool = False) -> Union[str, bool, list, str]:
+        """
+        Ask which kind of information player wants to check.
+
+        :param bool show_items: If the player doesn't have items on its bag, this flag will help the
+        questions to remove the items question.
+        :rtype: Union[str, bool, list, str].
+        """
+        pass
+
+    @abstractmethod
+    def ask_actions_questions(self, actions_available: List[str]) -> Union[str, bool, list, str]:
+        """
+        Ask which action the player is going to execute.
+
+        :param List[str] actions_available: The actions that the player it's currently allowed to execute.
+        :rtype: Union[str, bool, list, str].
+        """
+        pass
+
+
+class IEnemiesQuestioner(ABC):
+
+    @abstractmethod
+    def ask_enemy_to_check(self, enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
+        """
+        Ask which enemy the player wants to know more info.
+
+        :param List[IPlayer] enemies: The unhidden players to analyze.
+        :rtype: Union[str, bool, list, IPlayer].
+        """
+        pass
+
+    @abstractmethod
+    def ask_enemy_to_attack(self, enemies: List[IPlayer], skill_type: str = '') -> Union[str, bool, list, IPlayer]:
+        """
+        Ask which enemy to attack.
+
+        :param List[IPlayer] enemies: The possible foes.
+        :param str skill_type: The type of the attack/skill.
+        :rtype: Union[str, bool, list, IPlayer].
+        """
+        pass
+
+
+class IItemsQuestioner(ABC):
+
+    @abstractmethod
+    def select_item(self, items: List[IItem]) -> Union[str, bool, list, IItem]:
+        """
+        Select an item to use, or even get more information about it.
+
+        :param List[IItem] items: The available items for the player.
+        :rtype: Union[str, bool, list, IItem].
+        """
+        pass
+
+    def confirm_item_selection(self) -> Union[str, bool, list, bool]:
+        """
+        Confirm question, to ensure that player really wants to use the selected item.
+
+        :rtype: Union[str, bool, list, bool].
+        """
+        pass
+
+    def confirm_use_item_on_you(self) -> Union[str, bool, list, bool]:
+        """
+        Confirm question, to ensure that player really wants to use the selected item on himself.
+
+        :rtype: Union[str, bool, list, bool].
+        """
+        pass
+
+    def display_equipment_choices(self, player: IPlayer) -> Union[str, bool, list, IEquipmentItem]:
+        """
+        Will display all the equipments that player has, for equipping one of them.
+
+        :param IPlayer player: The current player.
+        :rtype: Union[str, bool, list, IEquipmentItem].
+        """
+        pass
+
+
+class ILevelUpQuestioner(ABC):
+
+    def ask_attributes_to_improve(self) -> Union[str, bool, list, List]:
+        """
+        This function is used by human controlled players to chose which attribute they want to upgrade
+
+        :rtype: Union[str, bool, list, list].
+        """
+        pass
+
+
+class IMovementQuestioner(ABC):
+
+    def ask_where_to_move(self, possibilities: List[str]) -> Union[str, bool, list, str]:
+        """
+        This function is used by asking the player where he wants to move.
+
+        :param List[str] possibilities: The previously calculated possibilities of movement.
+        :rtype: Union[str, bool, list, str].
+        """
+        pass
+
+
+class INewGameQuestioner(ABC):
+
+    @abstractmethod
+    def perform_first_question(self) -> Union[str, bool, list, str]:
+        """
+        This function is used by asking a new game questions.
+
+        :rtype: Union[str, bool, list, dict].
+        """
+        pass
+
+    @abstractmethod
+    def perform_game_create_questions(self) -> Union[str, bool, list, dict]:
+        """
+        This function is used by asking a new game questions.
+
+        :rtype: Union[str, bool, list, dict].
+        """
+        pass
+
+    @abstractmethod
+    def perform_character_creation_questions(self, existing_names: List[str]) -> Union[str, bool, list, dict]:
+        """
+        This function is used when creating a new character.
+
+        :rtype: Union[str, bool, list, dict].
+        """
+        pass
+
+
+class ISaveLoadQuestioner(ABC):
+    def get_saved_game(self, normalized_files: List[Dict]) -> Union[str, bool, list, Path]:
+        """
+        Ask the players, which load file he wants to continue playing, the saved games comes in the normalized_files
+        parameter, that it's a list of dictionaries that has the file itself, and also a normalized user friendly formatted
+        name of this file.
+
+        :param List[Dict] normalized_files: The dictionary of all saved games.
+        :rtype: Union[str, bool, list, Path].
+        """
+        pass
+
+
+class ISkillsQuestioner(ABC):
+
+    def select_skill(self, available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
+        """
+        Question function, to query user for available skills to use.
+
+        :param List[ISkill] available_skills: Skills to be chosen.
+        :rtype: None
+        """
+        pass
+
+
+class IQuestioningSystem(ABC):
+    actions_questioner: IActionsQuestioner
+    enemies_questioner: IEnemiesQuestioner
+    items_questioner: IItemsQuestioner
+    level_up_questioner: ILevelUpQuestioner
+    movement_questioner: IMovementQuestioner
+    new_game_questioner: INewGameQuestioner
+    save_load_questioner: ISaveLoadQuestioner
+    skills_questioner: ISkillsQuestioner
 
 class IBotDecisioning(ABC):
     game: IGame
@@ -519,6 +675,7 @@ class IGameOrchestrator:
     actions: Dict[str, IAction]
     actions_left: List[str]
     turn_remaining_players: List[IPlayer]
+    questioning_system: IQuestioningSystem
 
     @abstractmethod
     def init_actions(self) -> None:
@@ -535,6 +692,7 @@ class IGameOrchestrator:
 
 class IGameFactory:
     begin_question_results: Union[Union[str, bool, list, dict], None]
+    questioning_system: IQuestioningSystem
 
     @abstractmethod
     def pre_initial_settings(self) -> IGameOrchestrator:
@@ -555,3 +713,5 @@ class IGameFactory:
     @abstractmethod
     def init_bots(self) -> List[IBotPlayer]:
         pass
+
+

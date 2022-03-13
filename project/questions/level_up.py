@@ -7,7 +7,103 @@ import emojis
 
 from project.conf import get_configuration
 from project.utils import LEVEL_UP_INCREMENT, JOBS_SECTION, RACES_SECTION
-from project.interface import IJob, IRace
+from project.interface import IJob, IRace, ILevelUpQuestioner
+
+
+class LevelUpQuestionerCMD(ILevelUpQuestioner):
+
+    def ask_attributes_to_improve(self) -> Union[str, bool, list, List]:
+        level_up_increment_attributes = get_configuration(LEVEL_UP_INCREMENT)
+        health_points = level_up_increment_attributes.get('health_points', 5)
+        magic_points = level_up_increment_attributes.get('magic_points', 5)
+        move_speed = level_up_increment_attributes.get('move_speed', 1)
+        strength = level_up_increment_attributes.get('strength', 3)
+        intelligence = level_up_increment_attributes.get('intelligence', 3)
+        accuracy = level_up_increment_attributes.get('accuracy', 1)
+        armour = level_up_increment_attributes.get('armour', 3)
+        magic_resist = level_up_increment_attributes.get('magic_resist', 3)
+        will = level_up_increment_attributes.get('will', 3)
+
+        level_up_questions = [
+            {
+                "type": "list",
+                "message": "Select an action:",
+                "choices": [
+                    {
+                        "name": emojis.encode("+{points} Health Points :green_heart:".format(points=health_points)),
+                        "value": {
+                            "attribute": "health_points",
+                            "value": health_points
+                        }
+                    },
+                    {
+                        "name": emojis.encode("+{points} Magic Points :blue_heart:".format(points=magic_points)),
+                        "value": {
+                            "attribute": "magic_points",
+                            "value": magic_points
+                        }
+                    },
+                    {
+                        "name": emojis.encode("+{points} Move Speed :runner:".format(points=move_speed)),
+                        "value": {
+                            "attribute": "move_speed",
+                            "value": move_speed
+                        }
+                    },
+                    {
+                        "name": emojis.encode("+{points} Strength :punch:".format(points=strength)),
+                        "value": {
+                            "attribute": "strength",
+                            "value": strength
+                        }
+                    },
+                    {
+                        "name": emojis.encode("+{points} Intelligence :books:".format(points=intelligence)),
+                        "value": {
+                            "attribute": "intelligence",
+                            "value": intelligence
+                        }
+                    },
+                    {
+                        "name": emojis.encode("+{points} Accuracy :dart:".format(points=accuracy)),
+                        "value": {
+                            "attribute": "accuracy",
+                            "value": accuracy
+                        }
+                    },
+                    {
+                        "name": emojis.encode("+{points} Armour :anger:".format(points=armour)),
+                        "value": {
+                            "attribute": "armour",
+                            "value": armour
+                        }
+                    },
+                    {
+                        "name": emojis.encode("+{points} Magic Resist :cyclone:".format(points=magic_resist)),
+                        "value": {
+                            "attribute": "magic_resist",
+                            "value": magic_resist
+                        }
+                    },
+                    {
+                        "name": emojis.encode("+{points} Will :pray:".format(points=will)),
+                        "value": {
+                            "attribute": "will",
+                            "value": will
+                        }
+                    },
+                ],
+                "default": None,
+                "multiselect": True,
+                "validate": lambda selected: len(selected) == 2,
+                "invalid_message": "You need to select 2 attributes to improve!",
+                "show_cursor": True,
+                "max_height": "100"
+            },
+        ]
+
+        result = prompt(questions=level_up_questions)
+        return result[0]
 
 
 def improve_attributes_randomly() -> Dict:
@@ -59,102 +155,3 @@ def improve_attributes_automatically(job: IJob, race: IRace) -> Dict:
     chosen_attributes[second_attribute] = level_up_increment_attributes.get(second_attribute, 0)
 
     return chosen_attributes
-
-
-def ask_attributes_to_improve() -> Union[str, bool, list, List]:
-    """
-    This function is used by human controlled players to chose which attribute they want to upgrade
-
-    :rtype: Union[str, bool, list, list].
-    """
-    level_up_increment_attributes = get_configuration(LEVEL_UP_INCREMENT)
-    health_points = level_up_increment_attributes.get('health_points', 5)
-    magic_points = level_up_increment_attributes.get('magic_points', 5)
-    move_speed = level_up_increment_attributes.get('move_speed', 1)
-    strength = level_up_increment_attributes.get('strength', 3)
-    intelligence = level_up_increment_attributes.get('intelligence', 3)
-    accuracy = level_up_increment_attributes.get('accuracy', 1)
-    armour = level_up_increment_attributes.get('armour', 3)
-    magic_resist = level_up_increment_attributes.get('magic_resist', 3)
-    will = level_up_increment_attributes.get('will', 3)
-
-    level_up_questions = [
-        {
-            "type": "list",
-            "message": "Select an action:",
-            "choices": [
-                {
-                    "name": emojis.encode("+{points} Health Points :green_heart:".format(points=health_points)),
-                    "value": {
-                        "attribute": "health_points",
-                        "value": health_points
-                    }
-                },
-                {
-                    "name": emojis.encode("+{points} Magic Points :blue_heart:".format(points=magic_points)),
-                    "value": {
-                        "attribute": "magic_points",
-                        "value": magic_points
-                    }
-                },
-                {
-                    "name": emojis.encode("+{points} Move Speed :runner:".format(points=move_speed)),
-                    "value": {
-                        "attribute": "move_speed",
-                        "value": move_speed
-                    }
-                },
-                {
-                    "name": emojis.encode("+{points} Strength :punch:".format(points=strength)),
-                    "value": {
-                        "attribute": "strength",
-                        "value": strength
-                    }
-                },
-                {
-                    "name": emojis.encode("+{points} Intelligence :books:".format(points=intelligence)),
-                    "value": {
-                        "attribute": "intelligence",
-                        "value": intelligence
-                    }
-                },
-                {
-                    "name": emojis.encode("+{points} Accuracy :dart:".format(points=accuracy)),
-                    "value": {
-                        "attribute": "accuracy",
-                        "value": accuracy
-                    }
-                },
-                {
-                    "name": emojis.encode("+{points} Armour :anger:".format(points=armour)),
-                    "value": {
-                        "attribute": "armour",
-                        "value": armour
-                    }
-                },
-                {
-                    "name": emojis.encode("+{points} Magic Resist :cyclone:".format(points=magic_resist)),
-                    "value": {
-                        "attribute": "magic_resist",
-                        "value": magic_resist
-                    }
-                },
-                {
-                    "name": emojis.encode("+{points} Will :pray:".format(points=will)),
-                    "value": {
-                        "attribute": "will",
-                        "value": will
-                    }
-                },
-            ],
-            "default": None,
-            "multiselect": True,
-            "validate": lambda selected: len(selected) == 2,
-            "invalid_message": "You need to select 2 attributes to improve!",
-            "show_cursor": True,
-            "max_height": "100"
-        },
-    ]
-
-    result = prompt(questions=level_up_questions)
-    return result[0]

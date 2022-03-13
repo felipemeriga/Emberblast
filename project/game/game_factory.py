@@ -6,9 +6,6 @@ from project.game import DeathMatch
 from project.map import MapFactory
 from project.orchestrator import DeathMatchOrchestrator
 from project.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, BotPlayer
-from project.questions import perform_game_create_questions, perform_first_question, \
-    perform_character_creation_questions
-from project.questions import get_saved_game
 from project.save import get_normalized_saved_files_dict, recover_saved_game_orchestrator
 from project.item import Bag
 from project.utils import JOBS_SECTION, RACES_SECTION
@@ -16,8 +13,10 @@ from project.utils.name_generator import generate_name
 from project.item import Equipment
 from project.message import print_create_new_character
 from project.interface import IMap, IControlledPlayer, IBotPlayer, IGameOrchestrator, IGameFactory
+from project.questions import questioning_system_injector
 
 
+@questioning_system_injector()
 class GameFactory(IGameFactory):
     def __init__(self):
         """
@@ -35,12 +34,12 @@ class GameFactory(IGameFactory):
 
         # Checking first if there are any saved games
         if len(normalized_files) > 0:
-            first_game_question = perform_first_question()
+            first_game_question = self.questioning_system.new_game_questioner.perform_first_question()
             if first_game_question == 'new':
                 return self.new_game()
             elif first_game_question == 'continue':
                 normalized_files = get_normalized_saved_files_dict()
-                selected_file = get_saved_game(normalized_files)
+                selected_file = self.questioning_system.save_load_questioner.get_saved_game(normalized_files)
                 game_orchestrator = recover_saved_game_orchestrator(selected_file)
                 return game_orchestrator
         else:
@@ -54,7 +53,7 @@ class GameFactory(IGameFactory):
         :rtype: IGameOrchestrator.
         """
         players = []
-        self.begin_question_results = perform_game_create_questions()
+        self.begin_question_results = self.questioning_system.new_game_questioner.perform_game_create_questions()
         controlled_players = self.init_players()
         players.extend(controlled_players)
 
@@ -94,7 +93,8 @@ class GameFactory(IGameFactory):
             print_create_new_character(i)
             existing_names = [x for x in map(lambda player: player.name, controlled_players)]
 
-            new_character_responses = perform_character_creation_questions(existing_names)
+            new_character_responses = self.questioning_system.new_game_questioner.perform_character_creation_questions(
+                existing_names)
             controlled_player = ControlledPlayer(new_character_responses.get('nickname'),
                                                  dynamic_jobs_classes[new_character_responses.get('job')](),
                                                  dynamic_races_classes[new_character_responses.get('race')](),

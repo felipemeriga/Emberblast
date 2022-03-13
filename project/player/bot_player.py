@@ -1,3 +1,5 @@
+from typing import List, Union, Dict
+
 from project.questions import improve_attributes_automatically
 from .player import Player
 from project.interface import IBag, IJob, IRace, IEquipment, IBotPlayer
@@ -18,7 +20,7 @@ class BotPlayer(IBotPlayer, Player):
         """
         super().__init__(name, job, race, bag, equipment)
 
-    def _level_up(self) -> None:
+    def level_up(self, improvements: Union[List, Dict]) -> None:
         """
         Implementation this method from Player class, this function will improve the attribute
         in an automated way, every time a bot player levels up, considering its race and job, to

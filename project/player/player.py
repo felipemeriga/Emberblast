@@ -1,5 +1,5 @@
 import math
-from typing import Union, List
+from typing import Union, List, Dict
 
 from project.conf import get_logger
 from project.effect import SideEffect
@@ -70,7 +70,7 @@ class Player(IPlayer):
         self.magic_resist += attributes.magic_resist
         self.will += attributes.will
 
-    def _level_up(self):
+    def level_up(self, improvements: Union[List, Dict]):
         raise NotImplementedError('Player::to_string() should be implemented!')
 
     def earn_xp(self, experience: int) -> None:
@@ -82,9 +82,6 @@ class Player(IPlayer):
         """
         print_player_earned_xp(self.name, experience)
         self.experience = self.experience + experience
-        if self.experience >= 100:
-            self.experience = self.experience - 100
-            self._level_up()
 
     def suffer_damage(self, damage: float) -> None:
         """
