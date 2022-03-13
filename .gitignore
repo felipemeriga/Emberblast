@@ -139,3 +139,4 @@ store.pckl
 
 # Game Save Files
 saved_games
+.DS_Store

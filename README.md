@@ -53,7 +53,7 @@ You can also run this game as a Docker container, you can either pull the offici
 Our build a custom docker image, and run it, for building the Docker image, run the following command:
 ```shell
 docker build -t emberblast .
-```
+```x
 
 For running the game:
 ```shell
