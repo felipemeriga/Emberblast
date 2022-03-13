@@ -1,6 +1,8 @@
 import os
 from unittest import TestCase, skipIf
 
+from project.interface.interface import IQuestioningSystem
+
 HAS_ATTR_MESSAGE = '{} should have an attribute {}'
 
 
@@ -21,3 +23,7 @@ class BaseTestCase(TestCase):
                 self.fail(message)
             else:
                 self.fail(HAS_ATTR_MESSAGE.format(obj, attrname))
+
+
+class QuestionTestCase(BaseTestCase):
+    questioning_system: IQuestioningSystem
