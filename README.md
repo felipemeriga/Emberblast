@@ -6,7 +6,7 @@ This is an Open Source Python Command Line RPG Arena game, it's a turn based gam
 to have many game styles, but currently we only have Deathmatch, which is all against all in an 
 arena.
 
-![emberfire](./project/img/emberblast.png)
+![emberfire](emberblast/img/emberblast.png)
 
 ## Game Rules
 

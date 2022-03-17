@@ -1,0 +1,6 @@
+include emberblast/conf/conf.yaml
+include emberblast/conf/items.yaml
+include emberblast/conf/skills.yaml
+include emberblast/conf/side_effects.yaml
+include emberblast/img/emberblast.png
+include emberblast/saved_games
