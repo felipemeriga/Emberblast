@@ -73,11 +73,3 @@ terminal interactive game, without this argument, you won't be able to interact 
 - Add probability to side-effects
 - Test Level up velocity
 
-
-
-```shell
-python3 -m build
-python3 -m twine upload dist/*
-https://dev.to/arnu515/create-a-pypi-pip-package-test-it-and-publish-it-using-github-actions-part-2-1o83
-```x
-
