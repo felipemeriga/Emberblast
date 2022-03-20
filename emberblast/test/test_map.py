@@ -35,7 +35,7 @@ def mock_map() -> Callable:
 @mock_defective_map()
 class TestModuleMap(BaseTestCase):
     def test_graph_generation(self) -> None:
-        size = random.randint(0, 10)
+        size = random.randint(1, 10)
         new_graph = Graph(size=size)
         new_graph.init_graph()
 

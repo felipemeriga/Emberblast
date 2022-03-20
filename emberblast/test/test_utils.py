@@ -34,14 +34,14 @@ class TestModuleUtils(BaseTestCase):
         }
 
     def test_generate_random_adjacent_matrix(self) -> None:
-        a = random.randint(0, 10)
+        a = random.randint(1, 10)
         matrix = generate_random_adjacent_matrix(a)
         # Asserting that the generated matrix it's square and from the same input size
         self.assertEqual(len(matrix), a)
         self.assertEqual(len(matrix[0]), a)
 
     def test_generate_visited_default_matrix(self) -> None:
-        a = random.randint(0, 10)
+        a = random.randint(1, 10)
         matrix = generate_visited_default_matrix(a)
         # Asserting that the generated matrix it's square and from the same input size
         self.assertEqual(len(matrix), a)
