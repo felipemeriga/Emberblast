@@ -67,7 +67,6 @@ class Configuration(object):
         :rtype: None
         """
         project_root = str(get_project_root())
-        print(f'THE PROJECT ROOT: {project_root}')
         config_yaml_file = open(str(get_project_root()) + '/conf/conf.yaml')
         self.parsed_yaml_file = yaml.load(config_yaml_file, Loader=yaml.FullLoader)
         self.validate_config_file()
