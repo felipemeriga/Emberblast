@@ -11,26 +11,28 @@ def print_line_separator():
     print(u'\u2500' * term_size.columns)
 
 
-def print_loading(prefix: str, prefix_attributes: List[str]) -> None:
+def print_loading() -> None:
     animation = [
-        "        ",
-        ".       ",
-        "..     ",
-        "...     ",
-        "....    ",
-        ".....   ",
-        "......  ",
-        "....... ",
-        "........",
-        " .......",
-        "  ......",
-        "   .....",
-        "    ....",
-        "     ...",
-        "      ..",
-        "       .",
-        "        ",
-        "        "
+        "          ",
+        ".         ",
+        "..        ",
+        "...       ",
+        "....      ",
+        ".....     ",
+        "......    ",
+        ".......   ",
+        "........  ",
+        "......... ",
+        "..........",
+        " .........",
+        "  ........",
+        "   .......",
+        "    ......",
+        "     .....",
+        "      ....",
+        "       ...",
+        "        ..",
+        "         ."
     ]
 
     notcomplete = True
@@ -38,16 +40,16 @@ def print_loading(prefix: str, prefix_attributes: List[str]) -> None:
     i = 0
 
     while notcomplete:
-        print(colored(prefix + animation[i % len(animation)], 'green', prefix_attributes), end='\r')
+        print('[' + animation[i % len(animation)] + ']', end='\r')
         time.sleep(.1)
         i += 1
 
 
 def execute_loading(loading_time: int, prefix: str, prefix_attributes: List[str]) -> None:
-    p = multiprocessing.Process(target=print_loading(prefix, prefix_attributes))
+    print(colored(prefix, None, attrs=prefix_attributes))
+    p = multiprocessing.Process(target=print_loading)
     p.start()
 
-    # Wait for 10 seconds or until process finishes
     p.join(loading_time)
 
     # If thread is still active

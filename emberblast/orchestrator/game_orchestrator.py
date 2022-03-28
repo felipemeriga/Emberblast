@@ -13,7 +13,8 @@ from emberblast.interface import IGame, IControlledPlayer, IPlayer, IAction, IGa
 from emberblast.bot import BotDecisioning
 from emberblast.message import print_player_stats, print_enemy_status, print_map_info, print_moving_possibilities, \
     print_found_item, print_check_item, print_dice_result, print_suffer_damage, print_no_foes_attack, \
-    print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana, print_use_item
+    print_no_foes_skill, print_area_damage, print_missed, print_player_low_mana, print_use_item, print_line_separator, \
+    execute_loading
 from emberblast.message import print_player_won
 from emberblast.utils.constants import EXPERIENCE_EARNED_ACTION
 
@@ -152,6 +153,9 @@ class DeathMatchOrchestrator(GameOrchestrator):
             # player turn, and continue from there, if it's a new game, it will only game the first turn, which is the
             # first and the only element of the turns dictionary.
             turn_list = [list(self.game.turns.copy().keys())[-1]]
+            print_line_separator()
+            execute_loading(5, 'Starting game', ['bold'])
+
             for turn in turn_list:
                 self.clear()
                 print(Fore.GREEN + emojis.encode(
