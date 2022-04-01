@@ -3,7 +3,7 @@ from .print import print_greetings, print_player_stats, print_enemy_status, prin
     print_suffer_damage, print_no_foes_attack, print_no_foes_skill, print_area_damage, print_heal, print_missed, \
     print_spent_mana, print_player_low_mana, print_use_item, print_create_new_character, print_player_won, \
     print_add_side_effect, print_iterated_side_effect_apply, print_side_effect_ended, print_player_stole_item, \
-    print_player_fail_stole_item, print_player_level_up, print_player_earned_xp, print_trap_activated
+    print_player_fail_stole_item, print_player_level_up, print_player_earned_xp, print_trap_activated, print_event
 
 
 from .separators import print_line_separator, execute_loading
@@ -14,4 +14,4 @@ __all__ = ['print_greetings', 'print_player_stats', 'print_enemy_status', 'print
            'print_missed', 'print_spent_mana', 'print_player_low_mana', 'print_use_item', 'print_create_new_character',
            'print_player_won', 'print_add_side_effect', 'print_iterated_side_effect_apply', 'print_side_effect_ended',
            'print_player_stole_item', 'print_player_fail_stole_item', 'print_player_level_up', 'print_player_earned_xp',
-           'print_trap_activated', 'print_line_separator', 'execute_loading']
+           'print_trap_activated', 'print_line_separator', 'execute_loading', 'print_event']

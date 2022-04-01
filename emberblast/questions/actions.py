@@ -116,4 +116,5 @@ class ActionsQuestionerCMD(IActionsQuestioner):
             }
         ]
         result = prompt(questions=actions_questions)
+        print("\033[A" + 100*" " + "\033[A")  # ansi escape arrow up then overwrite the line
         return result[0]

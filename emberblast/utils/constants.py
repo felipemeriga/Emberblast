@@ -13,3 +13,4 @@ LEVEL_UP_INCREMENT = 'level_up_attributes_increment'
 EXPERIENCE_EARNED_ACTION = 'experience_earned_action'
 PASS_ACTION_NAME = 'pass'
 
+DELAYED_ACTIONS = ['attack', 'skill', 'defend', 'hide', 'search', 'item']

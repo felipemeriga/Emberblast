@@ -17,7 +17,7 @@ def print_greetings() -> None:
     obj = timg.Renderer()
     project_path = get_project_root()
     obj.load_image_from_file(str(project_path) + '/img/emberblast.png')
-    obj.resize(100, 100)
+    obj.resize(75, 75)
     obj.render(timg.ASCIIMethod)
     print(emojis.encode(colored(':fire: Welcome to Emberblast! :fire: \n\n', 'red')))
 
@@ -30,7 +30,7 @@ def print_player_earned_xp(player_name: str, xp: int) -> None:
     :param int xp: The amount of experience earned.
     :rtype: None
     """
-    print(f'Player {player_name} earned {xp} of experience! \n')
+    print(f'\tPlayer {player_name} earned {xp} of experience! \n')
 
 
 def print_player_level_up(player_name: str, level: int) -> None:
@@ -41,7 +41,7 @@ def print_player_level_up(player_name: str, level: int) -> None:
     :param int level: New level.
     :rtype: None
     """
-    print(f'Player {player_name} level up to {level}! \n')
+    print(f'\tPlayer {player_name} level up to {level}! \n')
 
 
 def print_player_stats(player: IPlayer):
@@ -52,7 +52,7 @@ def print_player_stats(player: IPlayer):
     :rtype: None
     """
     print(emojis.encode(
-        ':man: {name} Stats: \n\n'.format(name=player.name)))
+        '\n :man: {name} Stats: \n'.format(name=player.name)))
     print(emojis.encode(
         ':bar_chart: Level: {level} \n'
         ':green_heart: Life: {life} \n'
@@ -82,7 +82,7 @@ def print_enemy_status(enemy: IPlayer) -> None:
     :param IPlayer enemy: The selected enemy.
     :rtype: None
     """
-    print(emojis.encode(colored('Enemy {name}({job}) is currently at position: {position} \n'
+    print(emojis.encode(colored('\n Enemy {name}({job}) is currently at position: {position} \n'
                                 ':bar_chart: Level: {level} \n'
                                 ':green_heart: Life: {life} \n'
                                 ':blue_heart: Mana: {mana} \n'
@@ -151,7 +151,7 @@ def print_map_info(player: IPlayer, players: List[IPlayer], matrix: List[List[in
     :rtype: None
     """
     foes_positions = []
-    print(colored('{name} is currently at position: {position}, '
+    print(colored('\n {name} is currently at position: {position}, '
                   'with {life} HP'.format(name=player.name,
                                           position=player.position,
                                           life=player.life),
@@ -183,7 +183,7 @@ def print_map_info(player: IPlayer, players: List[IPlayer], matrix: List[List[in
             elif position in foes_positions:
                 color = 'red'
             print(colored('{:4}'.format('*' if matrix[row][column] == 1 else ' '), color, attrs=attrs), end="")
-        print('')
+        print('\n')
 
 
 def print_moving_possibilities(player_position: str, possibilities: List[str], matrix: List[List[int]],
@@ -232,12 +232,12 @@ def print_found_item(player_name: str, found: bool = False, item_tier: str = Non
     :rtype: None
     """
     if found:
-        print('{name} found a {tier} item! {item_name} \n'.format(name=player_name,
+        print('\t{name} found a {tier} item! {item_name} \n'.format(name=player_name,
                                                                   tier=item_tier,
                                                                   item_name=item_name
                                                                   ))
     else:
-        print('{name} tried to find some item, but nothing was found! \n'.format(name=player_name))
+        print('\t{name} tried to find some item, but nothing was found! \n'.format(name=player_name))
 
 
 def print_no_foes_attack(player: IPlayer) -> None:
@@ -277,10 +277,10 @@ def print_area_damage(skill: ISkill, affected_players: List[IPlayer]) -> None:
     :param List[IPlayer] affected_players: The players that will be affected by the skill.
     :rtype: None
     """
-    print('\n {name} is an area {kind} skill, and it will hit the following players: '.format(name=skill.name,
+    print('\n\t{name} is an area {kind} skill, and it will hit the following players: '.format(name=skill.name,
                                                                                               kind=skill.kind))
     for opponent in affected_players:
-        print(colored('Enemy {name}({job}) is currently at position: {position}, '
+        print(colored('\tEnemy {name}({job}) is currently at position: {position}, '
                       'with {health_points} HP'.format(name=opponent.name,
                                                        job=opponent.job.get_name(),
                                                        position=opponent.position,
@@ -298,7 +298,7 @@ def print_spent_mana(name: str, amount: int, skill_name: str) -> None:
     :param str skill_name: The name of the skill.
     :rtype: None
     """
-    print('{player} casted {skill} for {amount} of mana.'.format(player=name, skill=skill_name, amount=amount))
+    print('\t{player} casted {skill} for {amount} of mana.'.format(player=name, skill=skill_name, amount=amount))
 
 
 def print_add_side_effect(name: str, side_effect: ISideEffect) -> None:
@@ -316,7 +316,7 @@ def print_add_side_effect(name: str, side_effect: ISideEffect) -> None:
     else:
         side_effect_status = 'buffed'
 
-    print('{player} has been {status} with {effect} side-effect. '.format(player=name,
+    print('\t{player} has been {status} with {effect} side-effect. '.format(player=name,
                                                                           status=side_effect_status,
                                                                           effect=side_effect.name))
 
@@ -385,10 +385,10 @@ def print_heal(healer: IPlayer, foe: IPlayer, amount: int) -> None:
         foe_name = 'itself'
     else:
         foe_name = foe.name
-    print('{name} healed {foe_name} for {amount} of health points!'.format(name=healer.name,
+    print('\t{name} healed {foe_name} for {amount} of health points!'.format(name=healer.name,
                                                                            foe_name=foe_name,
                                                                            amount=amount))
-    print('{foe_name} now has {life} of life'.format(foe_name=foe.name, life=foe.life))
+    print('\t{foe_name} now has {life} of life'.format(foe_name=foe.name, life=foe.life))
 
 
 def print_missed(player: IPlayer, foe: IPlayer) -> None:
@@ -399,7 +399,7 @@ def print_missed(player: IPlayer, foe: IPlayer) -> None:
     :param IPlayer foe: The foe suffering damage.
     :rtype: None
     """
-    print('{name} tried to attack {foe_name} but missed it.'.format(name=player.name, foe_name=foe.name))
+    print('\t{name} tried to attack {foe_name} but missed it.'.format(name=player.name, foe_name=foe.name))
 
 
 def print_trap_activated(player: IPlayer, side_effects: List[ISideEffect]) -> None:
@@ -410,7 +410,7 @@ def print_trap_activated(player: IPlayer, side_effects: List[ISideEffect]) -> No
     :param ISideEffect side_effects: Side effects that will be applied.
     :rtype: None
     """
-    print('{player} has fallen into a trap, and got the following side-effects: '.format(player=player.name))
+    print('\t{player} has fallen into a trap, and got the following side-effects: '.format(player=player.name))
     for side_effect in side_effects:
         print(side_effect.name)
 
@@ -424,13 +424,13 @@ def print_suffer_damage(attacker: IPlayer, foe: IPlayer, damage: int) -> None:
     :param int damage: Amount of damage done.
     :rtype: None
     """
-    print('{name} inflicted a damage of {damage} on {foe_name}'.format(name=attacker.name,
-                                                                       damage=damage,
-                                                                       foe_name=foe.name))
+    print('\t{name} inflicted a damage of {damage} on {foe_name}'.format(name=attacker.name,
+                                                                         damage=damage,
+                                                                         foe_name=foe.name))
     if not foe.is_alive():
-        print(colored('{foe_name} it is now dead'.format(foe_name=foe.name), 'red'))
+        print(colored('\t{foe_name} it is now dead'.format(foe_name=foe.name), 'red'))
     else:
-        print('{foe_name} now has {life} of life'.format(foe_name=foe.name, life=foe.life))
+        print('\t{foe_name} now has {life} of life'.format(foe_name=foe.name, life=foe.life))
 
 
 def print_dice_result(name: str, result: int, kind: str, max_sides: int) -> None:
@@ -443,9 +443,9 @@ def print_dice_result(name: str, result: int, kind: str, max_sides: int) -> None
     :param int max_sides: The max sides of the dice, to detect critical attacks/skills.
     :rtype: None
     """
-    print('{name} rolled the dice and got {result}!'.format(name=name, result=result))
+    print('\t{name} rolled the dice and got {result}!'.format(name=name, result=result))
     if result == max_sides:
-        print('It is a critical {kind}! You will execute a massive amount of damage!'.format(kind=kind))
+        print('\tIt is a critical {kind}! You will execute a massive amount of damage!'.format(kind=kind))
 
 
 def print_use_item(player_name: str, item_name: str, target_name: str) -> None:
@@ -459,9 +459,9 @@ def print_use_item(player_name: str, item_name: str, target_name: str) -> None:
     """
     if target_name == player_name:
         target_name = 'himself'
-    print('{name} used an item: {item}, on {target}'.format(name=player_name,
-                                                            item=item_name,
-                                                            target=target_name))
+    print('\t{name} used an item: {item}, on {target}'.format(name=player_name,
+                                                              item=item_name,
+                                                              target=target_name))
 
 
 def print_player_fail_stole_item(name: str, foe_name: str) -> None:
@@ -472,7 +472,7 @@ def print_player_fail_stole_item(name: str, foe_name: str) -> None:
     :param str foe_name: Name of the foe.
     :rtype: None
     """
-    print(f'Player {name} failed to steal an item from {foe_name} \n')
+    print(f'\tPlayer {name} failed to steal an item from {foe_name} \n')
 
 
 def print_player_stole_item(name: str, foe_name: str, item_name: str, tier: str) -> None:
@@ -486,10 +486,10 @@ def print_player_stole_item(name: str, foe_name: str, item_name: str, tier: str)
     :rtype: None
     """
 
-    print('Player {player} stole an item from {foe}! It was a {item}, of tier {tier}\n'.format(player=name,
-                                                                                               foe=foe_name,
-                                                                                               item=item_name,
-                                                                                               tier=tier))
+    print('\tPlayer {player} stole an item from {foe}! It was a {item}, of tier {tier}\n'.format(player=name,
+                                                                                                 foe=foe_name,
+                                                                                                 item=item_name,
+                                                                                                 tier=tier))
 
 
 def print_player_won(name: str) -> None:
@@ -518,6 +518,23 @@ def print_create_new_character(number: int) -> None:
 
     print(colored('Creating controlled character number: {number}... \n'.format(number=number), color, attrs=attrs),
           end="")
+
+
+def print_event(event: str) -> None:
+    color = ''
+    attrs = ['bold']
+    if event == 'attack':
+        color = 'red'
+        print(emojis.encode(colored(':crossed_swords: ATTACK: ', color, attrs=attrs)))
+    elif event == 'skill':
+        color = 'blue'
+        print(emojis.encode(colored(':fire: SKILL: ', color, attrs=attrs)))
+    elif event == 'search':
+        color = 'yellow'
+        print(emojis.encode(colored(':eye: SEARCH: ', color, attrs=attrs)))
+    elif event == 'item':
+        color = 'green'
+        print(emojis.encode(colored(':test_tube: ITEM: ', color, attrs=attrs)))
 
 
 def print_check_item(item: IItem) -> None:
