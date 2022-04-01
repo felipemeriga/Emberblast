@@ -5,8 +5,8 @@ import random
 from typing import List, Optional
 
 from emberblast.conf import get_configuration
-from emberblast.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage, print_found_item, \
-    print_use_item
+from emberblast.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage, \
+    print_found_item, print_use_item, execute_loading, print_event
 
 from emberblast.interface import IBotDecisioning, IGame, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
     IHealingItem
@@ -122,6 +122,7 @@ class BotDecisioning(IBotDecisioning):
         return area_foes
 
     def prepare_execute_skill(self, skill: ISkill) -> None:
+        print_event('skill')
         dice_result = self.game.roll_the_dice()
         foes = []
         prefix = 'attack'
@@ -183,6 +184,7 @@ class BotDecisioning(IBotDecisioning):
         best_option = next(iter(sorted_recovery_possibilities))[0]
 
         if isinstance(best_option, IHealingItem):
+            print_event('item')
             self.current_bot.use_item(best_option)
             print_use_item(self.current_bot.name, best_option.name, self.current_bot.name)
             self.current_bot.bag.remove_item(best_option)
@@ -228,6 +230,7 @@ class BotDecisioning(IBotDecisioning):
         dice_result = self.game.roll_the_dice()
 
         if best_attack == 'attack':
+            print_event('attack')
             print_dice_result(self.current_bot.name, dice_result, 'attack', self.game.dice_sides)
 
             targeted_defense = 'armour' if self.current_bot.job.damage_vector == 'strength' else 'magic_resist'
@@ -379,18 +382,23 @@ class BotDecisioning(IBotDecisioning):
         if self.current_play_style == IPlayingMode.AGGRESSIVE and \
                 self.possible_foe is not None:
             self.attack()
+            execute_loading(1)
             self.current_play_style = IPlayingMode.NEUTRAL
             self.move()
+            execute_loading(1)
         elif self.current_play_style == IPlayingMode.AGGRESSIVE and \
                 self.possible_foe is None:
             self.move()
+            execute_loading(1)
             self.attack()
+            execute_loading(1)
         else:
             self.move()
-
+            execute_loading(1)
         if self.current_play_style == IPlayingMode.DEFENSIVE:
             self.decide_best_defensive_action()
-
+            execute_loading(1)
+        print_event('search')
         self.search_on_map()
-
+        execute_loading(1)
         self.equip_item()
