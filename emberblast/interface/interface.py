@@ -4,8 +4,6 @@ from pathlib import Path
 from typing import List, Union, Dict, Optional, Set, Callable, TypedDict
 
 
-
-
 class ISideEffect(ABC):
     name: str
     effect_type: str
@@ -489,6 +487,7 @@ class IPlayingMode(Enum):
     AGGRESSIVE = 1
     DEFENSIVE = 2
 
+
 class IActionsQuestioner(ABC):
 
     @abstractmethod
@@ -653,6 +652,10 @@ class ISkillsQuestioner(ABC):
         pass
 
 
+class IInformingSystem(ABC):
+    pass
+
+
 class IQuestioningSystem(ABC):
     actions_questioner: IActionsQuestioner
     enemies_questioner: IEnemiesQuestioner
@@ -662,6 +665,7 @@ class IQuestioningSystem(ABC):
     new_game_questioner: INewGameQuestioner
     save_load_questioner: ISaveLoadQuestioner
     skills_questioner: ISkillsQuestioner
+
 
 class IBotDecisioning(ABC):
     game: IGame
@@ -713,5 +717,3 @@ class IGameFactory:
     @abstractmethod
     def init_bots(self) -> List[IBotPlayer]:
         pass
-
-
