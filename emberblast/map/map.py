@@ -7,7 +7,6 @@ from emberblast.utils import convert_number_to_letter
 from emberblast.conf import get_configuration
 from emberblast.item import get_random_item
 from emberblast.interface import IPlayer, IItem, IMap, ISideEffect
-from emberblast.message import print_trap_activated
 
 
 class Map(IMap):
@@ -83,8 +82,8 @@ class Map(IMap):
         :rtype: None
         """
         traps = self.get_traps_from_position(destination)
+        # TODO - MOVE this validation to orchestrator, so we can use communicator to let players know
         if len(traps) > 0:
-            print_trap_activated(player, traps)
             for side_effect in traps:
                 player.add_side_effect(side_effect)
         player.set_position(destination)

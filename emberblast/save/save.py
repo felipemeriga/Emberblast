@@ -61,7 +61,7 @@ def get_saved_game_files() -> List[Path]:
 def get_normalized_saved_files_dict() -> List[Dict]:
     """
     Normalized and format the name of each of the save files, to be presented in a user friendly format in the
-    questions.
+    communicator.
 
     :rtype: List[Dict].
     """

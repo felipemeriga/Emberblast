@@ -3,13 +3,13 @@ from unittest import skipIf
 
 from .test import QuestionTestCase, manual_test
 from .test_player import mock_player
-from emberblast.questions import questioning_system_injector
+from emberblast.communicator import questioning_system_injector
 from .test_item import mock_healing_item, mock_recovery_item, mock_equipment_item
 from .test_map import mock_map
 from emberblast.interface import IItem, IEquipmentItem, IPlayer
 
 # All of the test under this test file are meant to be run manually only, for testing each of the
-# questions asked in the game
+# communicator asked in the game
 
 
 @manual_test

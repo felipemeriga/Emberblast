@@ -5,7 +5,6 @@ from emberblast.conf import get_logger
 from emberblast.effect import SideEffect
 from emberblast.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag, IJob, IRace, IEquipment, ISideEffect
 from emberblast.skill import get_player_available_skills
-from emberblast.message import print_iterated_side_effect_apply, print_side_effect_ended, print_player_earned_xp
 
 
 class Player(IPlayer):
@@ -80,7 +79,6 @@ class Player(IPlayer):
         :param int experience: Value to be computed.
         :rtype: None
         """
-        print_player_earned_xp(self.name, experience)
         self.experience = self.experience + experience
 
     def suffer_damage(self, damage: float) -> None:
@@ -288,7 +286,6 @@ class Player(IPlayer):
                                  filter(lambda effect: effect.occurrence == 'iterated', self.side_effects)]
 
         for side_effect in iterated_side_effects:
-            print_iterated_side_effect_apply(self.name, side_effect)
             if side_effect.effect_type == 'buff':
                 self.heal(side_effect.attribute, side_effect.base)
             elif side_effect.effect_type == 'debuff':
@@ -297,7 +294,7 @@ class Player(IPlayer):
                 elif side_effect.attribute == 'magic_points':
                     self.spend_mana(side_effect.base)
 
-    def compute_side_effect_duration(self) -> None:
+    def compute_side_effect_duration(self) -> List[ISideEffect]:
         """
         Each side effects may last in the player depending its duration configuration,
         each turn, this method will be called to compute this duration, when the duration
@@ -305,12 +302,14 @@ class Player(IPlayer):
 
         :rtype: None
         """
+        ended_side_effects = []
         for side_effect in self.side_effects:
             side_effect.duration = side_effect.duration - 1
             if side_effect.duration <= 0:
+                ended_side_effects.append(side_effect)
                 self.side_effects.remove(side_effect)
-                print_side_effect_ended(self.name, side_effect)
                 self.equipment.remove_side_effect(side_effect)
+        return ended_side_effects
 
     def refresh_skills_list(self) -> None:
         """

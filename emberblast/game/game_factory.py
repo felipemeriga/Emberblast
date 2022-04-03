@@ -11,22 +11,21 @@ from emberblast.item import Bag
 from emberblast.utils import JOBS_SECTION, RACES_SECTION
 from emberblast.utils.name_generator import generate_name
 from emberblast.item import Equipment
-from emberblast.message import print_create_new_character
 from emberblast.interface import IMap, IControlledPlayer, IBotPlayer, IGameOrchestrator, IGameFactory
-from emberblast.questions import questioning_system_injector
+from emberblast.communicator import communicator_injector
 
 
-@questioning_system_injector()
+@communicator_injector()
 class GameFactory(IGameFactory):
     def __init__(self):
         """
-        Constructor of the class, responsible for creating the game, and performing the proper questions.
+        Constructor of the class, responsible for creating the game, and performing the proper communicator.
         """
         self.begin_question_results = None
 
     def pre_initial_settings(self) -> IGameOrchestrator:
         """
-        Executes the first game questions, checking if the player wants to create a new game, or load an existing one.
+        Executes the first game communicator, checking if the player wants to create a new game, or load an existing one.
 
         :rtype: IGameOrchestrator.
         """
@@ -34,12 +33,12 @@ class GameFactory(IGameFactory):
 
         # Checking first if there are any saved games
         if len(normalized_files) > 0:
-            first_game_question = self.questioning_system.new_game_questioner.perform_first_question()
+            first_game_question = self.communicator.questioner.perform_first_question()
             if first_game_question == 'new':
                 return self.new_game()
             elif first_game_question == 'continue':
                 normalized_files = get_normalized_saved_files_dict()
-                selected_file = self.questioning_system.save_load_questioner.get_saved_game(normalized_files)
+                selected_file = self.communicator.questioner.get_saved_game(normalized_files)
                 game_orchestrator = recover_saved_game_orchestrator(selected_file)
                 return game_orchestrator
         else:
@@ -47,13 +46,13 @@ class GameFactory(IGameFactory):
 
     def new_game(self) -> IGameOrchestrator:
         """
-        Creates a new game, prompting the user the necessary questions of how the game will be, and
+        Creates a new game, prompting the user the necessary communicator of how the game will be, and
         instantiate the proper objects, according to what was requested.
 
         :rtype: IGameOrchestrator.
         """
         players = []
-        self.begin_question_results = self.questioning_system.new_game_questioner.perform_game_create_questions()
+        self.begin_question_results = self.communicator.questioner.perform_game_create_questions()
         controlled_players = self.init_players()
         players.extend(controlled_players)
 
@@ -90,10 +89,10 @@ class GameFactory(IGameFactory):
         for i in range(int(self.begin_question_results.get('controlled_players_number', 1))):
             bag = Bag()
             equipment = Equipment()
-            print_create_new_character(i)
+            self.communicator.informer.create_new_character(i)
             existing_names = [x for x in map(lambda player: player.name, controlled_players)]
 
-            new_character_responses = self.questioning_system.new_game_questioner.perform_character_creation_questions(
+            new_character_responses = self.communicator.questioner.perform_character_creation_questions(
                 existing_names)
             controlled_player = ControlledPlayer(new_character_responses.get('nickname'),
                                                  dynamic_jobs_classes[new_character_responses.get('job')](),

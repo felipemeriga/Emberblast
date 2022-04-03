@@ -1,9 +1,8 @@
 from typing import List, Union, Dict
 
-from emberblast.questions import improve_attributes_automatically
+from emberblast.communicator import improve_attributes_automatically
 from .player import Player
 from emberblast.interface import IBag, IJob, IRace, IEquipment, IBotPlayer
-from emberblast.message import print_player_level_up
 
 
 class BotPlayer(IBotPlayer, Player):
@@ -32,4 +31,3 @@ class BotPlayer(IBotPlayer, Player):
         for key, value in improvements.items():
             self.__setattr__(key, value + self.__getattribute__(key))
         self.level = self.level + 1
-        print_player_level_up(self.name, self.level)

@@ -2,7 +2,6 @@ from typing import List, Union, Dict
 
 from .player import Player
 from emberblast.interface import IBag, IEquipment, IJob, IRace, IControlledPlayer
-from emberblast.message import print_player_level_up
 
 
 class ControlledPlayer(IControlledPlayer, Player):
@@ -31,4 +30,3 @@ class ControlledPlayer(IControlledPlayer, Player):
             points = improvement.get('value', 0)
             self.__setattr__(attribute, points + self.__getattribute__(attribute))
         self.level = self.level + 1
-        print_player_level_up(self.name, self.level)

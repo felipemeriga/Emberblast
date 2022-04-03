@@ -4,15 +4,16 @@ import math
 import random
 from typing import List, Optional
 
+from emberblast.communicator import communicator_injector
 from emberblast.conf import get_configuration
-from emberblast.message import print_dice_result, print_suffer_damage, print_missed, print_area_damage, \
-    print_found_item, print_use_item, execute_loading, print_event
+from emberblast.message import execute_loading
 
 from emberblast.interface import IBotDecisioning, IGame, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
     IHealingItem
 from emberblast.utils.constants import EXPERIENCE_EARNED_ACTION
 
 
+@communicator_injector()
 class BotDecisioning(IBotDecisioning):
 
     def __init__(self, game: IGame) -> None:
@@ -68,10 +69,10 @@ class BotDecisioning(IBotDecisioning):
         if found_items is not None:
             for item in found_items:
                 self.current_bot.bag.add_item(item)
-                print_found_item(player_name=self.current_bot.name, found=True, item_tier=item.tier,
+                self.communicator.informer.found_item(player_name=self.current_bot.name, found=True, item_tier=item.tier,
                                  item_name=item.name)
         else:
-            print_found_item(player_name=self.current_bot.name)
+            self.communicator.informer.found_item(player_name=self.current_bot.name)
         return
 
     def find_foes(self, movement_possibilities: List[str]) -> Optional[IPlayer]:
@@ -122,7 +123,7 @@ class BotDecisioning(IBotDecisioning):
         return area_foes
 
     def prepare_execute_skill(self, skill: ISkill) -> None:
-        print_event('skill')
+        self.communicator.informer.event('skill')
         dice_result = self.game.roll_the_dice()
         foes = []
         prefix = 'attack'
@@ -134,11 +135,11 @@ class BotDecisioning(IBotDecisioning):
             foes = self.get_affected_players_area_skill(self.possible_foe, self.prioritized_foes,
                                                         skill.area)
             if len(foes) > 0:
-                print_area_damage(skill, foes)
+                self.communicator.informer.area_damage(skill, foes)
         elif skill.area == 0 and skill.kind == 'inflict':
             foes.append(self.possible_foe)
 
-        print_dice_result(self.current_bot.name, dice_result, prefix, self.game.dice_sides)
+        self.communicator.informer.dice_result(self.current_bot.name, dice_result, prefix, self.game.dice_sides)
         dice_result_normalized = dice_result / self.game.dice_sides
         skill.execute(self.current_bot, foes, dice_result_normalized)
 
@@ -184,9 +185,9 @@ class BotDecisioning(IBotDecisioning):
         best_option = next(iter(sorted_recovery_possibilities))[0]
 
         if isinstance(best_option, IHealingItem):
-            print_event('item')
+            self.communicator.informer.event('item')
             self.current_bot.use_item(best_option)
-            print_use_item(self.current_bot.name, best_option.name, self.current_bot.name)
+            self.communicator.informer.use_item(self.current_bot.name, best_option.name, self.current_bot.name)
             self.current_bot.bag.remove_item(best_option)
         elif isinstance(best_option, ISkill):
             self.prepare_execute_skill(best_option)
@@ -230,8 +231,8 @@ class BotDecisioning(IBotDecisioning):
         dice_result = self.game.roll_the_dice()
 
         if best_attack == 'attack':
-            print_event('attack')
-            print_dice_result(self.current_bot.name, dice_result, 'attack', self.game.dice_sides)
+            self.communicator.informer.event('attack')
+            self.communicator.informer.dice_result(self.current_bot.name, dice_result, 'attack', self.game.dice_sides)
 
             targeted_defense = 'armour' if self.current_bot.job.damage_vector == 'strength' else 'magic_resist'
 
@@ -254,15 +255,17 @@ class BotDecisioning(IBotDecisioning):
             damage = math.ceil(damage - self.possible_foe.get_attribute_real_value(targeted_defense))
             if damage > 0:
                 self.possible_foe.suffer_damage(damage)
-                print_suffer_damage(self.current_bot, self.possible_foe, damage)
+                self.communicator.informer.suffer_damage(self.current_bot, self.possible_foe, damage)
                 experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
                 self.current_bot.earn_xp(experience)
+                self.communicator.informer.player_earned_xp(player_name=self.current_bot.name, xp=experience)
 
                 if not self.possible_foe.is_alive():
                     experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
                     self.current_bot.earn_xp(experience)
+                    self.communicator.informer.player_earned_xp(player_name=self.current_bot.name, xp=experience)
             else:
-                print_missed(self.current_bot, self.possible_foe)
+                self.communicator.informer.missed(self.current_bot, self.possible_foe)
             return
         elif isinstance(best_attack, ISkill):
             self.prepare_execute_skill(best_attack)
@@ -398,7 +401,7 @@ class BotDecisioning(IBotDecisioning):
         if self.current_play_style == IPlayingMode.DEFENSIVE:
             self.decide_best_defensive_action()
             execute_loading(1)
-        print_event('search')
+        self.communicator.informer.event('search')
         self.search_on_map()
         execute_loading(1)
         self.equip_item()
