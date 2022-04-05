@@ -1,9 +1,9 @@
 import os
 from unittest import skipIf
 
-from .test import QuestionTestCase, manual_test
+from .test import CommunicatorTestCase, manual_test
 from .test_player import mock_player
-from emberblast.communicator import questioning_system_injector
+from emberblast.communicator import communicator_injector
 from .test_item import mock_healing_item, mock_recovery_item, mock_equipment_item
 from .test_map import mock_map
 from emberblast.interface import IItem, IEquipmentItem, IPlayer
@@ -18,24 +18,24 @@ from emberblast.interface import IItem, IEquipmentItem, IPlayer
 @mock_healing_item()
 @mock_recovery_item()
 @mock_equipment_item()
-@questioning_system_injector()
-class TestModuleQuestions(QuestionTestCase):
+@communicator_injector()
+class TestModuleQuestions(CommunicatorTestCase):
     def test_module(self) -> None:
         pass
 
     def test_ask_check_action(self) -> None:
-        result = self.questioning_system.actions_questioner.ask_check_action()
+        result = self.communicator.questioner.ask_check_action()
         assert isinstance(result, str)
 
     def test_ask_actions_questions(self) -> None:
-        result = self.questioning_system.actions_questioner.ask_actions_questions(['move', 'attack', 'skill', 'defend',
+        result = self.communicator.questioner.ask_actions_questions(['move', 'attack', 'skill', 'defend',
                                         'hide', 'search', 'item', 'equip', 'drop',
                                         'check', 'pass'])
         assert isinstance(result, str)
 
     def test_select_item(self):
         items = [self.mock_equipment_item, self.mock_healing_item, self.mock_recovery_item]
-        result = self.questioning_system.items_questioner.select_item(items)
+        result = self.communicator.questioner.select_item(items)
         assert isinstance(result, IItem)
 
     def test_ask_enemy_to_check(self) -> None:
@@ -43,16 +43,16 @@ class TestModuleQuestions(QuestionTestCase):
         assert isinstance(result, IPlayer)
 
     def test_confirm_item_selection(self) -> None:
-        result = self.questioning_system.items_questioner.confirm_item_selection()
+        result = self.communicator.questioner.confirm_item_selection()
         assert isinstance(result, bool)
 
     def test_confirm_use_item_on_you(self) -> None:
-        result = self.questioning_system.items_questioner.confirm_use_item_on_you()
+        result = self.communicator.questioner.confirm_use_item_on_you()
         assert isinstance(result, bool)
 
     def test_display_equipment_choices(self) -> None:
         self.mock_player.bag.add_item(self.mock_equipment_item)
-        result = self.questioning_system.items_questioner.display_equipment_choices(self.mock_player)
+        result = self.communicator.questioner.display_equipment_choices(self.mock_player)
         assert isinstance(result, IEquipmentItem)
 
     def test_ask_where_to_move(self) -> None:
