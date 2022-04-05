@@ -4,8 +4,6 @@ from pathlib import Path
 from typing import List, Union, Dict, Optional, Set, Callable, TypedDict
 
 
-
-
 class ISideEffect(ABC):
     name: str
     effect_type: str
@@ -29,6 +27,7 @@ class ISkill:
     side_effects: List[ISideEffect]
     applies_caster_only: bool
     punishment_side_effect: List[ISideEffect]
+    communicator: 'ICommunicator'
 
     def execute(self, player: 'IPlayer', foes: List['IPlayer'], dice_norm_result: float) -> None:
         pass
@@ -264,7 +263,7 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def compute_side_effect_duration(self) -> None:
+    def compute_side_effect_duration(self) -> List[ISideEffect]:
         pass
 
     @abstractmethod
@@ -489,7 +488,8 @@ class IPlayingMode(Enum):
     AGGRESSIVE = 1
     DEFENSIVE = 2
 
-class IActionsQuestioner(ABC):
+
+class IQuestioningSystem(ABC):
 
     @abstractmethod
     def ask_check_action(self, show_items: bool = False) -> Union[str, bool, list, str]:
@@ -497,7 +497,7 @@ class IActionsQuestioner(ABC):
         Ask which kind of information player wants to check.
 
         :param bool show_items: If the player doesn't have items on its bag, this flag will help the
-        questions to remove the items question.
+        communicator to remove the items question.
         :rtype: Union[str, bool, list, str].
         """
         pass
@@ -511,9 +511,6 @@ class IActionsQuestioner(ABC):
         :rtype: Union[str, bool, list, str].
         """
         pass
-
-
-class IEnemiesQuestioner(ABC):
 
     @abstractmethod
     def ask_enemy_to_check(self, enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
@@ -536,9 +533,6 @@ class IEnemiesQuestioner(ABC):
         """
         pass
 
-
-class IItemsQuestioner(ABC):
-
     @abstractmethod
     def select_item(self, items: List[IItem]) -> Union[str, bool, list, IItem]:
         """
@@ -549,6 +543,7 @@ class IItemsQuestioner(ABC):
         """
         pass
 
+    @abstractmethod
     def confirm_item_selection(self) -> Union[str, bool, list, bool]:
         """
         Confirm question, to ensure that player really wants to use the selected item.
@@ -557,6 +552,7 @@ class IItemsQuestioner(ABC):
         """
         pass
 
+    @abstractmethod
     def confirm_use_item_on_you(self) -> Union[str, bool, list, bool]:
         """
         Confirm question, to ensure that player really wants to use the selected item on himself.
@@ -565,6 +561,7 @@ class IItemsQuestioner(ABC):
         """
         pass
 
+    @abstractmethod
     def display_equipment_choices(self, player: IPlayer) -> Union[str, bool, list, IEquipmentItem]:
         """
         Will display all the equipments that player has, for equipping one of them.
@@ -574,9 +571,7 @@ class IItemsQuestioner(ABC):
         """
         pass
 
-
-class ILevelUpQuestioner(ABC):
-
+    @abstractmethod
     def ask_attributes_to_improve(self) -> Union[str, bool, list, List]:
         """
         This function is used by human controlled players to chose which attribute they want to upgrade
@@ -585,9 +580,7 @@ class ILevelUpQuestioner(ABC):
         """
         pass
 
-
-class IMovementQuestioner(ABC):
-
+    @abstractmethod
     def ask_where_to_move(self, possibilities: List[str]) -> Union[str, bool, list, str]:
         """
         This function is used by asking the player where he wants to move.
@@ -597,13 +590,10 @@ class IMovementQuestioner(ABC):
         """
         pass
 
-
-class INewGameQuestioner(ABC):
-
     @abstractmethod
     def perform_first_question(self) -> Union[str, bool, list, str]:
         """
-        This function is used by asking a new game questions.
+        This function is used by asking a new game communicator.
 
         :rtype: Union[str, bool, list, dict].
         """
@@ -612,9 +602,31 @@ class INewGameQuestioner(ABC):
     @abstractmethod
     def perform_game_create_questions(self) -> Union[str, bool, list, dict]:
         """
-        This function is used by asking a new game questions.
+        This function is used by asking a new game communicator.
 
         :rtype: Union[str, bool, list, dict].
+        """
+        pass
+
+    @abstractmethod
+    def select_skill(self, available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
+        """
+        Question function, to query user for available skills to use.
+
+        :param List[ISkill] available_skills: Skills to be chosen.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def get_saved_game(self, normalized_files: List[Dict]) -> Union[str, bool, list, Path]:
+        """
+        Ask the players, which load file he wants to continue playing, the saved games comes in the normalized_files
+        parameter, that it's a list of dictionaries that has the file itself, and also a normalized user friendly
+        formatted name of this file.
+
+        :param List[Dict] normalized_files: The dictionary of all saved games.
+        :rtype: Union[str, bool, list, Path].
         """
         pass
 
@@ -628,45 +640,389 @@ class INewGameQuestioner(ABC):
         pass
 
 
-class ISaveLoadQuestioner(ABC):
-    def get_saved_game(self, normalized_files: List[Dict]) -> Union[str, bool, list, Path]:
-        """
-        Ask the players, which load file he wants to continue playing, the saved games comes in the normalized_files
-        parameter, that it's a list of dictionaries that has the file itself, and also a normalized user friendly formatted
-        name of this file.
+class IInformingSystem(ABC):
 
-        :param List[Dict] normalized_files: The dictionary of all saved games.
-        :rtype: Union[str, bool, list, Path].
+    @abstractmethod
+    def greetings(self) -> None:
+        """
+        Print game greetings.
+
+        :rtype: None
         """
         pass
 
-
-class ISkillsQuestioner(ABC):
-
-    def select_skill(self, available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
+    @abstractmethod
+    def new_turn(self, turn: int) -> None:
         """
-        Question function, to query user for available skills to use.
+        Print that a new turn started.
 
-        :param List[ISkill] available_skills: Skills to be chosen.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_turn(self, name: str) -> None:
+        """
+        Print that the player's turn started.
+
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_earned_xp(self, player_name: str, xp: int) -> None:
+        """
+        Print that a player as leveled up.
+
+        :param str player_name: The name of the player.
+        :param int xp: The amount of experience earned.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_level_up(self, player_name: str, level: int) -> None:
+        """
+        Print that a player as leveled up.
+
+        :param str player_name: The name of the player.
+        :param int level: New level.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_stats(self, player: IPlayer):
+        """
+        Print the current playing player stats and attributes.
+
+        :param IPlayer player: The current player.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def enemy_status(self, enemy: IPlayer) -> None:
+        """
+        Print the current status and attributes of a unhidden player.
+
+        :param IPlayer enemy: The selected enemy.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def plain_matrix(self, matrix: List[List[int]]) -> None:
+        """
+        Print the matrix, that represents the map.
+
+        :param List[List[int]] matrix: The matrix that represents the map.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def plain_map(self, matrix: List[List[int]], size: int) -> None:
+        """
+        Print the plain map, without any additional info.
+
+        :param List[List[int]] matrix: The matrix that represents the map.
+        :param int size: Size of the map.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def map_info(self, player: IPlayer, players: List[IPlayer], matrix: List[List[int]], size: int) -> None:
+        """
+        Print the current position of all unhidden players in the map, and all the characteristics of it.
+
+        :param IPlayer player: The player that is currently playing.
+        :param List[IPlayer] players: Another competitors.
+        :param List[List[int]] matrix: The matrix that represents the map.
+        :param int size: Size of the map.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def moving_possibilities(self, player_position: str, possibilities: List[str], matrix: List[List[int]],
+                             size: int) -> None:
+        """
+        Print all the possibilities of moving in the map, considering the player's move speed.
+
+        :param str player_position: Original position of the player.
+        :param List[str] possibilities: The possibilities of movements, previously calculated.
+        :param List[List[int]] matrix: The matrix that represents the map.
+        :param int size: Size of the map.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def found_item(self, player_name: str, found: bool = False, item_tier: str = None, item_name: str = None) -> None:
+        """
+        Print if an item was found or not.
+
+        :param str player_name: Player's name, whom is currently searching for an item.
+        :param bool found: Whether the player has found it.
+        :param str item_tier: Tier of the found item.
+        :param str item_name: Item name.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def no_foes_attack(self, player: IPlayer) -> None:
+        """
+        Print that there is not foe, within the attackers range.
+
+        :param IPlayer player: The attacker.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def no_foes_skill(self, skill_range: int, player_position: str) -> None:
+        """
+        Print that there is not foe, within the attackers skill range.
+
+        :param int skill_range: The skill range.
+        :param str player_position: The attacker position.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def area_damage(self, skill: ISkill, affected_players: List[IPlayer]) -> None:
+        """
+        Print that some skill affects an entire area.
+
+        :param ISkill skill: The casting skill.
+        :param List[IPlayer] affected_players: The players that will be affected by the skill.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def spent_mana(self, name: str, amount: int, skill_name: str) -> None:
+        """
+        Print that the player spent mana when casting a skill.
+
+        :param str name: Name of the player.
+        :param int amount: The amount spent.
+        :param str skill_name: The name of the skill.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def add_side_effect(self, name: str, side_effect: ISideEffect) -> None:
+        """
+        Print that the player has got a side-effect.
+
+        :param str name: Name of the player.
+        :param ISideEffect side_effect: The side-effect that will be applied.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def side_effect_ended(self, name: str, side_effect: ISideEffect) -> None:
+        """
+        Print that a side-effect duration has ended for a player.
+
+        :param str name: Name of the player.
+        :param ISideEffect side_effect: The side-effect that has ended.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def iterated_side_effect_apply(self, name: str, side_effect: ISideEffect) -> None:
+        """
+        Print that the player passed its turn, and suffered/buffed from an iterated side-effect.
+
+        :param str name: Name of the player.
+        :param ISideEffect side_effect: The side-effect that will be applied.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def low_mana(self, player: IPlayer) -> None:
+        """
+        Print that the player is running out of mana.
+
+        :param IPlayer player: Current player.
+        :rtype: None
+        """
+        pass
+
+    def heal(self, healer: IPlayer, foe: IPlayer, amount: int) -> None:
+        """
+        Print that the player healed himself or another one.
+
+        :param IPlayer healer: The healer.
+        :param IPlayer foe: The healed.
+        :param int amount: The amount of life healed.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def missed(self, player: IPlayer, foe: IPlayer) -> None:
+        """
+        Print that the player missed the attack.
+
+        :param IPlayer player: The attacking player.
+        :param IPlayer foe: The foe suffering damage.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def trap_activated(self, player: IPlayer, side_effects: List[ISideEffect]) -> None:
+        """
+        Print that a player has fallen into a trap
+
+        :param IPlayer player: The attacking player.
+        :param ISideEffect side_effects: Side effects that will be applied.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def suffer_damage(self, attacker: IPlayer, foe: IPlayer, damage: int) -> None:
+        """
+        Print whenever a player inflicts damages to another players.
+
+        :param IPlayer attacker: The attacking player.
+        :param IPlayer foe: The one suffering the attack.
+        :param int damage: Amount of damage done.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def dice_result(self, name: str, result: int, kind: str, max_sides: int) -> None:
+        """
+        Print the result when a player rolls the dice.
+
+        :param str name: The name of the player who is rolling the dice.
+        :param int result: Dice result.
+        :param str kind: The purpose of rolling the dice, like attacking, skill.
+        :param int max_sides: The max sides of the dice, to detect critical attacks/skills.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def use_item(self, player_name: str, item_name: str, target_name: str) -> None:
+        """
+        Notify another players, that someone used an item.
+
+        :param str player_name: The player name that is currently using an item.
+        :param str item_name: The item name that is being used.
+        :param str target_name: The name of who is the item used on.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_fail_stole_item(self, name: str, foe_name: str) -> None:
+        """
+        Print that a player has failed in stealing an item
+
+        :param str name: Name of the player.
+        :param str foe_name: Name of the foe.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_stole_item(self, name: str, foe_name: str, item_name: str, tier: str) -> None:
+        """
+        Print that a player has stolen an item
+
+        :param str name: Name of the player.
+        :param str foe_name: Name of the foe.
+        :param str item_name: Name of the stolen item.
+        :param str tier: tier of the item.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_won(self, name: str) -> None:
+        """
+        Print the player that won the game.
+
+        :param str name: Name of the player.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def create_new_character(self, number: int) -> None:
+        """
+        Print the status, that someone is currently creating one character.
+
+        :param int number: Number of the player.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def check_item(self, item: IItem) -> None:
+        """
+        Print Item information that was selected by the player
+
+        :param IItem item: Item instance that will be printed.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def event(self, event: str) -> None:
+        """
+        Display that an user executed one of the available actions
+
+        :param str event: The selected event.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def line_separator(self) -> None:
+        """
+        Separate the information between the actions of two different players.
+        Usually used with terminal implementations
+
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def force_loading(self, loading_time: int, prefix: str = '', prefix_attributes: List[str] = None) -> None:
+        """
+        Simulate a loading, just to give a better flow to gaming experience
+
         :rtype: None
         """
         pass
 
 
-class IQuestioningSystem(ABC):
-    actions_questioner: IActionsQuestioner
-    enemies_questioner: IEnemiesQuestioner
-    items_questioner: IItemsQuestioner
-    level_up_questioner: ILevelUpQuestioner
-    movement_questioner: IMovementQuestioner
-    new_game_questioner: INewGameQuestioner
-    save_load_questioner: ISaveLoadQuestioner
-    skills_questioner: ISkillsQuestioner
+class ICommunicator(ABC):
+    questioner: IQuestioningSystem
+    informer: IInformingSystem
+
 
 class IBotDecisioning(ABC):
     game: IGame
     current_bot: Union[None, IPlayer]
     current_play_style: IPlayingMode
+    communicator: ICommunicator
 
 
 class IGameOrchestrator:
@@ -675,7 +1031,7 @@ class IGameOrchestrator:
     actions: Dict[str, IAction]
     actions_left: List[str]
     turn_remaining_players: List[IPlayer]
-    questioning_system: IQuestioningSystem
+    communicator: ICommunicator
 
     @abstractmethod
     def init_actions(self) -> None:
@@ -689,10 +1045,18 @@ class IGameOrchestrator:
     def initialize_players_skills(self) -> None:
         pass
 
+    @abstractmethod
+    def check_iterated_side_effects(self, player: IPlayer) -> None:
+        pass
+
+    @abstractmethod
+    def check_side_effect_duration(self, player: IPlayer) -> None:
+        pass
+
 
 class IGameFactory:
     begin_question_results: Union[Union[str, bool, list, dict], None]
-    questioning_system: IQuestioningSystem
+    communicator: ICommunicator
 
     @abstractmethod
     def pre_initial_settings(self) -> IGameOrchestrator:
@@ -715,3 +1079,9 @@ class IGameFactory:
         pass
 
 
+class IEmberblast(ABC):
+    communicator: ICommunicator
+
+    @abstractmethod
+    def run(self) -> None:
+        pass

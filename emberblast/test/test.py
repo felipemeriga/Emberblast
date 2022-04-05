@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase, skipIf
 
-from emberblast.interface.interface import IQuestioningSystem
+from emberblast.interface.interface import ICommunicator
 
 HAS_ATTR_MESSAGE = '{} should have an attribute {}'
 
@@ -25,5 +25,5 @@ class BaseTestCase(TestCase):
                 self.fail(HAS_ATTR_MESSAGE.format(obj, attrname))
 
 
-class QuestionTestCase(BaseTestCase):
-    questioning_system: IQuestioningSystem
+class CommunicatorTestCase(BaseTestCase):
+    communicator: ICommunicator

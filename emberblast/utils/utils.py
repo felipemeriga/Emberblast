@@ -2,7 +2,25 @@ import random
 from functools import reduce
 
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Callable
+
+
+def singleton(class_) -> Callable:
+    """
+    This function is a decorator to be used on classes, that adopts the singleton approach,
+    where only a single entity of the class will exist.
+
+    :rtype: Path
+    """
+
+    instances = {}
+
+    def get_instance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
+
+    return get_instance
 
 
 def get_project_root() -> Path:

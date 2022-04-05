@@ -3,12 +3,11 @@ import random
 import sys
 from typing import Dict, List
 
+from emberblast.communicator import communicator_injector
 from emberblast.conf import get_configuration
 from emberblast.effect import instantiate_side_effects
 from emberblast.interface import IPlayer, ISkill, ISideEffect
 from emberblast.utils import SKILLS_SECTION
-from emberblast.message import print_suffer_damage, print_heal, print_missed, print_spent_mana, print_add_side_effect, \
-    print_player_stole_item, print_player_fail_stole_item
 from emberblast.utils.constants import EXPERIENCE_EARNED_ACTION
 
 """
@@ -30,6 +29,7 @@ extents that.
 """
 
 
+@communicator_injector()
 class Skill(ISkill):
     def __init__(self, name: str, description: str, base: int, cost: int,
                  kind: str, level_requirement: int, ranged: int, area: int, job: str,
@@ -86,7 +86,7 @@ class Skill(ISkill):
         kill = False
         successful_skill = False
         player.spend_mana(self.cost)
-        print_spent_mana(player.name, self.cost, self.name)
+        self.communicator.informer.spent_mana(player.name, self.cost, self.name)
         for foe in foes:
             if self.kind == 'inflict':
                 damage = self.calculate_damage(player, dice_norm_result)
@@ -95,32 +95,33 @@ class Skill(ISkill):
                 if damage > 0:
                     successful_skill = True
                     foe.suffer_damage(damage)
-                    print_suffer_damage(player, foe, damage)
+                    self.communicator.informer.suffer_damage(player, foe, damage)
                 else:
-                    print_missed(player, foe)
+                    self.communicator.informer.missed(player, foe)
             elif self.kind == 'recover':
                 recover_result = self.calculate_recover(player, dice_norm_result)
                 foe.heal('health_points', recover_result)
-                print_heal(player, foe, recover_result)
+                self.communicator.informer.heal(player, foe, recover_result)
             for side_effect in self.side_effects:
                 foe.add_side_effect(side_effect)
-                print_add_side_effect(foe.name, side_effect)
+                self.communicator.informer.add_side_effect(foe.name, side_effect)
             for side_effect in self.punishment_side_effects:
                 player.add_side_effect(side_effect)
-                print_add_side_effect(player.name, side_effect)
+                self.communicator.informer.add_side_effect(player.name, side_effect)
             if not foe.is_alive():
                 kill = True
             print('\n')
         self.check_experience(player, successful_skill, kill)
 
-    @staticmethod
-    def check_experience(player: IPlayer, successful_skill: bool, killed: bool) -> None:
+    def check_experience(self, player: IPlayer, successful_skill: bool, killed: bool) -> None:
         if successful_skill:
             experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
             player.earn_xp(experience)
+            self.communicator.informer.player_earned_xp(player_name=player.name, xp=experience)
         if killed:
             experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
             player.earn_xp(experience)
+            self.communicator.informer.player_earned_xp(player_name=player.name, xp=experience)
 
 
 instantiated_skills: Dict = {}
@@ -255,10 +256,10 @@ class Steal(Skill):
             stolen_item = random.choice(items)
             foe.bag.remove_item(stolen_item)
             player.bag.add_item(stolen_item)
-            print_player_stole_item(player.name, foe.name, stolen_item.name, stolen_item.tier)
+            self.communicator.informer.player_stole_item(player.name, foe.name, stolen_item.name, stolen_item.tier)
             successful_steal = True
         else:
-            print_player_fail_stole_item(player.name, foe.name)
+            self.communicator.informer.player_fail_stole_item(player.name, foe.name)
         self.check_experience(player, successful_steal, False)
 
 
@@ -275,14 +276,14 @@ class Leech(Skill):
         kill = False
 
         player.spend_mana(self.cost)
-        print_spent_mana(player.name, self.cost, self.name)
+        self.communicator.informer.spent_mana(player.name, self.cost, self.name)
         foe = foes[0]
         damage = int(self.calculate_damage(player, dice_norm_result))
         defense = self.calculate_defense(foe)
         foe.suffer_damage(damage - defense)
-        print_suffer_damage(player, foe, damage)
+        self.communicator.informer.suffer_damage(player, foe, damage)
         player.heal('health_points', damage)
-        print_heal(player, player, damage)
+        self.communicator.informer.heal(player, player, damage)
 
         if damage - defense > 0:
             successful_skill = True

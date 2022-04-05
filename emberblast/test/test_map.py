@@ -5,7 +5,6 @@ from typing import Callable
 from .test import BaseTestCase
 from emberblast.map import Map, Graph
 from emberblast.utils import convert_number_to_letter
-from emberblast.message import print_plain_matrix
 
 
 def mock_defective_map() -> Callable:
@@ -62,7 +61,6 @@ class TestModuleMap(BaseTestCase):
         key_list = list(walkable_nodes.keys())
         source = walkable_nodes[key_list[0]]
 
-        print_plain_matrix(self.mock_map.graph.matrix)
         distance = self.mock_map.graph.get_shortest_path(source.vertex_id)
 
     def test_infinite_shortest_path(self) -> None:
@@ -88,5 +86,4 @@ class TestModuleMap(BaseTestCase):
 
         destinations = random.sample([x for x in key_list if x != source.vertex_id], 3)
 
-        print_plain_matrix(self.mock_map.graph.matrix)
         average = self.mock_map.graph.get_average_distance_source_destinations(source.vertex_id, destinations)
