@@ -3,7 +3,6 @@ import random
 from os import system
 from typing import List, Optional
 
-import emojis
 from colorama import Fore
 
 from emberblast.conf import get_configuration
@@ -12,7 +11,7 @@ from emberblast.skill import get_player_available_skills
 from emberblast.utils import PASS_ACTION_NAME
 from emberblast.interface import IGame, IControlledPlayer, IPlayer, IAction, IGameOrchestrator, IEquipmentItem
 from emberblast.bot import BotDecisioning
-from emberblast.utils.constants import EXPERIENCE_EARNED_ACTION, DELAYED_ACTIONS
+from emberblast.utils.constants import EXPERIENCE_EARNED_ACTION
 
 
 @communicator_injector()

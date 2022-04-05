@@ -1,5 +1,3 @@
-import sys
-
 from colorama import Fore
 import atexit
 
