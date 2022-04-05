@@ -652,6 +652,24 @@ class IInformingSystem(ABC):
         pass
 
     @abstractmethod
+    def new_turn(self, turn: int) -> None:
+        """
+        Print that a new turn started.
+
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_turn(self, name: str) -> None:
+        """
+        Print that the player's turn started.
+
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
     def player_earned_xp(self, player_name: str, xp: int) -> None:
         """
         Print that a player as leveled up.
@@ -971,6 +989,25 @@ class IInformingSystem(ABC):
         Display that an user executed one of the available actions
 
         :param str event: The selected event.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def line_separator(self) -> None:
+        """
+        Separate the information between the actions of two different players.
+        Usually used with terminal implementations
+
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def force_loading(self, loading_time: int, prefix: str = '', prefix_attributes: List[str] = None) -> None:
+        """
+        Simulate a loading, just to give a better flow to gaming experience
+
         :rtype: None
         """
         pass

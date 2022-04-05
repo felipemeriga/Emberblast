@@ -6,7 +6,6 @@ from typing import List, Optional
 
 from emberblast.communicator import communicator_injector
 from emberblast.conf import get_configuration
-from emberblast.message import execute_loading
 
 from emberblast.interface import IBotDecisioning, IGame, IPlayer, IPlayingMode, ISkill, IEquipmentItem, \
     IHealingItem
@@ -385,23 +384,23 @@ class BotDecisioning(IBotDecisioning):
         if self.current_play_style == IPlayingMode.AGGRESSIVE and \
                 self.possible_foe is not None:
             self.attack()
-            execute_loading(1)
+            self.communicator.informer.force_loading(1)
             self.current_play_style = IPlayingMode.NEUTRAL
             self.move()
-            execute_loading(1)
+            self.communicator.informer.force_loading(1)
         elif self.current_play_style == IPlayingMode.AGGRESSIVE and \
                 self.possible_foe is None:
             self.move()
-            execute_loading(1)
+            self.communicator.informer.force_loading(1)
             self.attack()
-            execute_loading(1)
+            self.communicator.informer.force_loading(1)
         else:
             self.move()
-            execute_loading(1)
+            self.communicator.informer.force_loading(1)
         if self.current_play_style == IPlayingMode.DEFENSIVE:
             self.decide_best_defensive_action()
-            execute_loading(1)
+            self.communicator.informer.force_loading(1)
         self.communicator.informer.event('search')
         self.search_on_map()
-        execute_loading(1)
+        self.communicator.informer.force_loading(1)
         self.equip_item()

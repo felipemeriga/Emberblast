@@ -12,9 +12,6 @@ from emberblast.skill import get_player_available_skills
 from emberblast.utils import PASS_ACTION_NAME
 from emberblast.interface import IGame, IControlledPlayer, IPlayer, IAction, IGameOrchestrator, IEquipmentItem
 from emberblast.bot import BotDecisioning
-# TODO - Send these guys to communicator
-from emberblast.message import print_line_separator, \
-    execute_loading
 from emberblast.utils.constants import EXPERIENCE_EARNED_ACTION, DELAYED_ACTIONS
 
 
@@ -168,14 +165,12 @@ class DeathMatchOrchestrator(GameOrchestrator):
             # first and the only element of the turns dictionary.
             turn_list = [list(self.game.turns.copy().keys())[-1]]
             self.clear()
-            print_line_separator()
-            execute_loading(3, 'Starting game', ['bold'])
+            self.communicator.informer.line_separator()
+            self.communicator.informer.force_loading(3, 'Starting game', ['bold'])
 
             for turn in turn_list:
                 self.clear()
-                print(Fore.GREEN + emojis.encode(
-                    ':fire: Starting Turn {turn}! Embrace Yourselves! :fire: \n\n'.format(turn=turn)))
-                print(Fore.RESET)
+                self.communicator.informer.new_turn(turn)
 
                 if not len(self.turn_remaining_players) > 0:
                     # Making a copy of the dict, because dicts are mutable, and without a copy, would alter
@@ -189,15 +184,14 @@ class DeathMatchOrchestrator(GameOrchestrator):
                     if not player.is_alive():
                         self.turn_remaining_players.remove(player)
                         continue
-                    print_line_separator()
-                    print(emojis.encode(
-                        ':man: {name} Time! \n'.format(name=player.name)))
+                    self.communicator.informer.line_separator()
+                    self.communicator.informer.player_turn(player.name)
                     # Resetting player's last action, If he was defending or hidden, this will be reset for a new turn
                     player.reset_last_action()
                     if isinstance(player, IControlledPlayer):
                         self.controlled_decisioning(player)
                     else:
-                        execute_loading(random.randint(2, 4))
+                        self.communicator.informer.force_loading(random.randint(2, 4))
                         self.bot_decisioning(player)
                     self.turn_remaining_players.remove(player)
 
@@ -316,7 +310,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
     def search(self, player: IPlayer) -> Optional[bool]:
         self.communicator.informer.event('search')
         items = self.game.game_map.check_item_in_position(player.position)
-        execute_loading(2)
+        self.communicator.informer.force_loading(2)
         if items is not None:
             for item in items:
                 player.bag.add_item(item)
@@ -379,7 +373,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         enemy_to_attack = self.communicator.questioner.ask_enemy_to_attack(possible_foes)
         if enemy_to_attack is None:
             return False
-        execute_loading(2)
+        self.communicator.informer.force_loading(2)
         self.communicator.informer.event('attack')
         dice_result = self.game.roll_the_dice()
         self.communicator.informer.dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
@@ -450,7 +444,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 self.communicator.informer.area_damage(selected_skill, foes)
         else:
             foes.append(enemy_to_attack)
-        execute_loading(2)
+        self.communicator.informer.force_loading(2)
         self.communicator.informer.event('skill')
         dice_result = self.game.roll_the_dice()
         self.communicator.informer.dice_result(player.name, dice_result, 'skill', self.game.dice_sides)
@@ -469,7 +463,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
             if not self.communicator.questioner.confirm_use_item_on_you():
                 player = self.communicator.questioner.ask_enemy_to_attack(another_players_in_position)
         if self.communicator.questioner.confirm_item_selection():
-            execute_loading(2)
+            self.communicator.informer.force_loading(2)
             self.communicator.informer.event('item')
             target_player = player.name
             player.use_item(selected_item)

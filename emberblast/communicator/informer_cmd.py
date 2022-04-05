@@ -1,6 +1,10 @@
+import multiprocessing
+import os
+import time
 from typing import List
 
 import timg
+from colorama import Fore
 from emojis import emojis
 from termcolor import colored
 
@@ -21,6 +25,25 @@ class InformerCMD(IInformingSystem):
         obj.resize(75, 75)
         obj.render(timg.ASCIIMethod)
         print(emojis.encode(colored(':fire: Welcome to Emberblast! :fire: \n\n', 'red')))
+
+    def new_turn(self, turn: int) -> None:
+        print(Fore.GREEN + emojis.encode(
+            ':fire: Starting Turn {turn}! Embrace Yourselves! :fire: \n\n'.format(turn=turn)))
+        print(Fore.RESET)
+
+    def player_turn(self, name: str) -> None:
+        print(emojis.encode(
+            f':man: {name} Time! \n'))
+
+    def line_separator(self) -> None:
+        """
+        Display that an user executed one of the available actions
+
+        :param str event: The selected event.
+        :rtype: None
+        """
+        term_size = os.get_terminal_size()
+        print(u'\u2500' * term_size.columns)
 
     def player_earned_xp(self, player_name: str, xp: int) -> None:
         print(f'\tPlayer {player_name} earned {xp} of experience! \n')
@@ -345,3 +368,51 @@ class InformerCMD(IInformingSystem):
                                             tier=item.tier,
                                             description=item.description,
                                             weight=item.weight)))
+
+    def force_loading(self, loading_time: int, prefix: str = '', prefix_attributes: List[str] = None) -> None:
+        if prefix != '':
+            print(colored(prefix, None, attrs=prefix_attributes))
+        p = multiprocessing.Process(target=print_loading)
+        p.start()
+
+        p.join(loading_time)
+
+        # If thread is still active
+        if p.is_alive():
+            p.kill()
+            print(" " * len(animation[0]), end="\r")
+
+
+animation = [
+    "          ",
+    ".         ",
+    "..        ",
+    "...       ",
+    "....      ",
+    ".....     ",
+    "......    ",
+    ".......   ",
+    "........  ",
+    "......... ",
+    "..........",
+    " .........",
+    "  ........",
+    "   .......",
+    "    ......",
+    "     .....",
+    "      ....",
+    "       ...",
+    "        ..",
+    "         ."
+]
+
+
+def print_loading() -> None:
+    notcomplete = True
+
+    i = 0
+
+    while notcomplete:
+        print(animation[i % len(animation)], end='\r')
+        time.sleep(.05)
+        i += 1
