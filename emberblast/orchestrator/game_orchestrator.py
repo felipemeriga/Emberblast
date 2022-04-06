@@ -129,6 +129,7 @@ class GameOrchestrator(IGameOrchestrator):
                                  filter(lambda effect: effect.occurrence == 'iterated', player.side_effects)]
 
         for side_effect in iterated_side_effects:
+            self.communicator.informer.event('side-effect')
             self.communicator.informer.iterated_side_effect_apply(player.name, side_effect)
         player.compute_iterated_side_effects()
 
@@ -212,7 +213,6 @@ class DeathMatchOrchestrator(GameOrchestrator):
         :param IPlayer player: The bot that is currently playing.
         :rtype: None.
         """
-        # TODO - Merge this in a single code.
         self.check_iterated_side_effects(player)
         try:
             self.bot_controller.decide(player)
@@ -222,6 +222,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
             print(Fore.RED + 'System shutdown with unexpected error')
 
         self.check_side_effect_duration(player)
+        self.check_player_level_up(player)
 
     def hide_invalid_actions(self, player: IPlayer) -> List[str]:
         """
@@ -265,6 +266,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 self.compute_player_decisions(action, chosen_action_string)
         else:
             self.check_side_effect_duration(player)
+            self.check_player_level_up(player)
 
     def compute_player_decisions(self, action: IAction, action_string: str) -> None:
         """
@@ -292,6 +294,8 @@ class DeathMatchOrchestrator(GameOrchestrator):
                                                         self.game.game_map.size)
         selected_place = self.communicator.questioner.ask_where_to_move(possibilities)
         self.game.game_map.move_player(player, selected_place)
+        self.communicator.informer.event('move')
+        self.communicator.informer.moved(player.name)
         return
 
     def defend(self, player: IPlayer) -> Optional[bool]:
@@ -378,20 +382,19 @@ class DeathMatchOrchestrator(GameOrchestrator):
         self.communicator.informer.dice_result(player.name, dice_result, 'attack', self.game.dice_sides)
 
         damage = self.calculate_damage(player, enemy_to_attack, dice_result)
-
+        self.check_player_level_up(player)
         if damage > 0:
             enemy_to_attack.suffer_damage(damage)
             self.communicator.informer.suffer_damage(player, enemy_to_attack, damage)
             experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
 
-            # TODO - Find a way to prevent double XP, or insert a description why player is earning xp
             player.earn_xp(experience)
             self.communicator.informer.player_earned_xp(player_name=player.name, xp=experience)
 
             if not enemy_to_attack.is_alive():
                 experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
                 player.earn_xp(experience)
-                self.communicator.informer.player_earned_xp(player_name=player.name, xp=experience)
+                self.communicator.informer.player_killed_enemy_earned_xp(player_name=player.name, xp=experience)
         else:
             self.communicator.informer.missed(player, enemy_to_attack)
         return

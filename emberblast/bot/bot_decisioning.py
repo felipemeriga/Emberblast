@@ -68,8 +68,9 @@ class BotDecisioning(IBotDecisioning):
         if found_items is not None:
             for item in found_items:
                 self.current_bot.bag.add_item(item)
-                self.communicator.informer.found_item(player_name=self.current_bot.name, found=True, item_tier=item.tier,
-                                 item_name=item.name)
+                self.communicator.informer.found_item(player_name=self.current_bot.name, found=True,
+                                                      item_tier=item.tier,
+                                                      item_name=item.name)
         else:
             self.communicator.informer.found_item(player_name=self.current_bot.name)
         return
@@ -205,7 +206,6 @@ class BotDecisioning(IBotDecisioning):
             attack_range)
         attack_range_possibilities.append(self.current_bot.position)
 
-        # TODO: Fix the values with the damage with melee, ranged or magic
         if (self.current_bot.job.attack_type == 'melee' and self.possible_foe.position == self.current_bot.position) \
                 or (
                 self.current_bot.job.attack_type == 'ranged'
@@ -307,6 +307,8 @@ class BotDecisioning(IBotDecisioning):
         if self.current_play_style == IPlayingMode.NEUTRAL:
             random_position = random.choice(possibilities)
             self.game.game_map.move_player(self.current_bot, random_position)
+        self.communicator.informer.event('move')
+        self.communicator.informer.moved(self.current_bot.name)
 
     def probability_of_damage(self, foe: IPlayer) -> bool:
         if self.current_bot.job.intelligence > self.current_bot.job.strength:

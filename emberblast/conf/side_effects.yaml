@@ -82,3 +82,15 @@ weaken:
   base: 5
   duration: 2
   occurrence: constant
+injured:
+  type: debuff
+  attribute: armour
+  base: 4
+  duration: 2
+  occurrence: constant
+tired:
+  type: debuff
+  attribute: magic_resist
+  base: 4
+  duration: 2
+  occurrence: constant

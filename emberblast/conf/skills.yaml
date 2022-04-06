@@ -1,5 +1,3 @@
-# Knight
-
 # Wizard
 Fireball:
   name: Fireball
@@ -302,6 +300,7 @@ PoisonousBlow:
   area: 0
   job: Rogue
   base_attribute: strength
+  side_effects: [ poison ]
 SandBlow:
   name: Sand blow
   description: Throws sand into enemy's eyes
@@ -363,4 +362,32 @@ BearTrap:
   area: 0
   job: Rogue
   base_attribute: strength
-
+# Knight
+BreakArmour:
+  name: Break Armour
+  description: Really heavy attack, that decreases the armour of the enemy by 3 turns, applying exhaust to caster
+  base: 0
+  cost: 4
+  kind: inflict
+  level_requirement: 1
+  ranged: 0
+  area: 0
+  job: Knight
+  base_attribute: strength
+  side_effects: [ injured ]
+  punishment_side_effects: [ exhaust ]
+  applies_caster_only: true
+BreakSpellShield:
+  name: Break Spell Shield
+  description: Really heavy holly attack, that decreases the magic resist of the enemy by 3 turns, applying exhaust to caster
+  base: 0
+  cost: 4
+  kind: inflict
+  level_requirement: 1
+  ranged: 0
+  area: 0
+  job: Knight
+  base_attribute: strength
+  side_effects: [ tired ]
+  punishment_side_effects: [ exhaust ]
+  applies_caster_only: true

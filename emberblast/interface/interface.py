@@ -243,7 +243,7 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def add_side_effect(self, side_effect: ISideEffect) -> None:
+    def add_side_effect(self, new_side_effect: ISideEffect) -> None:
         pass
 
     @abstractmethod
@@ -675,6 +675,28 @@ class IInformingSystem(ABC):
         Print that a player as leveled up.
 
         :param str player_name: The name of the player.
+        :param int xp: The amount of experience earned.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def moved(self, player_name: str) -> None:
+        """
+        Print that a player moved to another place.
+
+        :param str player_name: The name of the player.
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def player_killed_enemy_earned_xp(self, player_name: str, foe: str, xp: int) -> None:
+        """
+        Print that a player as leveled up.
+
+        :param str player_name: The name of the player.
+        :param str foe: The name of the foe.
         :param int xp: The amount of experience earned.
         :rtype: None
         """

@@ -103,8 +103,9 @@ class Skill(ISkill):
                 foe.heal('health_points', recover_result)
                 self.communicator.informer.heal(player, foe, recover_result)
             for side_effect in self.side_effects:
-                foe.add_side_effect(side_effect)
-                self.communicator.informer.add_side_effect(foe.name, side_effect)
+                if successful_skill:
+                    foe.add_side_effect(side_effect)
+                    self.communicator.informer.add_side_effect(foe.name, side_effect)
             for side_effect in self.punishment_side_effects:
                 player.add_side_effect(side_effect)
                 self.communicator.informer.add_side_effect(player.name, side_effect)
@@ -218,7 +219,7 @@ def get_player_available_skills(player: IPlayer) -> List[ISkill]:
     available_skills: List[ISkill] = []
 
     for key, value in skill_dicts.items():
-        if player.job.get_name() == value.get('job') and player.level == value.get(
+        if player.job.get_name() == value.get('job') and player.level >= value.get(
                 'level_requirement') and player.mana > value.get('cost'):
             available_skills.append(get_instantiated_skill({key: value}))
 

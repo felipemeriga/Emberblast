@@ -215,13 +215,18 @@ class Player(IPlayer):
 
         return base_defense * 2 if self.is_defending() else base_defense
 
-    def add_side_effect(self, side_effect: ISideEffect) -> None:
+    def add_side_effect(self, new_side_effect: ISideEffect) -> None:
         """
        To add a new side effect in the player.
 
         :rtype: None
         """
-        self.side_effects.append(side_effect)
+        for i in range(len(self.side_effects)):
+            existing_side_effect = self.side_effects[i]
+            if existing_side_effect.name == new_side_effect.name:
+                self.side_effects[i] = new_side_effect
+                return
+        self.side_effects.append(new_side_effect)
 
     def use_item(self, item: IItem) -> None:
         """

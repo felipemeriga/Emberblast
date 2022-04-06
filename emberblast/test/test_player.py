@@ -5,6 +5,7 @@ from emberblast.player import dynamic_races_classes, dynamic_jobs_classes, Contr
 from .test import BaseTestCase
 from .test_item import mock_healing_item
 from emberblast.item import Bag, Equipment
+from emberblast.effect import SideEffect
 
 
 def mock_job() -> Callable:
@@ -84,3 +85,10 @@ class TestModulePlayer(BaseTestCase):
         self.mock_player.use_item(self.mock_healing_item)
         self.assertEqual(self.mock_player.life, self.mock_player.health_points)
         self.assertEqual(self.mock_player.mana, self.mock_player.magic_points)
+
+    def test_add_equal_side_effect(self) -> None:
+        side_effect_1 = SideEffect('poison', 'debuff', 'health_points', 2, 4, 'iterated')
+        side_effect_2 = SideEffect('poison', 'debuff', 'health_points', 2, 4, 'iterated')
+        self.mock_player.add_side_effect(side_effect_1)
+        self.mock_player.add_side_effect(side_effect_2)
+        self.assertEqual(len(self.mock_player.side_effects), 1)

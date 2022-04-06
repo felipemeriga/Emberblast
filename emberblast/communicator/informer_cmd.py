@@ -45,11 +45,17 @@ class InformerCMD(IInformingSystem):
         term_size = os.get_terminal_size()
         print(u'\u2500' * term_size.columns)
 
+    def moved(self, player_name: str) -> None:
+        print(f'\t{player_name} has just moved to another position \n')
+
     def player_earned_xp(self, player_name: str, xp: int) -> None:
-        print(f'\tPlayer {player_name} earned {xp} of experience! \n')
+        print(f'\tPlayer {player_name} earned {xp} xp of experience! \n')
+
+    def player_killed_enemy_earned_xp(self, player_name: str, foe: str, xp: int) -> None:
+        print(f'\tPlayer {player_name} got extra {xp} xp of experience, by killing {foe}! \n')
 
     def player_level_up(self, player_name: str, level: int) -> None:
-        print(f'\tPlayer {player_name} level up to {level}! \n')
+        print(f'\t{player_name} level up to {level}! \n')
 
     def player_stats(self, player: IPlayer):
         print(emojis.encode(
@@ -231,8 +237,8 @@ class InformerCMD(IInformingSystem):
                                                                                 effect=side_effect.name))
 
     def side_effect_ended(self, name: str, side_effect: ISideEffect) -> None:
-        print('Side-effect: {effect} has ended for player: {name} \n'.format(effect=side_effect.name,
-                                                                             name=name))
+        print('\t{effect} has ended for player: {name} \n'.format(effect=side_effect.name,
+                                                                  name=name))
 
     def iterated_side_effect_apply(self, name: str, side_effect: ISideEffect) -> None:
         if side_effect.effect_type == 'buff':
@@ -247,7 +253,7 @@ class InformerCMD(IInformingSystem):
         else:
             attribute = side_effect.attribute
         print(
-            '{name} has affected by {effect} side-effect, that will {status} player\'s {attribute} by {value} per '
+            '\t{name} has affected by {effect} side-effect, that will {status} player\'s {attribute} by {value} per '
             'turn. More {turns} are left until the effect ends. \n'.format(name=name,
                                                                            effect=side_effect.name,
                                                                            status=status,
@@ -335,6 +341,12 @@ class InformerCMD(IInformingSystem):
         elif event == 'item':
             color = 'green'
             print(emojis.encode(colored(':test_tube: ITEM: ', color, attrs=attrs)))
+        elif event == 'move':
+            color = 'cyan'
+            print(emojis.encode(colored(':runner: MOVE: ', color, attrs=attrs)))
+        elif event == 'side-effect':
+            color = 'magenta'
+            print(emojis.encode(colored(':grey_exclamation: SIDE-EFFECT: ', color, attrs=attrs)))
 
     def check_item(self, item: IItem) -> None:
         print(colored('---- Item Description --- \n', 'green'))
