@@ -138,5 +138,5 @@ log
 store.pckl
 
 # Game Save Files
-saved_games
+*.pckl
 .DS_Store
