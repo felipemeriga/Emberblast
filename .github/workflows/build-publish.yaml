@@ -2,7 +2,7 @@ name: Emberblast CI/CD
 # The difference between "released" and "published" is a "released" tag is not final, a "published" release is final
 env:
   REGISTRY: ghcr.io
-  REPO: ${{ format('ghcr.io/{0}/Emberblast', github.repository_owner) }}
+  REPO: emberblast
 on:
   release:
     types: [released]
