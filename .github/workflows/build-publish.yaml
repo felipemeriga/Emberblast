@@ -1,4 +1,4 @@
-name: Docker Build
+name: Emberblast CI/CD
 # The difference between "released" and "published" is a "released" tag is not final, a "published" release is final
 env:
   REGISTRY: ghcr.io
