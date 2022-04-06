@@ -32,3 +32,8 @@ class Emberblast(IEmberblast):
 
 if __name__ == '__main__':
     Emberblast().run()
+
+
+# pip cmd initializer
+def run_project():
+    Emberblast().run()
