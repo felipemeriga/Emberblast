@@ -8,6 +8,44 @@ arena.
 
 ![emberfire](emberblast/img/emberblast.png)
 
+## How to Play
+
+Currently, there are two ways of playing, both using the terminal:
+- Running the game as a docker container
+- Installing the pip package
+
+### Playing with pip 
+
+Pip is the package manager for Python, for being able to play that game, you must have Python 3.8 or higher,
+installed on your machine, also pip installed.
+
+Having all the requirements satisfied, you can install the game with pip command:
+```shell
+pip install Emberblast
+```
+If you are using pip3:
+```shell
+pip3 install Emberblast
+```
+
+After installing the package, run the game:
+```shell
+emberblast
+```
+### Playing with Docker
+
+You can also run this game as a Docker container, you can either pull the official image from our public registry.
+You can run the game in your terminal, with the following command:
+```shell
+docker run -it emberblast:latest
+```
+
+Don't forget the ```-it```argument when starting the container, because as Emberblast it's a
+terminal interactive game, without this argument, you won't be able to interact with the console.
+
+Also, the game has an auto-save feature, that saves your game every time you close the container, 
+if you start the game again on the same container, you should be able to continue where you stopped.
+
 ## Game Rules
 
 You basically need to select a job and a race for your character, each job and races
@@ -43,33 +81,4 @@ The game adopts the mentality to be as customizable as possible, which means tha
 default classes, races, skills and items, if you want, you can create your own ones and include it 
 in the game, or if you just want to enjoy, just grab and play it as the default version.
 
-For accessing all the playing manual with all the detailed rules, access the [GAME MANUAL]().
-
-## Docker
-
-You can also run this game as a Docker container, you can either pull the official image from our public registry
-[registry.emberblast.docker.cc](registry.emberblast.docker.cc).
-
-Our build a custom docker image, and run it, for building the Docker image, run the following command:
-```shell
-docker build -t emberblast .
-```x
-
-For running the game:
-```shell
-docker run -it emberblast:latest
-```
-
-Don't forget the ```-it```argument when starting the container, because as Emberblast it's a
-terminal interactive game, without this argument, you won't be able to interact with the console.
-
-## TODO List
-
-- add attribute to SideEffect class to skip turns from certain players
-- implement skills to find items on the map
-- Add more skills for knight
-- Add more custom skills
-- Add more side-effects
-- Add probability to side-effects
-- Test Level up velocity
-
+For accessing all the playing manual with all the detailed rules, access the [GAME MANUAL](./RULES.md).
