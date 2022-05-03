@@ -37,7 +37,7 @@ emberblast
 You can also run this game as a Docker container, you can either pull the official image from our public registry.
 You can run the game in your terminal, with the following command:
 ```shell
-docker run -it emberblast:latest
+docker run -it ghcr.io/felipemeriga/emberblast:latest
 ```
 
 Don't forget the ```-it```argument when starting the container, because as Emberblast it's a
