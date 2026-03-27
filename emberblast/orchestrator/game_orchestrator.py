@@ -164,6 +164,13 @@ class GameOrchestrator(IGameOrchestrator):
             )
         player.compute_iterated_side_effects()
 
+        if iterated_side_effects and isinstance(self, DeathMatchOrchestrator):
+            turn = self.bot_controller._current_turn
+            effects_desc = ", ".join(
+                f"{e.name} ({e.effect_type} {e.attribute} by {e.base})" for e in iterated_side_effects
+            )
+            self._record_bot_memory(player.name, turn, f"Side effects applied: {effects_desc}")
+
     def check_side_effect_duration(self, player: IPlayer) -> None:
         ended_side_effects = player.compute_side_effect_duration()
         if len(ended_side_effects) > 0:
@@ -171,6 +178,10 @@ class GameOrchestrator(IGameOrchestrator):
                 self.communicator.informer.render(
                     SideEffectEndedEvent(player_name=player.name, effect_name=side_effect.name)
                 )
+            if isinstance(self, DeathMatchOrchestrator):
+                turn = self.bot_controller._current_turn
+                names = ", ".join(e.name for e in ended_side_effects)
+                self._record_bot_memory(player.name, turn, f"Side effects ended: {names}")
 
 
 class DeathMatchOrchestrator(GameOrchestrator):
@@ -182,6 +193,19 @@ class DeathMatchOrchestrator(GameOrchestrator):
         :rtype: None.
         """
         super().__init__(game)
+
+    def _record_bot_memory(self, player_name: str, turn: int, description: str) -> None:
+        """
+        Record a game event into a bot's memory so the LLM has context
+        about what happened to or around the bot.
+
+        :param str player_name: The name of the bot to record memory for.
+        :param int turn: The current turn number.
+        :param str description: A description of the event.
+        :rtype: None.
+        """
+        memory = self.bot_controller._get_memory(player_name)
+        memory.add(turn, description)
 
     def execute_game(self) -> None:
         """
@@ -256,6 +280,13 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
         self.check_side_effect_duration(player)
         self.check_player_level_up(player)
+
+        turn = self.bot_controller._current_turn
+        self._record_bot_memory(
+            player.name,
+            turn,
+            f"Completed turn (HP: {player.life}, MP: {player.mana})",
+        )
 
     def hide_invalid_actions(self, player: IPlayer) -> List[str]:
         """
@@ -358,6 +389,9 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 self.communicator.informer.render(
                     ItemFoundEvent(player_name=player.name, found=True, item_tier=item.tier, item_name=item.name)
                 )
+            turn = self.bot_controller._current_turn
+            item_names = ", ".join(i.name for i in items)
+            self._record_bot_memory(player.name, turn, f"Found items: {item_names}")
         else:
             self.communicator.informer.render(ItemFoundEvent(player_name=player.name, found=False))
         return
@@ -439,6 +473,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
         damage = self.calculate_damage(player, enemy_to_attack, dice_result)
         self.check_player_level_up(player)
+        turn = self.bot_controller._current_turn
         if damage > 0:
             enemy_to_attack.suffer_damage(damage)
             self.communicator.informer.render(
@@ -455,14 +490,24 @@ class DeathMatchOrchestrator(GameOrchestrator):
             player.earn_xp(experience)
             self.communicator.informer.render(XPEarnedEvent(player_name=player.name, xp=experience))
 
+            self._record_bot_memory(player.name, turn, f"Attacked {enemy_to_attack.name} for {damage} damage")
+            self._record_bot_memory(
+                enemy_to_attack.name,
+                turn,
+                f"Took {damage} damage from {player.name} (HP: {enemy_to_attack.life})",
+            )
+
             if not enemy_to_attack.is_alive():
                 experience = get_configuration(EXPERIENCE_EARNED_ACTION).get("kill", 0)
                 player.earn_xp(experience)
                 self.communicator.informer.render(XPEarnedEvent(player_name=player.name, xp=experience))
+                self._record_bot_memory(player.name, turn, f"Killed {enemy_to_attack.name}")
+                self._record_bot_memory(enemy_to_attack.name, turn, f"Was killed by {player.name}")
         else:
             self.communicator.informer.render(
                 MissedAttackEvent(attacker_name=player.name, target_name=enemy_to_attack.name)
             )
+            self._record_bot_memory(player.name, turn, f"Missed attack on {enemy_to_attack.name}")
         return
 
     def get_affected_players_area_skill(
@@ -537,6 +582,21 @@ class DeathMatchOrchestrator(GameOrchestrator):
         )
         dice_result_normalized = dice_result / self.game.dice_sides
         selected_skill.execute(player, foes, dice_result_normalized)
+
+        turn = self.bot_controller._current_turn
+        foe_names = ", ".join(f.name for f in foes)
+        self._record_bot_memory(
+            player.name,
+            turn,
+            f"Used skill {selected_skill.name} ({selected_skill.kind}) on {foe_names}",
+        )
+        for foe in foes:
+            if foe.name != player.name:
+                self._record_bot_memory(
+                    foe.name,
+                    turn,
+                    f"Hit by {player.name}'s skill {selected_skill.name} ({selected_skill.kind})",
+                )
         return
 
     def item(self, player: IPlayer) -> Optional[bool]:
@@ -558,6 +618,12 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 UseItemEvent(player_name=using_player, item_name=selected_item.name, target_name=target_player)
             )
             player.bag.remove_item(selected_item)
+            turn = self.bot_controller._current_turn
+            self._record_bot_memory(
+                using_player,
+                turn,
+                f"Used item {selected_item.name} on {target_player}",
+            )
         else:
             return True
 
