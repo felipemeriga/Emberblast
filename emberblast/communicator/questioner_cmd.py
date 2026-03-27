@@ -23,14 +23,14 @@ class QuestionerCMD(IQuestioningSystem):
         :rtype: Union[str, bool, list, str].
         """
         choices = [
-            {"name": "Map and Enemies :city_sunset: ", "value": "map"},
-            {"name": ("My Status: :bar_chart: "), "value": "status"},
-            {"name": ("Single Enemy: :skull: "), "value": "enemy"},
+            {"name": "Map and Enemies \U0001f307", "value": "map"},
+            {"name": "My Status \U0001f4ca", "value": "status"},
+            {"name": "Single Enemy \U0001f480", "value": "enemy"},
         ]
         if show_items:
-            choices.append({"name": ("My Items: :test_tube: "), "value": "item"})
+            choices.append({"name": "My Items \U0001f9ea", "value": "item"})
 
-        choices.append({"name": ("Cancel: :x: "), "value": "cancel"})
+        choices.append({"name": "Cancel \u274c", "value": "cancel"})
         questions = [
             {
                 "type": "list",
@@ -47,17 +47,17 @@ class QuestionerCMD(IQuestioningSystem):
 
     def ask_actions_questions(self, actions_available: List[str]) -> Union[str, bool, list, str]:
         base_actions = {
-            "move": {"name": ("Move: :runner:"), "value": "move"},
-            "attack": {"name": ("Attack: :crossed_swords:"), "value": "attack"},
-            "skill": {"name": ("Skill: :fire:"), "value": "skill"},
-            "defend": {"name": ("Defend: :shield:"), "value": "defend"},
-            "hide": {"name": ("Hide: :ninja:"), "value": "hide"},
-            "search": {"name": ("Search: :eye:"), "value": "search"},
-            "item": {"name": ("Item: :test_tube:"), "value": "item"},
-            "equip": {"name": ("Equip: :crossed_swords:"), "value": "equip"},
-            "drop": {"name": ("Drop: :arrow_down:"), "value": "drop"},
-            "check": {"name": ("Check: :eyes:"), "value": "check"},
-            "pass": {"name": ("Pass: :wave:"), "value": "pass"},
+            "move": {"name": "Move \U0001f3c3", "value": "move"},
+            "attack": {"name": "Attack \u2694\ufe0f", "value": "attack"},
+            "skill": {"name": "Skill \U0001f525", "value": "skill"},
+            "defend": {"name": "Defend \U0001f6e1\ufe0f", "value": "defend"},
+            "hide": {"name": "Hide \U0001f977", "value": "hide"},
+            "search": {"name": "Search \U0001f441\ufe0f", "value": "search"},
+            "item": {"name": "Item \U0001f9ea", "value": "item"},
+            "equip": {"name": "Equip \u2694\ufe0f", "value": "equip"},
+            "drop": {"name": "Drop \u2b07\ufe0f", "value": "drop"},
+            "check": {"name": "Check \U0001f440", "value": "check"},
+            "pass": {"name": "Pass \U0001f44b", "value": "pass"},
         }
 
         authorized_actions = []
@@ -101,14 +101,14 @@ class QuestionerCMD(IQuestioningSystem):
 
     def ask_enemy_to_attack(self, enemies: List[IPlayer], skill_type: str = "") -> Union[str, bool, list, IPlayer]:
         choices = []
-        action_type = "attack: :punch:"
+        action_type = "attack \U0001f44a"
 
         if skill_type == "recover":
-            action_type = "recover: :green_heart:"
+            action_type = "recover \U0001f49a"
         elif skill_type == "buff":
-            action_type = "buff:"
+            action_type = "buff"
         elif skill_type == "debuff":
-            action_type = "debuff:"
+            action_type = "debuff"
 
         for enemy in enemies:
             choices.append(
@@ -119,7 +119,7 @@ class QuestionerCMD(IQuestioningSystem):
                     "value": enemy,
                 }
             )
-        choices.append({"name": ("Cancel :x: "), "value": None})
+        choices.append({"name": "Cancel \u274c", "value": None})
         enemies_questions = [
             {
                 "type": "list",
@@ -138,7 +138,7 @@ class QuestionerCMD(IQuestioningSystem):
         choices = []
         for item in items:
             choices.append({"name": ("{item} - {tier}".format(item=item.name, tier=item.tier)), "value": item})
-        choices.append({"name": ("Cancel :x: "), "value": None})
+        choices.append({"name": "Cancel \u274c", "value": None})
         items_questions = [
             {
                 "type": "list",
@@ -189,7 +189,7 @@ class QuestionerCMD(IQuestioningSystem):
                     "value": equip,
                 }
             )
-        choices.append({"name": ("Cancel :x: "), "value": None})
+        choices.append({"name": "Cancel \u274c", "value": None})
 
         equipment_questions = [
             {
@@ -224,39 +224,39 @@ class QuestionerCMD(IQuestioningSystem):
                 "message": "Select an action:",
                 "choices": [
                     {
-                        "name": ("+{points} Health Points :green_heart:".format(points=health_points)),
+                        "name": f"+{health_points} Health Points \U0001f49a",
                         "value": {"attribute": "health_points", "value": health_points},
                     },
                     {
-                        "name": ("+{points} Magic Points :blue_heart:".format(points=magic_points)),
+                        "name": f"+{magic_points} Magic Points \U0001f499",
                         "value": {"attribute": "magic_points", "value": magic_points},
                     },
                     {
-                        "name": ("+{points} Move Speed :runner:".format(points=move_speed)),
+                        "name": f"+{move_speed} Move Speed \U0001f3c3",
                         "value": {"attribute": "move_speed", "value": move_speed},
                     },
                     {
-                        "name": ("+{points} Strength :punch:".format(points=strength)),
+                        "name": f"+{strength} Strength \U0001f44a",
                         "value": {"attribute": "strength", "value": strength},
                     },
                     {
-                        "name": ("+{points} Intelligence :books:".format(points=intelligence)),
+                        "name": f"+{intelligence} Intelligence \U0001f4da",
                         "value": {"attribute": "intelligence", "value": intelligence},
                     },
                     {
-                        "name": ("+{points} Accuracy :dart:".format(points=accuracy)),
+                        "name": f"+{accuracy} Accuracy \U0001f3af",
                         "value": {"attribute": "accuracy", "value": accuracy},
                     },
                     {
-                        "name": ("+{points} Armour :anger:".format(points=armour)),
+                        "name": f"+{armour} Armour \U0001f4a2",
                         "value": {"attribute": "armour", "value": armour},
                     },
                     {
-                        "name": ("+{points} Magic Resist :cyclone:".format(points=magic_resist)),
+                        "name": f"+{magic_resist} Magic Resist \U0001f300",
                         "value": {"attribute": "magic_resist", "value": magic_resist},
                     },
                     {
-                        "name": ("+{points} Will :pray:".format(points=will)),
+                        "name": f"+{will} Will \U0001f64f",
                         "value": {"attribute": "will", "value": will},
                     },
                 ],
@@ -276,7 +276,7 @@ class QuestionerCMD(IQuestioningSystem):
         questions = [
             {
                 "type": "list",
-                "message": (":mount_fuji: Select where to move: "),
+                "message": "\U0001f5fb Select where to move: ",
                 "choices": possibilities,
                 "invalid_message": "You need to select at least one place to move!",
                 "show_cursor": True,
@@ -287,7 +287,10 @@ class QuestionerCMD(IQuestioningSystem):
         return result[0]
 
     def perform_first_question(self) -> Union[str, bool, list, str]:
-        choices = [{"name": ("New Game :new:"), "value": "new"}, {"name": ("Continue :repeat:"), "value": "continue"}]
+        choices = [
+            {"name": "New Game \U0001f195", "value": "new"},
+            {"name": "Continue \U0001f501", "value": "continue"},
+        ]
         first_game_questions = [
             {
                 "type": "list",
@@ -306,19 +309,19 @@ class QuestionerCMD(IQuestioningSystem):
         begin_game_questions = [
             {
                 "type": "list",
-                "message": (":video_game: Select the Game Type "),
+                "message": "\U0001f3ae Select the Game Type ",
                 "choices": ["Deathmatch", "Clan"],
                 "name": "game",
             },
             {
                 "type": "list",
-                "message": (":sunrise: Select the map "),
+                "message": "\U0001f305 Select the map ",
                 "choices": ["Millstone Plains", "Firebend Vulcan", "Lerwick Mountains"],
                 "name": "map",
             },
             {
                 "type": "input",
-                "message": (":computer: How many controlled players are playing "),
+                "message": "\U0001f4bb How many controlled players are playing ",
                 "validate": MaxPlayersValidator(),
                 "invalid_message": "Input should be number.",
                 "default": "1",
@@ -326,7 +329,7 @@ class QuestionerCMD(IQuestioningSystem):
             },
             {
                 "type": "input",
-                "message": (":computer: How many bots are you playing against "),
+                "message": "\U0001f4bb How many bots are you playing against ",
                 "validate": MaxBotsInputValidator(),
                 "invalid_message": "Input should be number.",
                 "default": "4",
@@ -340,20 +343,20 @@ class QuestionerCMD(IQuestioningSystem):
         questions = [
             {
                 "type": "input",
-                "message": (":man: Please enter your character name "),
+                "message": "\U0001f468 Please enter your character name ",
                 "validate": DuplicatedNamesValidator(existing_names),
                 "invalid_message": "minimum of 1 letters, max of 20 letters",
                 "name": "nickname",
             },
             {
                 "type": "list",
-                "message": (":skull: Please enter your character race? "),
+                "message": "\U0001f480 Please enter your character race? ",
                 "choices": get_configuration(RACES_SECTION).keys(),
                 "name": "race",
             },
             {
                 "type": "list",
-                "message": (":name_badge: Please enter your character job? "),
+                "message": "\U0001f4db Please enter your character job? ",
                 "choices": get_configuration(JOBS_SECTION).keys(),
                 "name": "job",
             },
@@ -367,7 +370,7 @@ class QuestionerCMD(IQuestioningSystem):
         for file_dict in normalized_files:
             option = {"name": file_dict.get("name"), "value": file_dict.get("path")}
             choices.append(option)
-        choices.append({"name": ("Cancel :x:"), "value": "cancel"})
+        choices.append({"name": "Cancel \u274c", "value": "cancel"})
 
         select_saved_game_questions = [
             {
@@ -397,18 +400,18 @@ class QuestionerCMD(IQuestioningSystem):
             choices.append(
                 {
                     "name": (
-                        "{name} / type: {kind} / cost: {cost} mana :blue_heart: {additional}".format(
+                        "{name} / type: {kind} / cost: {cost} mana \U0001f499 {additional}".format(
                             name=skill.name, kind=skill.kind, cost=skill.cost, additional=area_range_string
                         )
                     ),
                     "value": skill,
                 }
             )
-        choices.append({"name": ("Cancel :x: "), "value": None})
+        choices.append({"name": "Cancel \u274c", "value": None})
         skill_questions = [
             {
                 "type": "list",
-                "message": ("Select a skill: :fire:"),
+                "message": "Select a skill \U0001f525",
                 "choices": choices,
                 "default": available_skills[0],
                 "invalid_message": "You need to select at least one skill",
