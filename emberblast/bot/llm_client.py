@@ -181,10 +181,21 @@ def parse_llm_response(raw: str) -> Optional[Dict]:
     return data
 
 
+_openai_client: Optional[OpenAI] = None
+
+
+def _get_openai_client() -> OpenAI:
+    """Return a singleton OpenAI client instance."""
+    global _openai_client
+    if _openai_client is None:
+        _openai_client = OpenAI()
+    return _openai_client
+
+
 def call_openai(system_prompt: str, user_prompt: str) -> Optional[str]:
     """Call OpenAI API and return the response content, or None on failure."""
     try:
-        client = OpenAI()
+        client = _get_openai_client()
         response = client.chat.completions.create(
             model=os.environ.get("EMBERBLAST_MODEL", "gpt-4o-mini"),
             temperature=0.7,

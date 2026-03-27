@@ -159,6 +159,12 @@ class TestParseLLMResponse(BaseTestCase):
 
 
 class TestCallOpenAI(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        import emberblast.bot.llm_client as llm_mod
+
+        llm_mod._openai_client = None
+
     @patch("emberblast.bot.llm_client.OpenAI")
     def test_call_openai_success(self, mock_openai_cls):
         mock_client = MagicMock()
