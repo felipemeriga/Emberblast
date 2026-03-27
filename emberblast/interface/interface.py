@@ -1,7 +1,7 @@
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
-from typing import List, Union, Dict, Optional, Set, Callable, TypedDict
+from typing import Callable, Dict, List, Optional, Set, TypedDict, Union
 
 
 class ISideEffect(ABC):
@@ -27,9 +27,9 @@ class ISkill:
     side_effects: List[ISideEffect]
     applies_caster_only: bool
     punishment_side_effect: List[ISideEffect]
-    communicator: 'ICommunicator'
+    communicator: "ICommunicator"
 
-    def execute(self, player: 'IPlayer', foes: List['IPlayer'], dice_norm_result: float) -> None:
+    def execute(self, player: "IPlayer", foes: List["IPlayer"], dice_norm_result: float) -> None:
         pass
 
 
@@ -94,7 +94,7 @@ class IEquipment(ABC):
         pass
 
     @abstractmethod
-    def get_attribute_addition(self, attribute: str, usage: str = 'all') -> int:
+    def get_attribute_addition(self, attribute: str, usage: str = "all") -> int:
         pass
 
     @abstractmethod
@@ -251,7 +251,7 @@ class IPlayer(ABC):
         pass
 
     @abstractmethod
-    def get_attribute_real_value(self, attribute: str, usage: str = 'all') -> int:
+    def get_attribute_real_value(self, attribute: str, usage: str = "all") -> int:
         pass
 
     @abstractmethod
@@ -310,8 +310,9 @@ class IGraph(ABC):
         pass
 
     @abstractmethod
-    def _create_matrix_dfs_traverse(self, matrix: List[List[int]], row: int, column: int,
-                                    visited: List[List[bool]]) -> None:
+    def _create_matrix_dfs_traverse(
+        self, matrix: List[List[int]], row: int, column: int, visited: List[List[bool]]
+    ) -> None:
         pass
 
     @abstractmethod
@@ -335,8 +336,9 @@ class IGraph(ABC):
         pass
 
     @abstractmethod
-    def compute_recursive_range_edges(self, vertex: IVertex, reach: float, available_nodes: Set[str],
-                                      origin_node: str) -> None:
+    def compute_recursive_range_edges(
+        self, vertex: IVertex, reach: float, available_nodes: Set[str], origin_node: str
+    ) -> None:
         pass
 
     @abstractmethod
@@ -376,8 +378,9 @@ class IGraph(ABC):
         pass
 
     @abstractmethod
-    def get_average_distances_sources_destinations_map(self, sources: List[str],
-                                                       positions: List[str]) -> Dict[str, float]:
+    def get_average_distances_sources_destinations_map(
+        self, sources: List[str], positions: List[str]
+    ) -> Dict[str, float]:
         pass
 
 
@@ -490,7 +493,6 @@ class IPlayingMode(Enum):
 
 
 class IQuestioningSystem(ABC):
-
     @abstractmethod
     def ask_check_action(self, show_items: bool = False) -> Union[str, bool, list, str]:
         """
@@ -523,7 +525,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def ask_enemy_to_attack(self, enemies: List[IPlayer], skill_type: str = '') -> Union[str, bool, list, IPlayer]:
+    def ask_enemy_to_attack(self, enemies: List[IPlayer], skill_type: str = "") -> Union[str, bool, list, IPlayer]:
         """
         Ask which enemy to attack.
 
@@ -641,7 +643,6 @@ class IQuestioningSystem(ABC):
 
 
 class IInformingSystem(ABC):
-
     @abstractmethod
     def greetings(self) -> None:
         """
@@ -768,8 +769,9 @@ class IInformingSystem(ABC):
         pass
 
     @abstractmethod
-    def moving_possibilities(self, player_position: str, possibilities: List[str], matrix: List[List[int]],
-                             size: int) -> None:
+    def moving_possibilities(
+        self, player_position: str, possibilities: List[str], matrix: List[List[int]], size: int
+    ) -> None:
         """
         Print all the possibilities of moving in the map, considering the player's move speed.
 
@@ -1026,12 +1028,18 @@ class IInformingSystem(ABC):
         pass
 
     @abstractmethod
-    def force_loading(self, loading_time: int, prefix: str = '', prefix_attributes: List[str] = None) -> None:
+    def force_loading(self, loading_time: int, prefix: str = "", prefix_attributes: List[str] = None) -> None:
         """
         Simulate a loading, just to give a better flow to gaming experience
 
         :rtype: None
         """
+        pass
+
+
+class IRenderer(ABC):
+    @abstractmethod
+    def render(self, event) -> None:
         pass
 
 
