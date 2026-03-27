@@ -1,7 +1,6 @@
 from emberblast.conf import get_configuration
-
-from emberblast.utils import RACES_SECTION
 from emberblast.interface import IRace
+from emberblast.utils import RACES_SECTION
 
 
 class RaceMeta(type):

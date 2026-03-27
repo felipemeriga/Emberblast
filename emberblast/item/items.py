@@ -1,9 +1,10 @@
 import random
 from typing import List
+
 from emberblast.conf import get_configuration
+from emberblast.effect import instantiate_side_effects
+from emberblast.interface import IEquipmentItem, IHealingItem, IItem, IRecoveryItem, ISideEffect
 from emberblast.utils import ITEMS_SECTION
-from emberblast.effect import SideEffect, instantiate_side_effects
-from emberblast.interface import IItem, IHealingItem, IRecoveryItem, IEquipmentItem, ISideEffect
 
 
 class Item(IItem):

@@ -1,6 +1,6 @@
 from emberblast.conf import get_configuration
-from emberblast.utils import JOBS_SECTION
 from emberblast.interface import IJob
+from emberblast.utils import JOBS_SECTION
 
 
 class JobMeta(type):

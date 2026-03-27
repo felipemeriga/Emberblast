@@ -1,11 +1,12 @@
 import random
-from typing import Dict, Callable
+from typing import Callable, Dict
 
-from emberblast.player import dynamic_races_classes, dynamic_jobs_classes, ControlledPlayer
+from emberblast.effect import SideEffect
+from emberblast.item import Bag, Equipment
+from emberblast.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes
+
 from .test import BaseTestCase
 from .test_item import mock_healing_item
-from emberblast.item import Bag, Equipment
-from emberblast.effect import SideEffect
 
 
 def mock_job() -> Callable:

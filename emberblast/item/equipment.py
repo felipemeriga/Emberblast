@@ -1,4 +1,5 @@
 from typing import Union
+
 from emberblast.interface import IEquipment, IEquipmentItem, IItem, ISideEffect
 
 

@@ -1,9 +1,13 @@
 import math
-from typing import List, Set, Dict, Tuple, Union
+from typing import Dict, List, Set
 
-from emberblast.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, convert_number_to_letter, \
-    convert_letter_to_number, is_square_matrix
-from emberblast.interface import IGraph, IVertex, IEdge
+from emberblast.interface import IEdge, IGraph, IVertex
+from emberblast.utils import (
+    convert_number_to_letter,
+    generate_random_adjacent_matrix,
+    generate_visited_default_matrix,
+    is_square_matrix,
+)
 
 
 class Edge(IEdge):

@@ -1,14 +1,13 @@
 from pathlib import Path
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
 from InquirerPy import prompt
-from emojis import emojis
 from prompt_toolkit.document import Document
-from prompt_toolkit.validation import Validator, ValidationError
+from prompt_toolkit.validation import ValidationError, Validator
 
 from emberblast.conf import get_configuration
-from emberblast.interface.interface import IQuestioningSystem, IPlayer, IEquipmentItem, IItem, ISkill
-from emberblast.utils import LEVEL_UP_INCREMENT, GAME_SECTION, JOBS_SECTION, RACES_SECTION
+from emberblast.interface.interface import IEquipmentItem, IItem, IPlayer, IQuestioningSystem, ISkill
+from emberblast.utils import GAME_SECTION, JOBS_SECTION, LEVEL_UP_INCREMENT, RACES_SECTION
 
 
 class QuestionerCMD(IQuestioningSystem):
@@ -26,26 +25,26 @@ class QuestionerCMD(IQuestioningSystem):
         """
         choices = [
             {
-                'name': emojis.encode('Map and Enemies :city_sunset: '),
+                'name': 'Map and Enemies :city_sunset: ',
                 'value': 'map'
             },
             {
-                'name': emojis.encode('My Status: :bar_chart: '),
+                'name': ('My Status: :bar_chart: '),
                 'value': 'status'
             },
             {
-                'name': emojis.encode('Single Enemy: :skull: '),
+                'name': ('Single Enemy: :skull: '),
                 'value': 'enemy'
             }
         ]
         if show_items:
             choices.append({
-                'name': emojis.encode('My Items: :test_tube: '),
+                'name': ('My Items: :test_tube: '),
                 'value': 'item'
             })
 
         choices.append({
-            'name': emojis.encode('Cancel: :x: '),
+            'name': ('Cancel: :x: '),
             'value': 'cancel'
         })
         questions = [
@@ -65,47 +64,47 @@ class QuestionerCMD(IQuestioningSystem):
     def ask_actions_questions(self, actions_available: List[str]) -> Union[str, bool, list, str]:
         base_actions = {
             'move': {
-                'name': emojis.encode('Move: :runner:'),
+                'name': ('Move: :runner:'),
                 'value': 'move'
             },
             'attack': {
-                'name': emojis.encode('Attack: :crossed_swords:'),
+                'name': ('Attack: :crossed_swords:'),
                 'value': 'attack'
             },
             'skill': {
-                'name': emojis.encode('Skill: :fire:'),
+                'name': ('Skill: :fire:'),
                 'value': 'skill'
             },
             'defend': {
-                'name': emojis.encode('Defend: :shield:'),
+                'name': ('Defend: :shield:'),
                 'value': 'defend'
             },
             'hide': {
-                'name': emojis.encode('Hide: :ninja:'),
+                'name': ('Hide: :ninja:'),
                 'value': 'hide'
             },
             'search': {
-                'name': emojis.encode('Search: :eye:'),
+                'name': ('Search: :eye:'),
                 'value': 'search'
             },
             'item': {
-                'name': emojis.encode('Item: :test_tube:'),
+                'name': ('Item: :test_tube:'),
                 'value': 'item'
             },
             'equip': {
-                'name': emojis.encode('Equip: :crossed_swords:'),
+                'name': ('Equip: :crossed_swords:'),
                 'value': 'equip'
             },
             'drop': {
-                'name': emojis.encode('Drop: :arrow_down:'),
+                'name': ('Drop: :arrow_down:'),
                 'value': 'drop'
             },
             'check': {
-                'name': emojis.encode('Check: :eyes:'),
+                'name': ('Check: :eyes:'),
                 'value': 'check'
             },
             'pass': {
-                'name': emojis.encode('Pass: :wave:'),
+                'name': ('Pass: :wave:'),
                 'value': 'pass'
             },
         }
@@ -170,13 +169,13 @@ class QuestionerCMD(IQuestioningSystem):
                 'value': enemy
             })
         choices.append({
-            'name': emojis.encode('Cancel :x: '),
+            'name': ('Cancel :x: '),
             'value': None
         })
         enemies_questions = [
             {
                 'type': 'list',
-                'message': emojis.encode('Select an enemy to {action}'.format(action=action_type)),
+                'message': ('Select an enemy to {action}'.format(action=action_type)),
                 'choices': choices,
                 'invalid_message': 'You need to select at least one enemy to attack!',
                 'show_cursor': True,
@@ -191,12 +190,12 @@ class QuestionerCMD(IQuestioningSystem):
         choices = []
         for item in items:
             choices.append({
-                'name': emojis.encode('{item} - {tier}'.format(item=item.name,
+                'name': ('{item} - {tier}'.format(item=item.name,
                                                                tier=item.tier)),
                 'value': item
             })
         choices.append({
-            'name': emojis.encode('Cancel :x: '),
+            'name': ('Cancel :x: '),
             'value': None
         })
         items_questions = [
@@ -240,13 +239,13 @@ class QuestionerCMD(IQuestioningSystem):
             if player.equipment.is_equipped(equip):
                 equipped_string = '  (EQUIPPED)'
             choices.append({
-                'name': emojis.encode('{item} - {tier} {equipped_string}'.format(item=equip.name,
+                'name': ('{item} - {tier} {equipped_string}'.format(item=equip.name,
                                                                                  tier=equip.tier,
                                                                                  equipped_string=equipped_string)),
                 'value': equip
             })
         choices.append({
-            'name': emojis.encode('Cancel :x: '),
+            'name': ('Cancel :x: '),
             'value': None
         })
 
@@ -283,63 +282,63 @@ class QuestionerCMD(IQuestioningSystem):
                 "message": "Select an action:",
                 "choices": [
                     {
-                        "name": emojis.encode("+{points} Health Points :green_heart:".format(points=health_points)),
+                        "name": ("+{points} Health Points :green_heart:".format(points=health_points)),
                         "value": {
                             "attribute": "health_points",
                             "value": health_points
                         }
                     },
                     {
-                        "name": emojis.encode("+{points} Magic Points :blue_heart:".format(points=magic_points)),
+                        "name": ("+{points} Magic Points :blue_heart:".format(points=magic_points)),
                         "value": {
                             "attribute": "magic_points",
                             "value": magic_points
                         }
                     },
                     {
-                        "name": emojis.encode("+{points} Move Speed :runner:".format(points=move_speed)),
+                        "name": ("+{points} Move Speed :runner:".format(points=move_speed)),
                         "value": {
                             "attribute": "move_speed",
                             "value": move_speed
                         }
                     },
                     {
-                        "name": emojis.encode("+{points} Strength :punch:".format(points=strength)),
+                        "name": ("+{points} Strength :punch:".format(points=strength)),
                         "value": {
                             "attribute": "strength",
                             "value": strength
                         }
                     },
                     {
-                        "name": emojis.encode("+{points} Intelligence :books:".format(points=intelligence)),
+                        "name": ("+{points} Intelligence :books:".format(points=intelligence)),
                         "value": {
                             "attribute": "intelligence",
                             "value": intelligence
                         }
                     },
                     {
-                        "name": emojis.encode("+{points} Accuracy :dart:".format(points=accuracy)),
+                        "name": ("+{points} Accuracy :dart:".format(points=accuracy)),
                         "value": {
                             "attribute": "accuracy",
                             "value": accuracy
                         }
                     },
                     {
-                        "name": emojis.encode("+{points} Armour :anger:".format(points=armour)),
+                        "name": ("+{points} Armour :anger:".format(points=armour)),
                         "value": {
                             "attribute": "armour",
                             "value": armour
                         }
                     },
                     {
-                        "name": emojis.encode("+{points} Magic Resist :cyclone:".format(points=magic_resist)),
+                        "name": ("+{points} Magic Resist :cyclone:".format(points=magic_resist)),
                         "value": {
                             "attribute": "magic_resist",
                             "value": magic_resist
                         }
                     },
                     {
-                        "name": emojis.encode("+{points} Will :pray:".format(points=will)),
+                        "name": ("+{points} Will :pray:".format(points=will)),
                         "value": {
                             "attribute": "will",
                             "value": will
@@ -362,7 +361,7 @@ class QuestionerCMD(IQuestioningSystem):
         questions = [
             {
                 'type': 'list',
-                'message': emojis.encode(':mount_fuji: Select where to move: '),
+                'message': (':mount_fuji: Select where to move: '),
                 'choices': possibilities,
                 'invalid_message': 'You need to select at least one place to move!',
                 'show_cursor': True,
@@ -375,10 +374,10 @@ class QuestionerCMD(IQuestioningSystem):
     def perform_first_question(self) -> Union[str, bool, list, str]:
         choices = [
             {
-                'name': emojis.encode('New Game :new:'),
+                'name': ('New Game :new:'),
                 'value': 'new'
             }, {
-                'name': emojis.encode('Continue :repeat:'),
+                'name': ('Continue :repeat:'),
                 'value': 'continue'
             }
         ]
@@ -400,19 +399,19 @@ class QuestionerCMD(IQuestioningSystem):
         begin_game_questions = [
             {
                 "type": "list",
-                "message": emojis.encode(':video_game: Select the Game Type '),
+                "message": (':video_game: Select the Game Type '),
                 "choices": ["Deathmatch", "Clan"],
                 "name": "game"
             },
             {
                 "type": "list",
-                "message": emojis.encode(':sunrise: Select the map '),
+                "message": (':sunrise: Select the map '),
                 "choices": ["Millstone Plains", "Firebend Vulcan", "Lerwick Mountains"],
                 "name": "map"
             },
             {
                 "type": "input",
-                "message": emojis.encode(':computer: How many controlled players are playing '),
+                "message": (':computer: How many controlled players are playing '),
                 "validate": MaxPlayersValidator(),
                 "invalid_message": "Input should be number.",
                 "default": "1",
@@ -420,7 +419,7 @@ class QuestionerCMD(IQuestioningSystem):
             },
             {
                 "type": "input",
-                "message": emojis.encode(':computer: How many bots are you playing against '),
+                "message": (':computer: How many bots are you playing against '),
                 "validate": MaxBotsInputValidator(),
                 "invalid_message": "Input should be number.",
                 "default": "4",
@@ -434,20 +433,20 @@ class QuestionerCMD(IQuestioningSystem):
         questions = [
             {
                 "type": "input",
-                "message": emojis.encode(':man: Please enter your character name '),
+                "message": (':man: Please enter your character name '),
                 "validate": DuplicatedNamesValidator(existing_names),
                 "invalid_message": "minimum of 1 letters, max of 20 letters",
                 "name": "nickname"
             },
             {
                 "type": "list",
-                "message": emojis.encode(':skull: Please enter your character race? '),
+                "message": (':skull: Please enter your character race? '),
                 "choices": get_configuration(RACES_SECTION).keys(),
                 "name": "race"
             },
             {
                 "type": "list",
-                "message": emojis.encode(':name_badge: Please enter your character job? '),
+                "message": (':name_badge: Please enter your character job? '),
                 "choices": get_configuration(JOBS_SECTION).keys(),
                 "name": "job"
             },
@@ -465,7 +464,7 @@ class QuestionerCMD(IQuestioningSystem):
             }
             choices.append(option)
         choices.append({
-            'name': emojis.encode('Cancel :x:'),
+            'name': ('Cancel :x:'),
             'value': 'cancel'
         })
 
@@ -494,19 +493,19 @@ class QuestionerCMD(IQuestioningSystem):
                 area_range_string = '/ ranged skill with range of {range}, area damage of radius {area}'.format(
                     range=skill.ranged, area=skill.area)
             choices.append({
-                'name': emojis.encode('{name} / type: {kind} / cost: {cost} mana :blue_heart: {additional}'.format(
+                'name': ('{name} / type: {kind} / cost: {cost} mana :blue_heart: {additional}'.format(
                     name=skill.name, kind=skill.kind, cost=skill.cost, additional=area_range_string
                 )),
                 'value': skill
             })
         choices.append({
-            'name': emojis.encode('Cancel :x: '),
+            'name': ('Cancel :x: '),
             'value': None
         })
         skill_questions = [
             {
                 'type': 'list',
-                'message': emojis.encode('Select a skill: :fire:'),
+                'message': ('Select a skill: :fire:'),
                 'choices': choices,
                 'default': available_skills[0],
                 'invalid_message': 'You need to select at least one skill',

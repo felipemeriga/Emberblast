@@ -2,6 +2,7 @@ import sys
 from typing import Callable, Type
 
 from emberblast.interface.interface import ICommunicator
+
 from .communicator_cmd import CommunicatorCMD
 
 

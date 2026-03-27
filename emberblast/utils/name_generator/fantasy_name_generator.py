@@ -20,5 +20,5 @@ def generate_name() -> str:
                 last_names = last_names_files.read().splitlines()
                 return '{first_name} {last_name}'.format(first_name=names[randrange(len(names))],
                                                          last_name=last_names[randrange(len(last_names))])
-    except OSError as err:
+    except OSError:
         return ''

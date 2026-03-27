@@ -1,7 +1,8 @@
+from emberblast.skill import Steal, get_instantiated_skill, get_player_available_skills
 from emberblast.test.test import BaseTestCase
-from .test_player import mock_player
-from emberblast.skill import get_player_available_skills, get_instantiated_skill, Steal
+
 from ..interface import ISkill
+from .test_player import mock_player
 
 
 @mock_player()

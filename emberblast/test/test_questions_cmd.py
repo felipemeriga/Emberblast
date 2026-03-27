@@ -1,12 +1,11 @@
-import os
-from unittest import skipIf
+
+from emberblast.communicator import communicator_injector
+from emberblast.interface import IEquipmentItem, IItem, IPlayer
 
 from .test import CommunicatorTestCase, manual_test
-from .test_player import mock_player
-from emberblast.communicator import communicator_injector
-from .test_item import mock_healing_item, mock_recovery_item, mock_equipment_item
+from .test_item import mock_equipment_item, mock_healing_item, mock_recovery_item
 from .test_map import mock_map
-from emberblast.interface import IItem, IEquipmentItem, IPlayer
+from .test_player import mock_player
 
 # All of the test under this test file are meant to be run manually only, for testing each of the
 # communicator asked in the game

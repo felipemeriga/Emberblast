@@ -6,25 +6,35 @@ from typing import Dict, List
 from emberblast.communicator import communicator_injector
 from emberblast.conf import get_configuration
 from emberblast.effect import instantiate_side_effects
-from emberblast.interface import IPlayer, ISkill, ISideEffect
+from emberblast.events import (
+    DamageEvent,
+    HealEvent,
+    MissedAttackEvent,
+    PlayerFailStoleItemEvent,
+    PlayerStoleItemEvent,
+    SideEffectEvent,
+    SpentManaEvent,
+    XPEarnedEvent,
+)
+from emberblast.interface import IPlayer, ISideEffect, ISkill
 from emberblast.utils import SKILLS_SECTION
 from emberblast.utils.constants import EXPERIENCE_EARNED_ACTION
 
 """
-This is the base class for defining a Skill, as all the skills are defined dynamically on the skills.yaml file, 
-there is a set of attributes required for each skill, and their behavior will be basically the same, inflicting or 
+This is the base class for defining a Skill, as all the skills are defined dynamically on the skills.yaml file,
+there is a set of attributes required for each skill, and their behavior will be basically the same, inflicting or
 healing players.
 
-For extending this game functionality, concrete classes that extends Skill base class can be created, for modifying 
-what happens when a character uses that skill. 
+For extending this game functionality, concrete classes that extends Skill base class can be created, for modifying
+what happens when a character uses that skill.
 
-For example, the skill Fireball doesn't need to be override, only defined on skills.yaml file, because the purpose of 
+For example, the skill Fireball doesn't need to be override, only defined on skills.yaml file, because the purpose of
 that skill it's only inflicting damage.
 
 Now, imagine Steal skill, instead of inflicting/healing, the purpose it's stealing someone's item. So that skill can
 be overrided by a concrete classes, and we can call them custom skills.
 
-So we have dynamic skills that follows the imposed behavior of the parent class Skill, and the custom Skills that 
+So we have dynamic skills that follows the imposed behavior of the parent class Skill, and the custom Skills that
 extents that.
 """
 
@@ -86,7 +96,9 @@ class Skill(ISkill):
         kill = False
         successful_skill = False
         player.spend_mana(self.cost)
-        self.communicator.informer.spent_mana(player.name, self.cost, self.name)
+        self.communicator.informer.render(SpentManaEvent(
+            player_name=player.name, amount=self.cost, skill_name=self.name
+        ))
         for foe in foes:
             if self.kind == 'inflict':
                 damage = self.calculate_damage(player, dice_norm_result)
@@ -95,20 +107,34 @@ class Skill(ISkill):
                 if damage > 0:
                     successful_skill = True
                     foe.suffer_damage(damage)
-                    self.communicator.informer.suffer_damage(player, foe, damage)
+                    self.communicator.informer.render(DamageEvent(
+                        attacker_name=player.name, target_name=foe.name,
+                        damage=damage, target_alive=foe.is_alive(), target_life=foe.life
+                    ))
                 else:
-                    self.communicator.informer.missed(player, foe)
+                    self.communicator.informer.render(MissedAttackEvent(
+                        attacker_name=player.name, target_name=foe.name
+                    ))
             elif self.kind == 'recover':
                 recover_result = self.calculate_recover(player, dice_norm_result)
                 foe.heal('health_points', recover_result)
-                self.communicator.informer.heal(player, foe, recover_result)
+                self.communicator.informer.render(HealEvent(
+                    healer_name=player.name, target_name=foe.name,
+                    amount=recover_result, target_life=foe.life
+                ))
             for side_effect in self.side_effects:
                 if successful_skill:
                     foe.add_side_effect(side_effect)
-                    self.communicator.informer.add_side_effect(foe.name, side_effect)
+                    self.communicator.informer.render(SideEffectEvent(
+                        player_name=foe.name, effect_name=side_effect.name,
+                        effect_type=side_effect.effect_type, occurrence=side_effect.occurrence
+                    ))
             for side_effect in self.punishment_side_effects:
                 player.add_side_effect(side_effect)
-                self.communicator.informer.add_side_effect(player.name, side_effect)
+                self.communicator.informer.render(SideEffectEvent(
+                    player_name=player.name, effect_name=side_effect.name,
+                    effect_type=side_effect.effect_type, occurrence=side_effect.occurrence
+                ))
             if not foe.is_alive():
                 kill = True
             print('\n')
@@ -118,11 +144,11 @@ class Skill(ISkill):
         if successful_skill:
             experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
             player.earn_xp(experience)
-            self.communicator.informer.player_earned_xp(player_name=player.name, xp=experience)
+            self.communicator.informer.render(XPEarnedEvent(player_name=player.name, xp=experience))
         if killed:
             experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
             player.earn_xp(experience)
-            self.communicator.informer.player_earned_xp(player_name=player.name, xp=experience)
+            self.communicator.informer.render(XPEarnedEvent(player_name=player.name, xp=experience))
 
 
 instantiated_skills: Dict = {}
@@ -230,12 +256,12 @@ def get_player_available_skills(player: IPlayer) -> List[ISkill]:
 --------------- EXTENDED SKILLS ---------------
 
 For default, skills are intended to heal or cause damage to one player, that is why all the skills present in the
-skills configuration file, has a default instantiating mechanism that inherits from Skill parent class, that has the 
+skills configuration file, has a default instantiating mechanism that inherits from Skill parent class, that has the
 execute method, which simply executes the skill. But you can override the functionality of skills from configuration
 file, creating a concrete class above here and override the methods from Skill class.
 
 This functionally extends the basic implementation, adding more possibilities to the skills in the game. For example,
-the Steal skill from Rogue class, instead of it causing damage or healing someone, this class is written above, 
+the Steal skill from Rogue class, instead of it causing damage or healing someone, this class is written above,
 making possible from a player to steal the item from another one.
 
 """
@@ -257,10 +283,15 @@ class Steal(Skill):
             stolen_item = random.choice(items)
             foe.bag.remove_item(stolen_item)
             player.bag.add_item(stolen_item)
-            self.communicator.informer.player_stole_item(player.name, foe.name, stolen_item.name, stolen_item.tier)
+            self.communicator.informer.render(PlayerStoleItemEvent(
+                player_name=player.name, foe_name=foe.name,
+                item_name=stolen_item.name, tier=stolen_item.tier
+            ))
             successful_steal = True
         else:
-            self.communicator.informer.player_fail_stole_item(player.name, foe.name)
+            self.communicator.informer.render(PlayerFailStoleItemEvent(
+                player_name=player.name, foe_name=foe.name
+            ))
         self.check_experience(player, successful_steal, False)
 
 
@@ -277,14 +308,22 @@ class Leech(Skill):
         kill = False
 
         player.spend_mana(self.cost)
-        self.communicator.informer.spent_mana(player.name, self.cost, self.name)
+        self.communicator.informer.render(SpentManaEvent(
+            player_name=player.name, amount=self.cost, skill_name=self.name
+        ))
         foe = foes[0]
         damage = int(self.calculate_damage(player, dice_norm_result))
         defense = self.calculate_defense(foe)
         foe.suffer_damage(damage - defense)
-        self.communicator.informer.suffer_damage(player, foe, damage)
+        self.communicator.informer.render(DamageEvent(
+            attacker_name=player.name, target_name=foe.name,
+            damage=damage, target_alive=foe.is_alive(), target_life=foe.life
+        ))
         player.heal('health_points', damage)
-        self.communicator.informer.heal(player, player, damage)
+        self.communicator.informer.render(HealEvent(
+            healer_name=player.name, target_name=player.name,
+            amount=damage, target_life=player.life
+        ))
 
         if damage - defense > 0:
             successful_skill = True

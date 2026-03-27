@@ -1,7 +1,8 @@
-from typing import List, Union, Dict
+from typing import Dict, List, Union
+
+from emberblast.interface import IBag, IControlledPlayer, IEquipment, IJob, IRace
 
 from .player import Player
-from emberblast.interface import IBag, IEquipment, IJob, IRace, IControlledPlayer
 
 
 class ControlledPlayer(IControlledPlayer, Player):

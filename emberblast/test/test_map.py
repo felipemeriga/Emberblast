@@ -2,9 +2,10 @@ import math
 import random
 from typing import Callable
 
-from .test import BaseTestCase
-from emberblast.map import Map, Graph
+from emberblast.map import Graph, Map
 from emberblast.utils import convert_number_to_letter
+
+from .test import BaseTestCase
 
 
 def mock_defective_map() -> Callable:

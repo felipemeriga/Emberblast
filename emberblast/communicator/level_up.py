@@ -3,8 +3,8 @@ from copy import copy
 from typing import Dict
 
 from emberblast.conf import get_configuration
-from emberblast.interface import IRace, IJob
-from emberblast.utils import LEVEL_UP_INCREMENT, JOBS_SECTION, RACES_SECTION
+from emberblast.interface import IJob, IRace
+from emberblast.utils import JOBS_SECTION, LEVEL_UP_INCREMENT, RACES_SECTION
 
 
 def improve_attributes_randomly() -> Dict:

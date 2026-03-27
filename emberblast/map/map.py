@@ -1,12 +1,13 @@
 import random
 from math import floor
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
+from emberblast.conf import get_configuration
+from emberblast.interface import IItem, IMap, IPlayer, ISideEffect
+from emberblast.item import get_random_item
+from emberblast.utils import convert_number_to_letter
 
 from .graph import Graph
-from emberblast.utils import convert_number_to_letter
-from emberblast.conf import get_configuration
-from emberblast.item import get_random_item
-from emberblast.interface import IPlayer, IItem, IMap, ISideEffect
 
 
 class Map(IMap):

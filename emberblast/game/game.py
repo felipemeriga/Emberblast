@@ -5,8 +5,8 @@ from typing import List
 from numpy.random import choice
 
 from emberblast.conf import get_configuration
+from emberblast.interface import IGame, IMap, IPlayer
 from emberblast.utils import GAME_SECTION
-from emberblast.interface import IPlayer, IMap, IGame
 
 
 class Game(IGame):

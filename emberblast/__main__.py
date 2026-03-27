@@ -1,6 +1,7 @@
 import atexit
 
 from emberblast.communicator import communicator_injector
+from emberblast.events import GreetingsEvent
 from emberblast.game import GameFactory
 from emberblast.interface import IEmberblast
 from emberblast.save import save_game_state_on_exit
@@ -15,7 +16,7 @@ def exit_handler(orchestrator):
 class Emberblast(IEmberblast):
     def run(self):
         try:
-            self.communicator.informer.greetings()
+            self.communicator.informer.render(GreetingsEvent())
             game_factory = GameFactory()
             game_orchestrator = game_factory.pre_initial_settings()
             atexit.register(exit_handler, game_orchestrator)

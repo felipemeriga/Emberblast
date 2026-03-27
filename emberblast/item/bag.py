@@ -1,6 +1,7 @@
 from functools import wraps
 from typing import List, cast
-from emberblast.interface import IBag, IItem, IEquipmentItem, IRecoveryItem, IHealingItem
+
+from emberblast.interface import IBag, IEquipmentItem, IHealingItem, IItem, IRecoveryItem
 
 
 def weight_compute(func):

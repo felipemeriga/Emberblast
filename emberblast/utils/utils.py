@@ -1,8 +1,7 @@
 import random
 from functools import reduce
-
 from pathlib import Path
-from typing import List, Dict, Any, Callable
+from typing import Any, Callable, Dict, List
 
 
 def singleton(class_) -> Callable:

@@ -1,17 +1,33 @@
 import yaml
+from cerberus import SchemaError, Validator
 from yaml.scanner import ScannerError
-from cerberus import Validator, SchemaError
 
-from .schema import race_section_configuration_schema, game_section_configuration_schema, \
-    job_section_configuration_schema, level_up_attributes_configuration_schema, side_effects_configuration_schema, \
-    healing_item_validation_schema, recovery_item_validation_schema, equipment_item_validation_schema, \
-    items_probabilities_schema, skills_validation_schema, experience_earned_action_configuration_schema
-from .logger import get_logger
-from emberblast.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT, SIDE_EFFECTS_SECTION, \
-    ITEMS_SECTION, ITEMS_PROBABILITIES_SECTION, SKILLS_SECTION
-from emberblast.utils import get_project_root, deep_get
 from emberblast.exception import ConfigFileError
+from emberblast.utils import (
+    GAME_SECTION,
+    ITEMS_PROBABILITIES_SECTION,
+    JOBS_SECTION,
+    LEVEL_UP_INCREMENT,
+    RACES_SECTION,
+    deep_get,
+    get_project_root,
+)
+
 from ..utils.constants import EXPERIENCE_EARNED_ACTION
+from .logger import get_logger
+from .schema import (
+    equipment_item_validation_schema,
+    experience_earned_action_configuration_schema,
+    game_section_configuration_schema,
+    healing_item_validation_schema,
+    items_probabilities_schema,
+    job_section_configuration_schema,
+    level_up_attributes_configuration_schema,
+    race_section_configuration_schema,
+    recovery_item_validation_schema,
+    side_effects_configuration_schema,
+    skills_validation_schema,
+)
 
 
 class Configuration(object):
@@ -258,7 +274,7 @@ class Configuration(object):
 
             normalized_skill = v.normalized(value)
 
-            if not normalized_skill.get('job', None) in self.jobs:
+            if normalized_skill.get('job', None) not in self.jobs:
                 error_string = 'The skill {skill} has an unknown job assigned to it.'.format(skill=normalized_skill.get('name'))
                 self._logger.error(error_string)
                 raise ConfigFileError(error_string)

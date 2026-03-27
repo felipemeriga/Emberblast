@@ -1,6 +1,8 @@
 from typing import Any
-from .test import BaseTestCase
+
 from emberblast.conf import get_configuration
+
+from .test import BaseTestCase
 
 
 # This is a decorator to be used in all the another tests that

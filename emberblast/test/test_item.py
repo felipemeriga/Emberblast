@@ -1,8 +1,9 @@
 from typing import Callable
 
+from emberblast.interface import IEquipmentItem, IHealingItem, IItem, IRecoveryItem
+from emberblast.item import Bag, get_random_item
+
 from .test import BaseTestCase
-from emberblast.item import get_random_item, Bag
-from emberblast.interface import IItem, IHealingItem, IEquipmentItem, IRecoveryItem
 
 
 def mock_recovery_item(tier: str = 'common') -> Callable:

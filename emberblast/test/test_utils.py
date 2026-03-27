@@ -1,10 +1,17 @@
 import random
-from .test import BaseTestCase
 from typing import Dict
 
-from emberblast.utils import generate_random_adjacent_matrix, generate_visited_default_matrix, find_key_recursively, \
-    convert_letter_to_number, convert_number_to_letter, deep_get
+from emberblast.utils import (
+    convert_letter_to_number,
+    convert_number_to_letter,
+    deep_get,
+    find_key_recursively,
+    generate_random_adjacent_matrix,
+    generate_visited_default_matrix,
+)
 from emberblast.utils.name_generator import generate_name
+
+from .test import BaseTestCase
 
 
 class TestModuleUtils(BaseTestCase):
