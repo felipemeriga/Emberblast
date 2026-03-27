@@ -1,4 +1,3 @@
-from colorama import Fore
 import atexit
 
 from emberblast.communicator import communicator_injector
@@ -25,7 +24,7 @@ class Emberblast(IEmberblast):
             pass
         except Exception as err:
             print(err)
-            print(Fore.RED + 'System shutdown with unexpected error')
+            print('System shutdown with unexpected error')
 
     __call__ = run
 
