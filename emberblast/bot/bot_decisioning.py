@@ -1,10 +1,20 @@
 import collections
 import functools
+import json
+import logging
 import math
+import os
 import random
 import time
-from typing import List, Optional
+from typing import Dict, List, Optional
 
+from emberblast.bot.llm_client import (
+    build_personality_prompt,
+    call_openai,
+    parse_llm_response,
+    serialize_game_state,
+)
+from emberblast.bot.memory import BotMemory
 from emberblast.communicator import communicator_injector
 from emberblast.conf import get_configuration
 from emberblast.events import (
@@ -15,11 +25,14 @@ from emberblast.events import (
     ItemFoundEvent,
     MissedAttackEvent,
     MoveEvent,
+    NarrationEvent,
     UseItemEvent,
     XPEarnedEvent,
 )
 from emberblast.interface import IBotDecisioning, IEquipmentItem, IGame, IHealingItem, IPlayer, IPlayingMode, ISkill
 from emberblast.utils.constants import EXPERIENCE_EARNED_ACTION
+
+logger = logging.getLogger(__name__)
 
 
 @communicator_injector()
@@ -31,6 +44,9 @@ class BotDecisioning(IBotDecisioning):
         self.current_play_style = IPlayingMode.NEUTRAL
         self.prioritized_foes: List[IPlayer] = []
         self.possible_foe: Optional[IPlayer] = None
+        self._memories: Dict[str, BotMemory] = {}
+        self._current_turn: int = 0
+        self._llm_enabled: bool = bool(os.environ.get("OPENAI_API_KEY"))
 
     def reset_attributes(self) -> None:
         self.prioritized_foes = []
@@ -395,6 +411,14 @@ class BotDecisioning(IBotDecisioning):
                 if best_equip is not None:
                     self.current_bot.equipment.equip(best_equip)
 
+    def _get_memory(self, player_name: str) -> BotMemory:
+        if player_name not in self._memories:
+            self._memories[player_name] = BotMemory()
+        return self._memories[player_name]
+
+    def set_current_turn(self, turn: int) -> None:
+        self._current_turn = turn
+
     def select_playing_mode(self) -> None:
         remaining_players = self.game.get_remaining_players(player=self.current_bot, include_hidden=True)
         low_life_level = self.current_bot.health_points * 0.3
@@ -410,6 +434,162 @@ class BotDecisioning(IBotDecisioning):
             self.current_play_style = IPlayingMode.DEFENSIVE
 
     def decide(self, player: IPlayer) -> None:
+        if not self._llm_enabled:
+            self._decide_deterministic(player)
+            return
+
+        self.reset_attributes()
+        self.current_bot = player
+
+        enemies = self.game.get_remaining_players(player)
+        memory = self._get_memory(player.name)
+        available_actions = ["move", "attack", "skill", "item", "defend", "hide", "search", "equip", "pass"]
+
+        system_prompt = build_personality_prompt(
+            player.name, player.job.get_name(), player.race.get_name()
+        )
+        game_state = serialize_game_state(
+            player, enemies, self.game, memory.get_entries(), available_actions
+        )
+        user_prompt = json.dumps(game_state, indent=2)
+
+        raw_response = call_openai(system_prompt, user_prompt)
+        if raw_response is None:
+            logger.warning("LLM call failed for %s, falling back to deterministic", player.name)
+            self._decide_deterministic(player)
+            return
+
+        parsed = parse_llm_response(raw_response)
+        if parsed is None:
+            logger.warning("Failed to parse LLM response for %s, falling back", player.name)
+            self._decide_deterministic(player)
+            return
+
+        success = self._execute_llm_action(player, parsed, enemies)
+        if not success:
+            # Retry once with error feedback
+            error_msg = f"Previous action was invalid. Game state: {user_prompt}\nChoose a valid action."
+            raw_response = call_openai(system_prompt, error_msg)
+            if raw_response:
+                parsed = parse_llm_response(raw_response)
+                if parsed:
+                    success = self._execute_llm_action(player, parsed, enemies)
+
+            if not success:
+                logger.warning("LLM retry failed for %s, falling back to deterministic", player.name)
+                self._decide_deterministic(player)
+                return
+
+        # Display narration if present
+        narration = parsed.get("narration", "")
+        if narration:
+            self.communicator.informer.render(
+                NarrationEvent(player_name=player.name, text=narration)
+            )
+
+        # Record to memory
+        action = parsed.get("action", "unknown")
+        target = parsed.get("target", "")
+        memory_line = f"{action}"
+        if target:
+            memory_line += f" targeting {target}"
+        memory.add(self._current_turn, memory_line)
+
+    def _execute_llm_action(self, player: IPlayer, parsed: Dict, enemies: List[IPlayer]) -> bool:
+        action = parsed.get("action", "").lower()
+        try:
+            if action == "move":
+                return self._execute_llm_move(player, parsed)
+            elif action == "attack":
+                return self._execute_llm_attack(player, parsed, enemies)
+            elif action == "skill":
+                return self._execute_llm_skill(player, parsed, enemies)
+            elif action == "item":
+                return self._execute_llm_item(player, parsed)
+            elif action == "defend":
+                player.set_defense_mode(True)
+                return True
+            elif action == "hide":
+                player.set_hidden(True)
+                return True
+            elif action == "search":
+                self.search_on_map()
+                return True
+            elif action == "equip":
+                self.equip_item()
+                return True
+            elif action == "pass":
+                return True
+            else:
+                return False
+        except Exception as e:
+            logger.warning("Error executing LLM action %s: %s", action, e)
+            return False
+
+    def _execute_llm_move(self, player: IPlayer, parsed: Dict) -> bool:
+        destination = parsed.get("move_to", "")
+        if not destination:
+            return False
+        walkable = self.game.game_map.graph.get_available_nodes_in_range(
+            player.position, player.move_speed
+        )
+        if destination not in walkable:
+            return False
+        self.game.game_map.move_player(player, destination)
+        self.communicator.informer.render(EventAction(event='move'))
+        self.communicator.informer.render(MoveEvent(player_name=player.name))
+        return True
+
+    def _execute_llm_attack(self, player: IPlayer, parsed: Dict, enemies: List[IPlayer]) -> bool:
+        target_name = parsed.get("target", "")
+        target = self._find_enemy_by_name(target_name, enemies)
+        if target is None:
+            return False
+        self.current_bot = player
+        self.possible_foe = target
+        self.sort_foes_by_priority()
+        self.select_playing_mode()
+        self.attack()
+        return True
+
+    def _execute_llm_skill(self, player: IPlayer, parsed: Dict, enemies: List[IPlayer]) -> bool:
+        skill_name = parsed.get("skill_name", "")
+        target_name = parsed.get("target", "")
+        skill = None
+        for s in player.skills:
+            if s.name.lower() == skill_name.lower() and s.cost <= player.mana:
+                skill = s
+                break
+        if skill is None:
+            return False
+        target = self._find_enemy_by_name(target_name, enemies)
+        if target is None and skill.kind == "inflict":
+            return False
+        self.current_bot = player
+        self.possible_foe = target if target else player
+        self.sort_foes_by_priority()
+        self.prepare_execute_skill(skill)
+        return True
+
+    def _execute_llm_item(self, player: IPlayer, parsed: Dict) -> bool:
+        item_name = parsed.get("item_name", "")
+        for item in player.bag.get_usable_items():
+            if item.name.lower() == item_name.lower():
+                player.use_item(item)
+                player.bag.remove_item(item)
+                self.communicator.informer.render(UseItemEvent(
+                    player_name=player.name, item_name=item.name, target_name=player.name
+                ))
+                return True
+        return False
+
+    def _find_enemy_by_name(self, name: str, enemies: List[IPlayer]) -> Optional[IPlayer]:
+        for enemy in enemies:
+            if enemy.name.lower() == name.lower():
+                return enemy
+        return None
+
+    def _decide_deterministic(self, player: IPlayer) -> None:
         self.reset_attributes()
         self.current_bot = player
         self.sort_foes_by_priority()

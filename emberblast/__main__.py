@@ -1,4 +1,5 @@
 import atexit
+import os
 
 from emberblast.communicator import communicator_injector
 from emberblast.events import GreetingsEvent
@@ -16,6 +17,8 @@ def exit_handler(orchestrator):
 class Emberblast(IEmberblast):
     def run(self):
         try:
+            if not os.environ.get("OPENAI_API_KEY"):
+                print("Warning: OPENAI_API_KEY not set. Bots will use deterministic AI.")
             self.communicator.informer.render(GreetingsEvent())
             game_factory = GameFactory()
             game_orchestrator = game_factory.pre_initial_settings()

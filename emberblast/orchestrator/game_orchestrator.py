@@ -202,6 +202,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
             for turn in turn_list:
                 self.clear()
+                self.bot_controller.set_current_turn(turn)
                 self.communicator.informer.render(TurnStartEvent(turn=turn))
 
                 if not len(self.turn_remaining_players) > 0:
