@@ -32,6 +32,8 @@ class LineSeparatorEvent(GameEvent):
 @dataclass
 class MoveEvent(GameEvent):
     player_name: str
+    from_position: Optional[str] = None
+    to_position: Optional[str] = None
 
 
 @dataclass

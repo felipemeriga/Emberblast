@@ -107,7 +107,10 @@ class RichCLIRenderer:
         self.console.rule()
 
     def _render_move(self, event: MoveEvent) -> None:
-        self.console.print(f"\t{event.player_name} has just moved to another position\n")
+        if event.from_position and event.to_position:
+            self.console.print(f"\t{event.player_name} moved from {event.from_position} to {event.to_position}\n")
+        else:
+            self.console.print(f"\t{event.player_name} has just moved to another position\n")
 
     def _render_damage(self, event: DamageEvent) -> None:
         self.console.print(
