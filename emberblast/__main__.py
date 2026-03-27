@@ -10,7 +10,7 @@ from emberblast.save import save_game_state_on_exit
 
 def exit_handler(orchestrator):
     save_game_state_on_exit(orchestrator)
-    print('Closing Emberblast!')
+    print("Closing Emberblast!")
 
 
 @communicator_injector()
@@ -28,12 +28,12 @@ class Emberblast(IEmberblast):
             pass
         except Exception as err:
             print(err)
-            print('System shutdown with unexpected error')
+            print("System shutdown with unexpected error")
 
     __call__ = run
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Emberblast().run()
 
 

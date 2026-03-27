@@ -41,10 +41,22 @@ extents that.
 
 @communicator_injector()
 class Skill(ISkill):
-    def __init__(self, name: str, description: str, base: int, cost: int,
-                 kind: str, level_requirement: int, ranged: int, area: int, job: str,
-                 base_attribute: str, side_effects: List[ISideEffect], applies_caster_only: bool,
-                 punishment_side_effects: List[ISideEffect]) -> None:
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        base: int,
+        cost: int,
+        kind: str,
+        level_requirement: int,
+        ranged: int,
+        area: int,
+        job: str,
+        base_attribute: str,
+        side_effects: List[ISideEffect],
+        applies_caster_only: bool,
+        punishment_side_effects: List[ISideEffect],
+    ) -> None:
         """
         Constructor of the Skill parent class.
 
@@ -74,79 +86,98 @@ class Skill(ISkill):
         self.punishment_side_effects = punishment_side_effects
 
     def calculate_damage(self, player: IPlayer, dice_norm_result: float) -> float:
-        return self.base + dice_norm_result * player.get_attribute_real_value(
-            self.base_attribute) + player.get_attribute_real_value(self.base_attribute) / 2
+        return (
+            self.base
+            + dice_norm_result * player.get_attribute_real_value(self.base_attribute)
+            + player.get_attribute_real_value(self.base_attribute) / 2
+        )
 
-    def calculate_defense(self, foe: IPlayer, ) -> int:
+    def calculate_defense(
+        self,
+        foe: IPlayer,
+    ) -> int:
         # Skills can be magical, based on intelligence, and physical, based on strength
         # For magical skills,
         # foe will use magic resist and for physical, armour
-        if self.base_attribute == 'strength':
-            defense_attribute = 'armour'
+        if self.base_attribute == "strength":
+            defense_attribute = "armour"
         else:
-            defense_attribute = 'magic_resist'
+            defense_attribute = "magic_resist"
 
         return foe.get_defense_value(defense_attribute)
 
     def calculate_recover(self, player: IPlayer, dice_norm_result: float) -> int:
-        return math.ceil(
-            self.base + dice_norm_result * player.get_attribute_real_value('intelligence'))
+        return math.ceil(self.base + dice_norm_result * player.get_attribute_real_value("intelligence"))
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         kill = False
         successful_skill = False
         player.spend_mana(self.cost)
-        self.communicator.informer.render(SpentManaEvent(
-            player_name=player.name, amount=self.cost, skill_name=self.name
-        ))
+        self.communicator.informer.render(
+            SpentManaEvent(player_name=player.name, amount=self.cost, skill_name=self.name)
+        )
         for foe in foes:
-            if self.kind == 'inflict':
+            if self.kind == "inflict":
                 damage = self.calculate_damage(player, dice_norm_result)
                 defense = self.calculate_defense(foe)
                 damage = math.ceil(damage - defense)
                 if damage > 0:
                     successful_skill = True
                     foe.suffer_damage(damage)
-                    self.communicator.informer.render(DamageEvent(
-                        attacker_name=player.name, target_name=foe.name,
-                        damage=damage, target_alive=foe.is_alive(), target_life=foe.life
-                    ))
+                    self.communicator.informer.render(
+                        DamageEvent(
+                            attacker_name=player.name,
+                            target_name=foe.name,
+                            damage=damage,
+                            target_alive=foe.is_alive(),
+                            target_life=foe.life,
+                        )
+                    )
                 else:
-                    self.communicator.informer.render(MissedAttackEvent(
-                        attacker_name=player.name, target_name=foe.name
-                    ))
-            elif self.kind == 'recover':
+                    self.communicator.informer.render(
+                        MissedAttackEvent(attacker_name=player.name, target_name=foe.name)
+                    )
+            elif self.kind == "recover":
                 recover_result = self.calculate_recover(player, dice_norm_result)
-                foe.heal('health_points', recover_result)
-                self.communicator.informer.render(HealEvent(
-                    healer_name=player.name, target_name=foe.name,
-                    amount=recover_result, target_life=foe.life
-                ))
+                foe.heal("health_points", recover_result)
+                self.communicator.informer.render(
+                    HealEvent(
+                        healer_name=player.name, target_name=foe.name, amount=recover_result, target_life=foe.life
+                    )
+                )
             for side_effect in self.side_effects:
                 if successful_skill:
                     foe.add_side_effect(side_effect)
-                    self.communicator.informer.render(SideEffectEvent(
-                        player_name=foe.name, effect_name=side_effect.name,
-                        effect_type=side_effect.effect_type, occurrence=side_effect.occurrence
-                    ))
+                    self.communicator.informer.render(
+                        SideEffectEvent(
+                            player_name=foe.name,
+                            effect_name=side_effect.name,
+                            effect_type=side_effect.effect_type,
+                            occurrence=side_effect.occurrence,
+                        )
+                    )
             for side_effect in self.punishment_side_effects:
                 player.add_side_effect(side_effect)
-                self.communicator.informer.render(SideEffectEvent(
-                    player_name=player.name, effect_name=side_effect.name,
-                    effect_type=side_effect.effect_type, occurrence=side_effect.occurrence
-                ))
+                self.communicator.informer.render(
+                    SideEffectEvent(
+                        player_name=player.name,
+                        effect_name=side_effect.name,
+                        effect_type=side_effect.effect_type,
+                        occurrence=side_effect.occurrence,
+                    )
+                )
             if not foe.is_alive():
                 kill = True
-            print('\n')
+            print("\n")
         self.check_experience(player, successful_skill, kill)
 
     def check_experience(self, player: IPlayer, successful_skill: bool, killed: bool) -> None:
         if successful_skill:
-            experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('attack', 0)
+            experience = get_configuration(EXPERIENCE_EARNED_ACTION).get("attack", 0)
             player.earn_xp(experience)
             self.communicator.informer.render(XPEarnedEvent(player_name=player.name, xp=experience))
         if killed:
-            experience = get_configuration(EXPERIENCE_EARNED_ACTION).get('kill', 0)
+            experience = get_configuration(EXPERIENCE_EARNED_ACTION).get("kill", 0)
             player.earn_xp(experience)
             self.communicator.informer.render(XPEarnedEvent(player_name=player.name, xp=experience))
 
@@ -169,8 +200,7 @@ def dynamic_skill_class_factory(name: str, argument_names: List, base_class: typ
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             if key not in argument_names:
-                raise TypeError("Argument %s not valid for %s"
-                                % (key, self.__class__.__name__))
+                raise TypeError("Argument %s not valid for %s" % (key, self.__class__.__name__))
         base_class.__init__(self, **kwargs)
 
     new_class = type(name, (base_class,), {"__init__": __init__})
@@ -190,41 +220,44 @@ def get_instantiated_skill(skill_dict: Dict) -> ISkill:
     skill_name = list(skill_dict.keys())[0]
     if skill_name not in instantiated_skills:
         skill_values = skill_dict.get(skill_name)
-        skill_pkg = sys.modules[__package__].__getattribute__('skill')
-        side_effects = instantiate_side_effects(skill_values.get('side_effects'))
-        punishment_side_effects = instantiate_side_effects(skill_values.get('punishment_side_effects'))
+        skill_pkg = sys.modules[__package__].__getattribute__("skill")
+        side_effects = instantiate_side_effects(skill_values.get("side_effects"))
+        punishment_side_effects = instantiate_side_effects(skill_values.get("punishment_side_effects"))
 
         if skill_name in skill_pkg.__dict__:
             prev_defined_class = getattr(skill_pkg, skill_name)
             custom_skill = prev_defined_class(
-                name=skill_values.get('name'),
-                description=skill_values.get('description'),
-                base=skill_values.get('base'),
-                cost=skill_values.get('cost'),
-                kind=skill_values.get('kind'),
-                level_requirement=skill_values.get('level_requirement'),
-                ranged=skill_values.get('ranged'),
-                area=skill_values.get('area'),
-                job=skill_values.get('job'),
-                base_attribute=skill_values.get('base_attribute'),
+                name=skill_values.get("name"),
+                description=skill_values.get("description"),
+                base=skill_values.get("base"),
+                cost=skill_values.get("cost"),
+                kind=skill_values.get("kind"),
+                level_requirement=skill_values.get("level_requirement"),
+                ranged=skill_values.get("ranged"),
+                area=skill_values.get("area"),
+                job=skill_values.get("job"),
+                base_attribute=skill_values.get("base_attribute"),
                 side_effects=side_effects,
-                applies_caster_only=skill_values.get('applies_caster_only'),
-                punishment_side_effects=punishment_side_effects)
+                applies_caster_only=skill_values.get("applies_caster_only"),
+                punishment_side_effects=punishment_side_effects,
+            )
         else:
             dynamic_skill_class = dynamic_skill_class_factory(skill_name, list(skill_values), Skill)
-            custom_skill = dynamic_skill_class(name=skill_values.get('name'),
-                                               description=skill_values.get('description'),
-                                               base=skill_values.get('base'),
-                                               cost=skill_values.get('cost'),
-                                               kind=skill_values.get('kind'),
-                                               level_requirement=skill_values.get('level_requirement'),
-                                               ranged=skill_values.get('ranged'),
-                                               area=skill_values.get('area'),
-                                               job=skill_values.get('job'),
-                                               base_attribute=skill_values.get('base_attribute'),
-                                               side_effects=side_effects,
-                                               applies_caster_only=skill_values.get('applies_caster_only'),
-                                               punishment_side_effects=punishment_side_effects)
+            custom_skill = dynamic_skill_class(
+                name=skill_values.get("name"),
+                description=skill_values.get("description"),
+                base=skill_values.get("base"),
+                cost=skill_values.get("cost"),
+                kind=skill_values.get("kind"),
+                level_requirement=skill_values.get("level_requirement"),
+                ranged=skill_values.get("ranged"),
+                area=skill_values.get("area"),
+                job=skill_values.get("job"),
+                base_attribute=skill_values.get("base_attribute"),
+                side_effects=side_effects,
+                applies_caster_only=skill_values.get("applies_caster_only"),
+                punishment_side_effects=punishment_side_effects,
+            )
         instantiated_skills[skill_name] = custom_skill
     else:
         custom_skill = instantiated_skills[skill_name]
@@ -245,8 +278,11 @@ def get_player_available_skills(player: IPlayer) -> List[ISkill]:
     available_skills: List[ISkill] = []
 
     for key, value in skill_dicts.items():
-        if player.job.get_name() == value.get('job') and player.level >= value.get(
-                'level_requirement') and player.mana > value.get('cost'):
+        if (
+            player.job.get_name() == value.get("job")
+            and player.level >= value.get("level_requirement")
+            and player.mana > value.get("cost")
+        ):
             available_skills.append(get_instantiated_skill({key: value}))
 
     return available_skills
@@ -268,12 +304,37 @@ making possible from a player to steal the item from another one.
 
 
 class Steal(Skill):
-
-    def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
-                 ranged: int, area: int, job: str, base_attribute: str, side_effects: List[ISideEffect],
-                 applies_caster_only: bool, punishment_side_effects: List[ISideEffect]) -> None:
-        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job,
-                         base_attribute, side_effects, applies_caster_only, punishment_side_effects)
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        base: int,
+        cost: int,
+        kind: str,
+        level_requirement: int,
+        ranged: int,
+        area: int,
+        job: str,
+        base_attribute: str,
+        side_effects: List[ISideEffect],
+        applies_caster_only: bool,
+        punishment_side_effects: List[ISideEffect],
+    ) -> None:
+        super().__init__(
+            name,
+            description,
+            base,
+            cost,
+            kind,
+            level_requirement,
+            ranged,
+            area,
+            job,
+            base_attribute,
+            side_effects,
+            applies_caster_only,
+            punishment_side_effects,
+        )
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         successful_steal = False
@@ -283,47 +344,75 @@ class Steal(Skill):
             stolen_item = random.choice(items)
             foe.bag.remove_item(stolen_item)
             player.bag.add_item(stolen_item)
-            self.communicator.informer.render(PlayerStoleItemEvent(
-                player_name=player.name, foe_name=foe.name,
-                item_name=stolen_item.name, tier=stolen_item.tier
-            ))
+            self.communicator.informer.render(
+                PlayerStoleItemEvent(
+                    player_name=player.name, foe_name=foe.name, item_name=stolen_item.name, tier=stolen_item.tier
+                )
+            )
             successful_steal = True
         else:
-            self.communicator.informer.render(PlayerFailStoleItemEvent(
-                player_name=player.name, foe_name=foe.name
-            ))
+            self.communicator.informer.render(PlayerFailStoleItemEvent(player_name=player.name, foe_name=foe.name))
         self.check_experience(player, successful_steal, False)
 
 
 class Leech(Skill):
-
-    def __init__(self, name: str, description: str, base: int, cost: int, kind: str, level_requirement: int,
-                 ranged: int, area: int, job: str, base_attribute: str, side_effects: List[ISideEffect],
-                 applies_caster_only: bool, punishment_side_effects: List[ISideEffect]) -> None:
-        super().__init__(name, description, base, cost, kind, level_requirement, ranged, area, job, base_attribute,
-                         side_effects, applies_caster_only, punishment_side_effects)
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        base: int,
+        cost: int,
+        kind: str,
+        level_requirement: int,
+        ranged: int,
+        area: int,
+        job: str,
+        base_attribute: str,
+        side_effects: List[ISideEffect],
+        applies_caster_only: bool,
+        punishment_side_effects: List[ISideEffect],
+    ) -> None:
+        super().__init__(
+            name,
+            description,
+            base,
+            cost,
+            kind,
+            level_requirement,
+            ranged,
+            area,
+            job,
+            base_attribute,
+            side_effects,
+            applies_caster_only,
+            punishment_side_effects,
+        )
 
     def execute(self, player: IPlayer, foes: List[IPlayer], dice_norm_result: float) -> None:
         successful_skill = False
         kill = False
 
         player.spend_mana(self.cost)
-        self.communicator.informer.render(SpentManaEvent(
-            player_name=player.name, amount=self.cost, skill_name=self.name
-        ))
+        self.communicator.informer.render(
+            SpentManaEvent(player_name=player.name, amount=self.cost, skill_name=self.name)
+        )
         foe = foes[0]
         damage = int(self.calculate_damage(player, dice_norm_result))
         defense = self.calculate_defense(foe)
         foe.suffer_damage(damage - defense)
-        self.communicator.informer.render(DamageEvent(
-            attacker_name=player.name, target_name=foe.name,
-            damage=damage, target_alive=foe.is_alive(), target_life=foe.life
-        ))
-        player.heal('health_points', damage)
-        self.communicator.informer.render(HealEvent(
-            healer_name=player.name, target_name=player.name,
-            amount=damage, target_life=player.life
-        ))
+        self.communicator.informer.render(
+            DamageEvent(
+                attacker_name=player.name,
+                target_name=foe.name,
+                damage=damage,
+                target_alive=foe.is_alive(),
+                target_life=foe.life,
+            )
+        )
+        player.heal("health_points", damage)
+        self.communicator.informer.render(
+            HealEvent(healer_name=player.name, target_name=player.name, amount=damage, target_life=player.life)
+        )
 
         if damage - defense > 0:
             successful_skill = True

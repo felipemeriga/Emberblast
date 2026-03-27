@@ -11,7 +11,6 @@ from .graph import Graph
 
 
 class Map(IMap):
-
     def __init__(self, name: str, map_type: str, size: int) -> None:
         """
         Pick a random postion for a player in the game start.
@@ -104,31 +103,33 @@ class Map(IMap):
 
         number_of_walkable_nodes = len(walkable_nodes)
         number_of_items = floor(number_of_walkable_nodes / 2)
-        probabilities = get_configuration('item_probabilities')
-        common_items_number = round(number_of_items * probabilities.get('common', 0.6))
-        uncommon_items_number = round(number_of_items * probabilities.get('uncommon', 0.2))
-        rare_items_number = round(number_of_items * probabilities.get('rare', 0.15))
-        legendary_items_number = round(number_of_items * probabilities.get('legendary', 0.05))
-        item_type_distribution = {'common': ['healing'] * 45 + ['equipment'] * 30 + ['recovery'] * 25,
-                                  'uncommon': ['healing'] * 50 + ['equipment'] * 50,
-                                  'rare': ['healing'] * 20 + ['equipment'] * 80,
-                                  'legendary': ['equipment'] * 80}
+        probabilities = get_configuration("item_probabilities")
+        common_items_number = round(number_of_items * probabilities.get("common", 0.6))
+        uncommon_items_number = round(number_of_items * probabilities.get("uncommon", 0.2))
+        rare_items_number = round(number_of_items * probabilities.get("rare", 0.15))
+        legendary_items_number = round(number_of_items * probabilities.get("legendary", 0.05))
+        item_type_distribution = {
+            "common": ["healing"] * 45 + ["equipment"] * 30 + ["recovery"] * 25,
+            "uncommon": ["healing"] * 50 + ["equipment"] * 50,
+            "rare": ["healing"] * 20 + ["equipment"] * 80,
+            "legendary": ["equipment"] * 80,
+        }
 
         for i in range(common_items_number + uncommon_items_number + rare_items_number + legendary_items_number):
             key = random.choice(list(walkable_nodes.keys()))
             walkable_nodes.pop(key)
-            tier = ''
+            tier = ""
             if common_items_number > 0:
-                tier = 'common'
+                tier = "common"
                 common_items_number = common_items_number - 1
             elif uncommon_items_number > 0:
-                tier = 'uncommon'
+                tier = "uncommon"
                 uncommon_items_number = uncommon_items_number - 1
             elif rare_items_number > 0:
-                tier = 'rare'
+                tier = "rare"
                 rare_items_number = rare_items_number - 1
             elif legendary_items_number > 0:
-                tier = 'legendary'
+                tier = "legendary"
                 legendary_items_number = legendary_items_number - 1
 
             item_type = random.choice(item_type_distribution.get(tier))
@@ -187,7 +188,7 @@ class MapFactory:
 
         :rtype: Map.
         """
-        game_map = Map('test', 'wind', map_size)
+        game_map = Map("test", "wind", map_size)
         invalid_map = True
 
         while invalid_map:

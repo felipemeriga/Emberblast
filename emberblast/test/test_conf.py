@@ -22,5 +22,5 @@ class TestModuleConf(BaseTestCase):
         # validations on all the required files, params and environment variables, the only test to be done it's
         # to check this class gets instantiated correctly, because as a Singleton, the class has all validators inside
         # its constructor
-        configuration_object = get_configuration('')
+        configuration_object = get_configuration("")
         self.assertIsNotNone(configuration_object)

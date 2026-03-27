@@ -18,10 +18,7 @@ def improve_attributes_randomly() -> Dict:
     level_up_increment_attributes.pop(first_key, None)
     second_key, second_val = random.choice(list(level_up_increment_attributes.items()))
 
-    return {
-        first_key: first_val,
-        second_key: second_val
-    }
+    return {first_key: first_val, second_key: second_val}
 
 
 def improve_attributes_automatically(job: IJob, race: IRace) -> Dict:
@@ -45,7 +42,7 @@ def improve_attributes_automatically(job: IJob, race: IRace) -> Dict:
     sorted_list = iter(sorted(unsorted_attributes_dict, key=unsorted_attributes_dict.get, reverse=True))
     first_attribute = next(sorted_list)
     second_attribute = next(sorted_list)
-    not_allowed_together_list = ['magic_points', 'health_points']
+    not_allowed_together_list = ["magic_points", "health_points"]
 
     # As HP and MP, always have a higher distribution percentage, most probably they will always be the first two
     # elements of the sorted list, so to prevent all bots to always improve only these attributes, this IF is necessary.

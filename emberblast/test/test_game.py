@@ -12,7 +12,7 @@ def mock_game() -> Callable:
     def wrapper(func):
         bots = bot_factory(5)
         game = DeathMatch(bots, mock_game.mock_map)
-        setattr(func, 'mock_game', game)
+        setattr(func, "mock_game", game)
         return func
 
     return wrapper

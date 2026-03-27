@@ -10,7 +10,6 @@ from emberblast.utils import GAME_SECTION
 
 
 class Game(IGame):
-
     def __init__(self, players: List[IPlayer], game_map: IMap) -> None:
         """
         Base constructor of this class, for creating the game, remember that the constructor arguments of this class
@@ -23,7 +22,7 @@ class Game(IGame):
         self.players = players
         self.game_map = game_map
         self.turns = {}
-        self.dice_sides = get_configuration(GAME_SECTION).get('dice_sides', 6)
+        self.dice_sides = get_configuration(GAME_SECTION).get("dice_sides", 6)
 
     def calculate_turn_key(self, player: IPlayer) -> float:
         """
@@ -35,7 +34,7 @@ class Game(IGame):
         :param IPlayer player: current player.
         :rtype: None
         """
-        return (player.get_attribute_real_value('will') / 5) * self.roll_the_dice()
+        return (player.get_attribute_real_value("will") / 5) * self.roll_the_dice()
 
     def calculate_turn_order(self) -> None:
         """
@@ -53,8 +52,7 @@ class Game(IGame):
         else:
             turn = list(self.turns)[-1] + 1
             self.turns[turn] = []
-        players.sort(key=self.calculate_turn_key,
-                     reverse=True)
+        players.sort(key=self.calculate_turn_key, reverse=True)
         self.turns[turn] = players
 
     def roll_the_dice(self) -> int:
@@ -81,9 +79,9 @@ class Game(IGame):
         dice_result = self.roll_the_dice()
         positive_percentage = ((1 / self.dice_sides) * dice_result) + functools.reduce(lambda a, b: a + b, additional)
         negative_percentage = max(0, 1 - positive_percentage)
-        return \
-            choice([True, False], 1, p=[positive_percentage if positive_percentage <= 1 else 1, negative_percentage])[
-                0]
+        return choice(
+            [True, False], 1, p=[positive_percentage if positive_percentage <= 1 else 1, negative_percentage]
+        )[0]
 
     def check_another_players_in_position(self, current_player: IPlayer) -> List[IPlayer]:
         """
@@ -131,14 +129,21 @@ class Game(IGame):
         :rtype: List[IPlayer].
         """
         players = self.get_all_players()
-        remaining_players = [x for x in filter(lambda a: a.is_alive() and a.name != player.name if not include_hidden
-        else a.is_alive() and a.name != player.name and not a.is_hidden()
-                                               , players)]
+        remaining_players = [
+            x
+            for x in filter(
+                lambda a: (
+                    a.is_alive() and a.name != player.name
+                    if not include_hidden
+                    else a.is_alive() and a.name != player.name and not a.is_hidden()
+                ),
+                players,
+            )
+        ]
         return remaining_players
 
 
 class DeathMatch(Game):
-
     def __init__(self, players: List[IPlayer], game_map: IMap) -> None:
         """
         There must be many kinds of game, DeathMatch it's basically all vs all,

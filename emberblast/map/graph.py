@@ -90,8 +90,9 @@ class Graph(IGraph):
         visited = generate_visited_default_matrix(self.size)
         self._create_matrix_dfs_traverse(self.matrix, 0, 0, visited)
 
-    def _create_matrix_dfs_traverse(self, matrix: List[List[int]], row: int, column: int,
-                                    visited: List[List[bool]]) -> None:
+    def _create_matrix_dfs_traverse(
+        self, matrix: List[List[int]], row: int, column: int, visited: List[List[bool]]
+    ) -> None:
         """
         Private recursive method to create a matrix, using DFS preorder algorithm for traversing the matrix,
         and building each of the positions of it.
@@ -115,10 +116,7 @@ class Graph(IGraph):
         visited[row][column] = True
         letter_row = convert_number_to_letter(row)
         vertex_id = letter_row + str(column)
-        position = {
-            'row': letter_row,
-            'column': column
-        }
+        position = {"row": letter_row, "column": column}
         vertex = Vertex(vertex_id, matrix[row][column], position)
         if vertex.value == 1:
             self._compute_vertical_edges(vertex, row, column, matrix)
@@ -228,8 +226,9 @@ class Graph(IGraph):
         vertex = self.graph_dict.get(letter + str(column))
         return True if vertex.value == 1 else False
 
-    def compute_recursive_range_edges(self, vertex: IVertex, reach: float, available_nodes: Set[str],
-                                      origin_node: str) -> None:
+    def compute_recursive_range_edges(
+        self, vertex: IVertex, reach: float, available_nodes: Set[str], origin_node: str
+    ) -> None:
         """
         This function traverses the map using a dijkstra logic, trying to find all the possibilities of paths to
         walk on, within a determined reach(distance).
@@ -253,8 +252,9 @@ class Graph(IGraph):
                 reached_vertex = self.graph_dict.get(edge.destination)
                 available_nodes.add(reached_vertex.vertex_id)
                 if remaining_reach >= 1:
-                    self.compute_recursive_range_edges(reached_vertex, remaining_reach,
-                                                       available_nodes, vertex.vertex_id)
+                    self.compute_recursive_range_edges(
+                        reached_vertex, remaining_reach, available_nodes, vertex.vertex_id
+                    )
         return
 
     def get_available_nodes_in_range(self, position: str, radius: int) -> List[str]:
@@ -329,12 +329,12 @@ class Graph(IGraph):
         for key in self.get_walkable_nodes().keys():
             distances[key] = math.inf
 
-    def get_average_distances_sources_destinations_map(self, sources: List[str],
-                                                       positions: List[str]) -> Dict[str, float]:
+    def get_average_distances_sources_destinations_map(
+        self, sources: List[str], positions: List[str]
+    ) -> Dict[str, float]:
         averages_map = {}
         for source in sources:
-            average_distance = self.get_average_distance_source_destinations(source,
-                                                                             positions)
+            average_distance = self.get_average_distance_source_destinations(source, positions)
             averages_map[source] = average_distance
 
         return averages_map
@@ -383,8 +383,9 @@ class Graph(IGraph):
         return distances
 
     @staticmethod
-    def compute_distance(source_vertex: IVertex, destination_vertex: IVertex, edge_weight: float,
-                         distances: Dict[str, float]) -> None:
+    def compute_distance(
+        source_vertex: IVertex, destination_vertex: IVertex, edge_weight: float, distances: Dict[str, float]
+    ) -> None:
         """
         Check if the current measured edge weight it's lesser that the distance that already exists in the distances
         dictionary to the destination vertex. In the case it's smaller, it will replace the existing value.

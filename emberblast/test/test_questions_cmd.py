@@ -1,4 +1,3 @@
-
 from emberblast.communicator import communicator_injector
 from emberblast.interface import IEquipmentItem, IItem, IPlayer
 
@@ -27,9 +26,9 @@ class TestModuleQuestions(CommunicatorTestCase):
         assert isinstance(result, str)
 
     def test_ask_actions_questions(self) -> None:
-        result = self.communicator.questioner.ask_actions_questions(['move', 'attack', 'skill', 'defend',
-                                        'hide', 'search', 'item', 'equip', 'drop',
-                                        'check', 'pass'])
+        result = self.communicator.questioner.ask_actions_questions(
+            ["move", "attack", "skill", "defend", "hide", "search", "item", "equip", "drop", "check", "pass"]
+        )
         assert isinstance(result, str)
 
     def test_select_item(self):

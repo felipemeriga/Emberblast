@@ -8,7 +8,7 @@ from .communicator_cmd import CommunicatorCMD
 
 def communicator_injector() -> Callable:
     def decorator(cls) -> Type:
-        attr_name = 'communicator'
+        attr_name = "communicator"
         setattr(cls, attr_name, communicator)
         return cls
 

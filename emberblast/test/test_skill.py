@@ -7,7 +7,6 @@ from .test_player import mock_player
 
 @mock_player()
 class TestModuleSkill(BaseTestCase):
-
     def test_get_player_available_skills(self) -> None:
         result = get_player_available_skills(self.mock_player)
         if len(result) > 0:
@@ -27,7 +26,7 @@ class TestModuleSkill(BaseTestCase):
                 "job": "Rogue",
                 "side_effects": [],
                 "punishment_side_effects": [],
-                "base_attribute": "strength"
+                "base_attribute": "strength",
             }
         }
         skill = get_instantiated_skill(skill)

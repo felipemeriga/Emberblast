@@ -27,7 +27,7 @@ class ControlledPlayer(IControlledPlayer, Player):
         :rtype: None.
         """
         for improvement in improvements:
-            attribute = improvement.get('attribute', 'health_points')
-            points = improvement.get('value', 0)
+            attribute = improvement.get("attribute", "health_points")
+            points = improvement.get("value", 0)
             self.__setattr__(attribute, points + self.__getattribute__(attribute))
         self.level = self.level + 1
