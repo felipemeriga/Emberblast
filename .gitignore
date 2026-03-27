@@ -140,3 +140,9 @@ store.pckl
 # Game Save Files
 *.pckl
 .DS_Store
+
+# Docs/specs (local only)
+docs/superpowers/
+
+# npm
+.npmrc
