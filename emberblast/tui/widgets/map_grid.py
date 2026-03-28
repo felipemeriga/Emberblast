@@ -23,17 +23,20 @@ _VALUE_TO_TERRAIN: Dict[int, str] = {
     5: "forest",
 }
 
-# Terrain rendering: (symbol, foreground, background) — 5-char wide cells
+# Terrain rendering: (symbol, foreground, background) — 6-char wide cells
 _TERRAIN_STYLE: Dict[str, tuple] = {
-    "plains": (" \u00b7.\u00b7 ", "#484f58", "#1a1e24"),
-    "wall": (" \u2588\u2588\u2588 ", "#6e7681", "#2d333b"),
-    "water": (" \u2248\u2248\u2248 ", "#58a6ff", "#0c2d4a"),
-    "mountain": (" /\u25b2\\ ", "#f0883e", "#2a1a0a"),
-    "forest": (" \u2660\u2663\u2660 ", "#3fb950", "#0a2a0f"),
+    "plains": ("  \u00b7\u00b7  ", "#484f58", "#131820"),
+    "wall": ("  \u2588\u2588  ", "#6e7681", "#2d333b"),
+    "water": ("  \u2248\u2248  ", "#58a6ff", "#0a2240"),
+    "mountain": ("  /\\  ", "#f0883e", "#2a1a0a"),
+    "forest": ("  \u2663\u2663  ", "#3fb950", "#0a2a0f"),
 }
 
-# Cell width must match symbol length
-CELL_WIDTH = 5
+# Highlight terrain symbols (replace symbol with directional markers)
+_HIGHLIGHT_SYMBOL = "  \u25aa\u25aa  "
+_FLASH_SYMBOL = "  \u25c6\u25c6  "
+
+CELL_WIDTH = 6
 
 
 class MapWidget(Widget):
@@ -42,8 +45,8 @@ class MapWidget(Widget):
     DEFAULT_CSS = """
     MapWidget {
         background: #0d1117;
-        padding: 1;
-        border: solid #f0883e;
+        padding: 0 1;
+        border: tall #f0883e;
         height: 1fr;
     }
     """
@@ -68,7 +71,6 @@ class MapWidget(Widget):
         flash_cells: Optional[Set[str]] = None,
         highlight_cells: Optional[Set[str]] = None,
     ) -> None:
-        """Update the map data and trigger a refresh."""
         self._matrix = matrix
         self._grid_size = size
         self._players = players
@@ -79,9 +81,8 @@ class MapWidget(Widget):
         self.refresh()
 
     def _build_grid_text(self) -> Text:
-        """Build a Rich Text object representing the full grid."""
         if not self._matrix or self._grid_size == 0:
-            return Text("No map data")
+            return Text("  No map data")
 
         # Index players by (row, col)
         player_positions: Dict[tuple, list] = {}
@@ -100,22 +101,27 @@ class MapWidget(Widget):
             player_positions.setdefault(key, []).append(p)
 
         result = Text()
+        border_color = "#f0883e"
+        border_style = Style(color=border_color)
+        header_style = Style(bold=True, color="#6e7681")
 
         # Column headers
-        result.append("      ")
+        result.append("\n")
+        result.append("       ")
         for col in range(self._grid_size):
-            result.append(f" {col:^4}", style=Style(bold=True, color="#6e7681"))
+            result.append(f"  {col:<4}", style=header_style)
         result.append("\n")
 
-        # Top border — double-line box drawing
-        border_style = Style(color="#f0883e")
-        result.append("    \u2554\u2550", style=border_style)
-        result.append("\u2550\u2550\u2550\u2550\u2550" * self._grid_size, style=border_style)
+        # Top border — heavy double-line
+        result.append("     \u2554", style=border_style)
+        result.append("\u2550" * (CELL_WIDTH * self._grid_size + 1), style=border_style)
         result.append("\u2557\n", style=border_style)
 
         for row in range(self._grid_size):
             row_label = convert_number_to_letter(row)
-            result.append(f"  {row_label} \u2551 ", style=Style(bold=True, color="#6e7681"))
+
+            # Main cell row
+            result.append(f"   {row_label} \u2551", style=Style(bold=True, color="#8b949e"))
 
             for col in range(self._grid_size):
                 cell_value = self._matrix[row][col]
@@ -137,31 +143,43 @@ class MapWidget(Widget):
                         bold=True,
                         blink=is_active,
                     )
-                    result.append(f" [{token}]", style=style)
+                    result.append(f" [{token}] ", style=style)
                 elif cell_value == 0:
-                    result.append("     ")
+                    result.append(" " * CELL_WIDTH)
                 else:
                     terrain_name = _VALUE_TO_TERRAIN.get(cell_value, "plains")
                     symbol, fg, bg = _TERRAIN_STYLE.get(terrain_name, _TERRAIN_STYLE["plains"])
 
                     if position_str in self._flash_cells:
                         style = Style(color="#000000", bgcolor="#00ffff", bold=True)
+                        result.append(_FLASH_SYMBOL, style=style)
                     elif position_str in self._highlight_cells:
-                        style = Style(color="#00ffff", bgcolor="#1a4040", bold=True)
+                        style = Style(color="#00ffff", bgcolor="#1a3a3a", bold=True)
+                        result.append(_HIGHLIGHT_SYMBOL, style=style)
                     else:
                         style = Style(color=fg, bgcolor=bg)
-
-                    result.append(symbol, style=style)
+                        result.append(symbol, style=style)
 
             result.append("\u2551\n", style=border_style)
 
+            # Spacing row between grid rows (half-height visual separator)
+            if row < self._grid_size - 1:
+                result.append("     \u2551", style=border_style)
+                for col in range(self._grid_size):
+                    cell_value = self._matrix[row][col]
+                    terrain_name = _VALUE_TO_TERRAIN.get(cell_value, "plains")
+                    _, _, bg = _TERRAIN_STYLE.get(terrain_name, _TERRAIN_STYLE["plains"])
+                    # Subtle row separator
+                    result.append("\u2500" * CELL_WIDTH, style=Style(color="#21262d"))
+                result.append("\u2551\n", style=border_style)
+
         # Bottom border
-        result.append("    \u255a\u2550", style=border_style)
-        result.append("\u2550\u2550\u2550\u2550\u2550" * self._grid_size, style=border_style)
+        result.append("     \u255a", style=border_style)
+        result.append("\u2550" * (CELL_WIDTH * self._grid_size + 1), style=border_style)
         result.append("\u255d\n", style=border_style)
 
-        # Legend
-        result.append("\n  ")
+        # Legend — player tokens
+        result.append("     ")
         for p in self._players:
             if hasattr(p, "is_alive") and not p.is_alive():
                 continue
@@ -173,9 +191,9 @@ class MapWidget(Widget):
             result.append(f"[{token}]", style=Style(color=colors["fg"], bgcolor=colors["bg"], bold=True))
             result.append(f" {p.name}", style=Style(color="#8b949e"))
             result.append("  ")
+        result.append("\n")
 
         return result
 
     def render(self) -> Text:
-        """Render the widget content."""
         return self._build_grid_text()

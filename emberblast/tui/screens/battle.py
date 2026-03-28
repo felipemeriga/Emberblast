@@ -26,11 +26,11 @@ class TurnHeader(Static):
     TurnHeader {
         dock: top;
         height: 3;
-        background: #161b22;
+        background: #0d1117;
         color: #f0883e;
         text-style: bold;
         content-align: center middle;
-        border: solid #f0883e;
+        border: tall #f0883e;
     }
     """
 
@@ -66,22 +66,21 @@ class BattleScreen(Screen):
     }
     #map-column {
         width: 3fr;
-        min-width: 40;
+        min-width: 50;
     }
     #info-column {
         width: 2fr;
-        min-width: 28;
+        min-width: 32;
     }
     #info-column > CharacterBadgeWidget {
         height: auto;
-        max-height: 40%;
     }
     #info-column > EnemyPanelWidget {
         height: auto;
-        max-height: 30%;
     }
     #info-column > CombatLogWidget {
         height: 1fr;
+        min-height: 6;
     }
     """
 

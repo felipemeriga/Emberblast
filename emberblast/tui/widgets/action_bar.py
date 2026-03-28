@@ -32,8 +32,8 @@ class ActionBarWidget(Widget):
     ActionBarWidget {
         dock: bottom;
         height: 5;
-        background: #161b22;
-        border-top: solid #30363d;
+        background: #0d1117;
+        border-top: tall #30363d;
         content-align: center middle;
     }
     """
