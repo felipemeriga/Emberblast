@@ -1,6 +1,7 @@
 import asyncio
 import atexit
 import os
+import sys
 
 from emberblast.communicator import communicator_injector
 from emberblast.events import GreetingsEvent
@@ -35,10 +36,53 @@ class Emberblast(IEmberblast):
         asyncio.run(self.run())
 
 
+def run_textual():
+    """Run the game with the Textual TUI."""
+    import emberblast.communicator.communicator as comm_mod
+    from emberblast.communicator import create_textual_communicator
+    from emberblast.interface import IControlledPlayer
+    from emberblast.tui.app import EmberblastApp
+
+    app = EmberblastApp()
+    textual_comm = create_textual_communicator(app)
+
+    # Override the global communicator singleton so all @communicator_injector classes use it
+    comm_mod.communicator = textual_comm
+
+    async def game_task():
+        try:
+            if not os.environ.get("OPENAI_API_KEY"):
+                app.post_combat_log("Warning: OPENAI_API_KEY not set. Bots will use deterministic AI.", "system")
+            game_factory = GameFactory()
+            game_factory.communicator = textual_comm
+            game_orchestrator = await game_factory.pre_initial_settings()
+
+            controlled_names = {
+                p.name for p in game_orchestrator.game.get_all_players() if isinstance(p, IControlledPlayer)
+            }
+            app.switch_to_battle(controlled_names)
+
+            game_orchestrator.communicator = textual_comm
+            game_orchestrator.bot_controller.communicator = textual_comm
+
+            await game_orchestrator.execute_game()
+        except Exception as err:
+            app.post_combat_log(f"Error: {err}", "damage")
+
+    app.set_game_task(game_task)
+    app.run()
+
+
 if __name__ == "__main__":
-    asyncio.run(Emberblast().run())
+    if "--classic" in sys.argv:
+        asyncio.run(Emberblast().run())
+    else:
+        run_textual()
 
 
 # pip cmd initializer
 def run_project():
-    asyncio.run(Emberblast().run())
+    if "--classic" in sys.argv:
+        asyncio.run(Emberblast().run())
+    else:
+        run_textual()

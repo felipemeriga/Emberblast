@@ -21,3 +21,17 @@ def communicator_factory() -> ICommunicator:
 
 
 communicator: ICommunicator = communicator_factory()
+
+
+def create_textual_communicator(app):
+    """Create a communicator wired to the Textual app."""
+    from emberblast.tui.questioner import TextualQuestioner
+    from emberblast.tui.renderer import TextualRenderer
+
+    class TextualCommunicator:
+        def __init__(self, app):
+            self.informer = TextualRenderer(app)
+            self.questioner = TextualQuestioner(app)
+            app.set_questioner(self.questioner)
+
+    return TextualCommunicator(app)
