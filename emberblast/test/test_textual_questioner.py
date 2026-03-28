@@ -1,11 +1,14 @@
 import asyncio
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 
 class TestTextualQuestioner(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.app = MagicMock()
+        # Make push_screen and pop_screen async-compatible for multi-step methods
+        self.app.push_screen = AsyncMock()
+        self.app.pop_screen = MagicMock()
         from emberblast.tui.questioner import TextualQuestioner
 
         self.questioner = TextualQuestioner(self.app)
@@ -44,9 +47,7 @@ class TestTextualQuestioner(unittest.IsolatedAsyncioTestCase):
         asyncio.create_task(resolver())
         result = await self.questioner.ask_actions_questions(actions_available=["attack", "move"])
         self.assertEqual(result, "attack")
-        self.app.handle_question.assert_called_once_with(
-            "ask_actions_questions", actions_available=["attack", "move"]
-        )
+        self.app.handle_question.assert_called_once_with("ask_actions_questions", actions_available=["attack", "move"])
 
     async def test_ask_enemy_to_check(self):
         enemies = [MagicMock(), MagicMock()]
@@ -70,9 +71,7 @@ class TestTextualQuestioner(unittest.IsolatedAsyncioTestCase):
         asyncio.create_task(resolver())
         result = await self.questioner.ask_enemy_to_attack(enemies=enemies, skill_type="melee")
         self.assertEqual(result, enemies[0])
-        self.app.handle_question.assert_called_once_with(
-            "ask_enemy_to_attack", enemies=enemies, skill_type="melee"
-        )
+        self.app.handle_question.assert_called_once_with("ask_enemy_to_attack", enemies=enemies, skill_type="melee")
 
     async def test_select_item(self):
         items = [MagicMock()]
@@ -150,16 +149,24 @@ class TestTextualQuestioner(unittest.IsolatedAsyncioTestCase):
         self.app.handle_question.assert_called_once_with("perform_first_question")
 
     async def test_perform_game_create_questions(self):
-        config = {"map_size": 10, "bots": 3}
+        """Multi-step: resolves 4 sub-questions into a dict."""
+        answers = ["Deathmatch", "Millstone Plains", "1", "4"]
+        call_count = 0
 
         async def resolver():
-            await asyncio.sleep(0.01)
-            self.questioner.resolve(config)
+            nonlocal call_count
+            for answer in answers:
+                await asyncio.sleep(0.1)
+                self.questioner.resolve(answer)
+                call_count += 1
 
         asyncio.create_task(resolver())
         result = await self.questioner.perform_game_create_questions()
-        self.assertEqual(result, config)
-        self.app.handle_question.assert_called_once_with("perform_game_create_questions")
+        self.assertEqual(result["game"], "Deathmatch")
+        self.assertEqual(result["map"], "Millstone Plains")
+        self.assertEqual(result["controlled_players_number"], "1")
+        self.assertEqual(result["bots_number"], "4")
+        self.assertEqual(call_count, 4)
 
     async def test_select_skill(self):
         skills = [MagicMock()]
@@ -174,32 +181,43 @@ class TestTextualQuestioner(unittest.IsolatedAsyncioTestCase):
         self.app.handle_question.assert_called_once_with("select_skill", available_skills=skills)
 
     async def test_get_saved_game(self):
+        """Uses _ask_setup_list to show saved games."""
         from pathlib import Path
 
         files = [{"path": Path("/save1"), "name": "Save 1"}]
 
         async def resolver():
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.1)
             self.questioner.resolve(Path("/save1"))
 
         asyncio.create_task(resolver())
         result = await self.questioner.get_saved_game(normalized_files=files)
         self.assertEqual(result, Path("/save1"))
-        self.app.handle_question.assert_called_once_with("get_saved_game", normalized_files=files)
+        # Should have pushed and popped a setup screen
+        self.app.push_screen.assert_called_once()
+        self.app.pop_screen.assert_called_once()
 
-    async def test_perform_character_creation_questions(self):
-        char = {"name": "Hero", "race": "Elf", "job": "Mage"}
+    @patch("emberblast.conf.get_configuration")
+    async def test_perform_character_creation_questions(self, mock_get_config):
+        """Multi-step: resolves name, race, job into a dict."""
+        mock_get_config.return_value = {"Elf": {}, "Orc": {}, "Human": {}}
+
+        answers = ["Hero", "Elf", "Knight"]
+        call_count = 0
 
         async def resolver():
-            await asyncio.sleep(0.01)
-            self.questioner.resolve(char)
+            nonlocal call_count
+            for answer in answers:
+                await asyncio.sleep(0.1)
+                self.questioner.resolve(answer)
+                call_count += 1
 
         asyncio.create_task(resolver())
         result = await self.questioner.perform_character_creation_questions(existing_names=["Bot1"])
-        self.assertEqual(result, char)
-        self.app.handle_question.assert_called_once_with(
-            "perform_character_creation_questions", existing_names=["Bot1"]
-        )
+        self.assertEqual(result["nickname"], "Hero")
+        self.assertEqual(result["race"], "Elf")
+        self.assertEqual(result["job"], "Knight")
+        self.assertEqual(call_count, 3)
 
     async def test_multiple_sequential_questions(self):
         """Verify questioner can handle multiple questions in sequence."""

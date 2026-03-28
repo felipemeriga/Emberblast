@@ -1,6 +1,6 @@
 import asyncio
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from emberblast.interface.interface import IEquipmentItem, IItem, IPlayer, IQuestioningSystem, ISkill
 
@@ -34,6 +34,33 @@ class TextualQuestioner(IQuestioningSystem):
         """Post question request to UI, then await the response."""
         self._app.handle_question(method_name, **kwargs)
         return await self._wait_for_response()
+
+    async def _ask_setup_list(self, title: str, choices: list, labels: Optional[list] = None):
+        """Push a SetupScreen, show a list, wait for selection, pop screen."""
+        from emberblast.tui.screens.setup import SetupScreen
+
+        setup = SetupScreen(question_type="sub_question")
+        setup.set_questioner(self)
+        await self._app.push_screen(setup)
+        # Small yield so the screen mounts before we call show_list
+        await asyncio.sleep(0.05)
+        setup.show_list(title, choices, labels)
+        result = await self._wait_for_response()
+        self._app.pop_screen()
+        return result
+
+    async def _ask_setup_input(self, title: str, placeholder: str = "Type here..."):
+        """Push a SetupScreen, show an input, wait for text, pop screen."""
+        from emberblast.tui.screens.setup import SetupScreen
+
+        setup = SetupScreen(question_type="sub_question")
+        setup.set_questioner(self)
+        await self._app.push_screen(setup)
+        await asyncio.sleep(0.05)
+        setup.show_input(title, placeholder)
+        result = await self._wait_for_response()
+        self._app.pop_screen()
+        return result
 
     async def ask_check_action(self, show_items: bool = False) -> Union[str, bool, list, str]:
         return await self._ask("ask_check_action", show_items=show_items)
@@ -71,15 +98,58 @@ class TextualQuestioner(IQuestioningSystem):
         return await self._ask("perform_first_question")
 
     async def perform_game_create_questions(self) -> Union[str, bool, list, dict]:
-        return await self._ask("perform_game_create_questions")
+        """Multi-step: ask game type, map, player count, bot count individually."""
+        game_type = await self._ask_setup_list(
+            "Select the Game Type",
+            ["Deathmatch", "Clan"],
+        )
+        game_map = await self._ask_setup_list(
+            "Select the Map",
+            ["Millstone Plains", "Firebend Vulcan", "Lerwick Mountains"],
+        )
+        controlled_players = await self._ask_setup_input(
+            "How many controlled players? (1-3)",
+            placeholder="1",
+        )
+        bots_number = await self._ask_setup_input(
+            "How many bots?",
+            placeholder="4",
+        )
+        return {
+            "game": game_type,
+            "map": game_map,
+            "controlled_players_number": controlled_players,
+            "bots_number": bots_number,
+        }
+
+    async def perform_character_creation_questions(self, existing_names: List[str]) -> Union[str, bool, list, dict]:
+        """Multi-step: ask name, race, job individually."""
+        from emberblast.conf import get_configuration
+        from emberblast.utils import JOBS_SECTION, RACES_SECTION
+
+        nickname = await self._ask_setup_input(
+            "Enter your character name",
+            placeholder="Hero",
+        )
+        races = list(get_configuration(RACES_SECTION).keys())
+        race = await self._ask_setup_list("Select your race", races)
+
+        jobs = list(get_configuration(JOBS_SECTION).keys())
+        job = await self._ask_setup_list("Select your job", jobs)
+
+        return {
+            "nickname": nickname,
+            "race": race,
+            "job": job,
+        }
 
     async def select_skill(self, available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
         return await self._ask("select_skill", available_skills=available_skills)
 
     async def get_saved_game(self, normalized_files: List[Dict]) -> Union[str, bool, list, Path]:
-        return await self._ask("get_saved_game", normalized_files=normalized_files)
-
-    async def perform_character_creation_questions(
-        self, existing_names: List[str]
-    ) -> Union[str, bool, list, dict]:
-        return await self._ask("perform_character_creation_questions", existing_names=existing_names)
+        """Show saved game list via setup screen."""
+        labels = [f.get("name", str(f)) for f in normalized_files]
+        paths = [f.get("path") for f in normalized_files]
+        labels.append("Cancel")
+        paths.append("cancel")
+        return await self._ask_setup_list("Select a saved game", paths, labels)

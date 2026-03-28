@@ -10,7 +10,6 @@ from textual.app import App
 
 from emberblast.tui.screens.battle import BattleScreen, TurnHeader
 from emberblast.tui.screens.game_over import GameOverScreen
-from emberblast.tui.screens.setup import SetupScreen
 from emberblast.tui.screens.title import TitleScreen
 from emberblast.tui.widgets.combat_log import CombatLogWidget
 from emberblast.tui.widgets.map_grid import MapWidget
@@ -157,11 +156,14 @@ class EmberblastApp(App):
     # ── Question routing ──
 
     def handle_question(self, method_name: str, **kwargs) -> None:
-        """Route a question from the questioner to the appropriate screen."""
+        """Route a question from the questioner to the appropriate screen.
+
+        Note: perform_game_create_questions, perform_character_creation_questions,
+        and get_saved_game are handled directly by TextualQuestioner using
+        _ask_setup_list/_ask_setup_input, so they don't route through here.
+        """
         if method_name == "perform_first_question":
             self._handle_title_question(method_name, **kwargs)
-        elif method_name in ("perform_game_create_questions", "perform_character_creation_questions", "get_saved_game"):
-            self._handle_setup_question(method_name, **kwargs)
         elif method_name in _BATTLE_QUESTIONS:
             self._handle_battle_question(method_name, **kwargs)
 
@@ -173,13 +175,6 @@ class EmberblastApp(App):
                 screen.set_questioner(self._questioner)
         except Exception:
             logger.debug("TitleScreen not available", exc_info=True)
-
-    def _handle_setup_question(self, method_name: str, **kwargs) -> None:
-        """Push a SetupScreen for the given question type."""
-        setup = SetupScreen(question_type=method_name)
-        if self._questioner:
-            setup.set_questioner(self._questioner)
-        self.push_screen(setup)
 
     def _handle_battle_question(self, method_name: str, **kwargs) -> None:
         """Forward question to the current BattleScreen."""
