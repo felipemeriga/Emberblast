@@ -680,6 +680,3 @@ class DeathMatchOrchestrator(GameOrchestrator):
             self.communicator.informer.render(CheckItemEvent(item=item))
         else:
             return
-
-    async def pass_turn(self, player: IPlayer) -> Optional[bool]:
-        pass
