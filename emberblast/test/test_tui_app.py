@@ -46,6 +46,12 @@ class TestEmberblastAppStructure(BaseTestCase):
     def test_has_switch_to_battle(self):
         self.assertHasAttr(EmberblastApp, "switch_to_battle")
 
+    def test_has_update_hud(self):
+        self.assertHasAttr(EmberblastApp, "update_hud")
+
+    def test_has_update_enemies(self):
+        self.assertHasAttr(EmberblastApp, "update_enemies")
+
     def test_default_state(self):
         app = EmberblastApp()
         self.assertEqual(app._active_player_name, "")

@@ -26,12 +26,12 @@ ACTION_KEYS: Dict[str, str] = {
 
 
 class ActionBarWidget(Widget):
-    """Displays available actions as keybinding buttons."""
+    """Displays available actions as styled bordered buttons."""
 
     DEFAULT_CSS = """
     ActionBarWidget {
         dock: bottom;
-        height: 3;
+        height: 5;
         background: #161b22;
         border-top: solid #30363d;
         content-align: center middle;
@@ -60,23 +60,42 @@ class ActionBarWidget(Widget):
         self.refresh()
 
     def _build_bar_text(self) -> Text:
-        """Build a Rich Text object for the action bar."""
+        """Build a Rich Text object for the action bar with bordered buttons."""
         result = Text()
 
+        if self._status and not self._actions:
+            result.append("\n ")
+            result.append(self._status, style=Style(italic=True, color="#8b949e"))
+            return result
+
         if self._actions:
-            for i, action in enumerate(self._actions):
+            # Top border of buttons
+            top_line = Text(" ")
+            mid_line = Text(" ")
+            bot_line = Text(" ")
+
+            for action in self._actions:
                 key = ACTION_KEYS.get(action, action[0].upper())
                 color = ACTION_COLORS.get(action, "#8b949e")
+                label = f"[{key}]{action[1:]}"
+                width = len(label) + 2  # padding inside box
+                border_style = Style(color=color)
 
-                if i > 0:
-                    result.append("  ")
+                top_line.append("\u250c" + "\u2500" * width + "\u2510 ", style=border_style)
+                mid_line.append("\u2502", style=border_style)
+                mid_line.append(f" [{key}]", style=Style(bold=True, color=color))
+                mid_line.append(f"{action[1:]} ", style=Style(color=color))
+                mid_line.append("\u2502 ", style=border_style)
+                bot_line.append("\u2514" + "\u2500" * width + "\u2518 ", style=border_style)
 
-                result.append(f"[{key}]", style=Style(bold=True, color=color))
-                result.append(f" {action.capitalize()}", style=Style(color=color))
+            result.append_text(top_line)
+            result.append("\n")
+            result.append_text(mid_line)
+            result.append("\n")
+            result.append_text(bot_line)
 
-        if self._status:
-            if self._actions:
-                result.append("  ")
+        if self._status and self._actions:
+            result.append("\n ")
             result.append(self._status, style=Style(dim=True, italic=True))
 
         return result

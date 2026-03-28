@@ -11,6 +11,27 @@ from emberblast.tui.styles import LOG_COLORS
 # Categories that get special formatting
 _BOLD_CATEGORIES = {"turn", "victory", "death", "level_up", "critical"}
 
+# Category-specific icons
+_CATEGORY_ICONS = {
+    "damage": "\u2694",
+    "heal": "\u271a",
+    "move": "\u2192",
+    "skill": "\u2726",
+    "death": "\u2620",
+    "victory": "\u265b",
+    "narration": "\u275d",
+    "item": "\u25c6",
+    "level_up": "\u25b2",
+    "xp": "\u2605",
+    "dice": "\u2684",
+    "critical": "\u26a1",
+    "side_effect": "\u223c",
+    "trap": "\u26a0",
+    "miss": "\u00d7",
+    "warning": "\u26a0",
+    "stats": "\u25a3",
+}
+
 
 class CombatLogWidget(RichLog):
     """Scrollable, color-coded combat log using Textual's RichLog for real scrolling."""
@@ -33,9 +54,10 @@ class CombatLogWidget(RichLog):
         if not self._initialized:
             self._initialized = True
             header = Text()
+            header.append(" \u2694 ", style=Style(color="#f0883e"))
             header.append("COMBAT LOG", style=Style(bold=True, color="#f0883e"))
             self.write(header)
-            sep = Text("─" * 40, style=Style(color="#30363d"))
+            sep = Text("\u2500" * 40, style=Style(color="#30363d"))
             self.write(sep)
 
     def set_turn(self, turn: int) -> None:
@@ -48,8 +70,17 @@ class CombatLogWidget(RichLog):
 
         # Separator lines
         if message == "---":
-            sep = Text("─" * 40, style=Style(color="#30363d"))
+            sep = Text("\u2500" * 40, style=Style(color="#30363d"))
             self.write(sep)
+            return
+
+        # Turn start gets special banner treatment
+        if category == "turn" and "Turn" in message:
+            banner = Text()
+            banner.append(" \u2550" * 12, style=Style(color="#f0883e"))
+            banner.append(f" {message} ", style=Style(bold=True, color="#f0883e"))
+            banner.append("\u2550" * 12, style=Style(color="#f0883e"))
+            self.write(banner)
             return
 
         line = Text()
@@ -57,6 +88,11 @@ class CombatLogWidget(RichLog):
         # Turn prefix for combat events
         if self._current_turn > 0 and category not in ("system", "turn"):
             line.append(f"[T{self._current_turn}] ", style=Style(color="#6e7681"))
+
+        # Category icon
+        icon = _CATEGORY_ICONS.get(category)
+        if icon:
+            line.append(f"{icon} ", style=Style(color=color))
 
         bold = category in _BOLD_CATEGORIES
         italic = category == "narration"

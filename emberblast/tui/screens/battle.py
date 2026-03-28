@@ -10,9 +10,10 @@ from textual.screen import Screen
 from textual.widgets import Static
 
 from emberblast.tui.widgets.action_bar import ACTION_KEYS, ActionBarWidget
+from emberblast.tui.widgets.character_badge import CharacterBadgeWidget
 from emberblast.tui.widgets.combat_log import CombatLogWidget
+from emberblast.tui.widgets.enemy_panel import EnemyPanelWidget
 from emberblast.tui.widgets.map_grid import MapWidget
-from emberblast.tui.widgets.player_hud import PlayerHUDWidget
 
 # Reverse lookup: key letter -> action name
 _KEY_TO_ACTION = {v.lower(): k for k, v in ACTION_KEYS.items()}
@@ -63,21 +64,24 @@ class BattleScreen(Screen):
     BattleScreen > Horizontal {
         height: 1fr;
     }
-    BattleScreen > Horizontal > MapWidget {
+    #map-column {
         width: 3fr;
         min-width: 40;
     }
-    BattleScreen > Horizontal > Vertical {
+    #info-column {
         width: 2fr;
-        min-width: 30;
+        min-width: 28;
     }
-    BattleScreen > Horizontal > Vertical > PlayerHUDWidget {
+    #info-column > CharacterBadgeWidget {
         height: auto;
-        max-height: 50%;
+        max-height: 40%;
     }
-    BattleScreen > Horizontal > Vertical > CombatLogWidget {
+    #info-column > EnemyPanelWidget {
+        height: auto;
+        max-height: 30%;
+    }
+    #info-column > CombatLogWidget {
         height: 1fr;
-        border: solid #30363d;
     }
     """
 
@@ -98,9 +102,11 @@ class BattleScreen(Screen):
     def compose(self) -> ComposeResult:
         yield TurnHeader(id="turn-header")
         with Horizontal():
-            yield MapWidget(id="map-widget")
-            with Vertical():
-                yield PlayerHUDWidget(id="player-hud")
+            with Vertical(id="map-column"):
+                yield MapWidget(id="map-widget")
+            with Vertical(id="info-column"):
+                yield CharacterBadgeWidget(id="character-badge")
+                yield EnemyPanelWidget(id="enemy-panel")
                 yield CombatLogWidget(id="combat-log")
         yield ActionBarWidget(id="action-bar")
 

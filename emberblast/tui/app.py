@@ -11,9 +11,10 @@ from textual.app import App
 from emberblast.tui.screens.battle import BattleScreen, TurnHeader
 from emberblast.tui.screens.game_over import GameOverScreen
 from emberblast.tui.screens.title import TitleScreen
+from emberblast.tui.widgets.character_badge import CharacterBadgeWidget
 from emberblast.tui.widgets.combat_log import CombatLogWidget
+from emberblast.tui.widgets.enemy_panel import EnemyPanelWidget
 from emberblast.tui.widgets.map_grid import MapWidget
-from emberblast.tui.widgets.player_hud import PlayerHUDWidget
 
 logger = logging.getLogger(__name__)
 
@@ -82,28 +83,33 @@ class EmberblastApp(App):
             logger.debug("MapWidget not available", exc_info=True)
 
     def refresh_huds(self) -> None:
-        """Refresh the player HUD widget."""
+        """Refresh both the character badge and enemy panel."""
         try:
-            hud = self.screen.query_one("#player-hud", PlayerHUDWidget)
-            hud.refresh()
+            badge = self.screen.query_one("#character-badge", CharacterBadgeWidget)
+            badge.refresh()
         except Exception:
-            logger.debug("PlayerHUDWidget not available", exc_info=True)
+            logger.debug("CharacterBadgeWidget not available", exc_info=True)
+        try:
+            panel = self.screen.query_one("#enemy-panel", EnemyPanelWidget)
+            panel.refresh()
+        except Exception:
+            logger.debug("EnemyPanelWidget not available", exc_info=True)
 
     def update_hud(self, player) -> None:
-        """Update the player HUD with actual player data."""
+        """Update the character badge with actual player data."""
         try:
-            hud = self.screen.query_one("#player-hud", PlayerHUDWidget)
-            hud.update_player(player)
+            badge = self.screen.query_one("#character-badge", CharacterBadgeWidget)
+            badge.update_player(player)
         except Exception:
-            logger.debug("PlayerHUDWidget not available for update", exc_info=True)
+            logger.debug("CharacterBadgeWidget not available for update", exc_info=True)
 
     def update_enemies(self, enemies: list) -> None:
-        """Update the enemy list in the HUD."""
+        """Update the enemy panel."""
         try:
-            hud = self.screen.query_one("#player-hud", PlayerHUDWidget)
-            hud.update_enemies(enemies)
+            panel = self.screen.query_one("#enemy-panel", EnemyPanelWidget)
+            panel.update_enemies(enemies)
         except Exception:
-            logger.debug("PlayerHUDWidget not available for enemy update", exc_info=True)
+            logger.debug("EnemyPanelWidget not available for update", exc_info=True)
 
     def set_turn(self, turn: int) -> None:
         """Update the turn header."""
@@ -206,12 +212,7 @@ class EmberblastApp(App):
     # ── Question routing ──
 
     def handle_question(self, method_name: str, **kwargs) -> None:
-        """Route a question from the questioner to the appropriate screen.
-
-        Note: perform_game_create_questions, perform_character_creation_questions,
-        and get_saved_game are handled directly by TextualQuestioner using
-        _ask_setup_list/_ask_setup_input, so they don't route through here.
-        """
+        """Route a question from the questioner to the appropriate screen."""
         if method_name == "perform_first_question":
             self._handle_title_question(method_name, **kwargs)
         elif method_name in _BATTLE_QUESTIONS:
@@ -238,7 +239,6 @@ class EmberblastApp(App):
                 screen.show_actions(actions)
             elif method_name == "ask_where_to_move":
                 possibilities = kwargs.get("possibilities", [])
-                # Highlight movement cells on the map
                 self._show_movement_highlights(possibilities)
                 screen.show_choices(method_name, possibilities, possibilities)
             elif method_name in ("ask_enemy_to_attack", "ask_enemy_to_check"):

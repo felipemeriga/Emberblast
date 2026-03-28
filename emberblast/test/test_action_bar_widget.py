@@ -30,8 +30,8 @@ class TestActionBarWidget(BaseTestCase):
         self.widget.set_actions(["move", "attack"])
         text = self.widget._build_bar_text()
         plain = text.plain
-        self.assertIn("move", plain.lower())
-        self.assertIn("attack", plain.lower())
+        self.assertIn("ove", plain)  # [M]ove
+        self.assertIn("ttack", plain)  # [A]ttack
 
     def test_clear_resets_state(self):
         self.widget.set_actions(["move", "attack"])
@@ -49,3 +49,10 @@ class TestActionBarWidget(BaseTestCase):
         self.widget.set_status("Waiting...")
         text = self.widget._build_bar_text()
         self.assertIn("Waiting...", text.plain)
+
+    def test_bordered_buttons_have_box_chars(self):
+        self.widget.set_actions(["move"])
+        text = self.widget._build_bar_text()
+        plain = text.plain
+        self.assertIn("\u250c", plain)  # top-left corner
+        self.assertIn("\u2518", plain)  # bottom-right corner

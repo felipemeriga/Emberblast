@@ -23,17 +23,17 @@ _VALUE_TO_TERRAIN: Dict[int, str] = {
     5: "forest",
 }
 
-# Terrain rendering: (symbol, foreground, background)
+# Terrain rendering: (symbol, foreground, background) — 5-char wide cells
 _TERRAIN_STYLE: Dict[str, tuple] = {
-    "plains": (" ∙∙ ", "#484f58", "#1a1e24"),
-    "wall": (" ██ ", "#6e7681", "#2d333b"),
-    "water": (" ~~ ", "#58a6ff", "#0c2d4a"),
-    "mountain": (" /\\ ", "#f0883e", "#2a1a0a"),
-    "forest": (" ♣♣ ", "#3fb950", "#0a2a0f"),
+    "plains": (" \u00b7.\u00b7 ", "#484f58", "#1a1e24"),
+    "wall": (" \u2588\u2588\u2588 ", "#6e7681", "#2d333b"),
+    "water": (" \u2248\u2248\u2248 ", "#58a6ff", "#0c2d4a"),
+    "mountain": (" /\u25b2\\ ", "#f0883e", "#2a1a0a"),
+    "forest": (" \u2660\u2663\u2660 ", "#3fb950", "#0a2a0f"),
 }
 
 # Cell width must match symbol length
-CELL_WIDTH = 4
+CELL_WIDTH = 5
 
 
 class MapWidget(Widget):
@@ -44,6 +44,7 @@ class MapWidget(Widget):
         background: #0d1117;
         padding: 1;
         border: solid #f0883e;
+        height: 1fr;
     }
     """
 
@@ -101,19 +102,20 @@ class MapWidget(Widget):
         result = Text()
 
         # Column headers
-        result.append("     ")
+        result.append("      ")
         for col in range(self._grid_size):
-            result.append(f" {col:^3}", style=Style(bold=True, color="#6e7681"))
+            result.append(f" {col:^4}", style=Style(bold=True, color="#6e7681"))
         result.append("\n")
 
-        # Top border
-        result.append("   ┌─")
-        result.append("────" * self._grid_size)
-        result.append("┐\n", style=Style(color="#f0883e"))
+        # Top border — double-line box drawing
+        border_style = Style(color="#f0883e")
+        result.append("    \u2554\u2550", style=border_style)
+        result.append("\u2550\u2550\u2550\u2550\u2550" * self._grid_size, style=border_style)
+        result.append("\u2557\n", style=border_style)
 
         for row in range(self._grid_size):
             row_label = convert_number_to_letter(row)
-            result.append(f" {row_label} │ ", style=Style(bold=True, color="#6e7681"))
+            result.append(f"  {row_label} \u2551 ", style=Style(bold=True, color="#6e7681"))
 
             for col in range(self._grid_size):
                 cell_value = self._matrix[row][col]
@@ -135,9 +137,9 @@ class MapWidget(Widget):
                         bold=True,
                         blink=is_active,
                     )
-                    result.append(f" {token} ", style=style)
+                    result.append(f" [{token}]", style=style)
                 elif cell_value == 0:
-                    result.append("    ")
+                    result.append("     ")
                 else:
                     terrain_name = _VALUE_TO_TERRAIN.get(cell_value, "plains")
                     symbol, fg, bg = _TERRAIN_STYLE.get(terrain_name, _TERRAIN_STYLE["plains"])
@@ -151,15 +153,15 @@ class MapWidget(Widget):
 
                     result.append(symbol, style=style)
 
-            result.append("│\n", style=Style(color="#f0883e"))
+            result.append("\u2551\n", style=border_style)
 
         # Bottom border
-        result.append("   └─")
-        result.append("────" * self._grid_size)
-        result.append("┘\n", style=Style(color="#f0883e"))
+        result.append("    \u255a\u2550", style=border_style)
+        result.append("\u2550\u2550\u2550\u2550\u2550" * self._grid_size, style=border_style)
+        result.append("\u255d\n", style=border_style)
 
         # Legend
-        result.append("\n ")
+        result.append("\n  ")
         for p in self._players:
             if hasattr(p, "is_alive") and not p.is_alive():
                 continue
@@ -168,8 +170,8 @@ class MapWidget(Widget):
             is_friendly = p.name in self._friendly_names
             team = "friendly" if is_friendly else "enemy"
             colors = TEAM_COLORS[team]
-            result.append(f" {token}", style=Style(color=colors["fg"], bgcolor=colors["bg"], bold=True))
-            result.append(f"={p.name}", style=Style(color="#8b949e"))
+            result.append(f"[{token}]", style=Style(color=colors["fg"], bgcolor=colors["bg"], bold=True))
+            result.append(f" {p.name}", style=Style(color="#8b949e"))
             result.append("  ")
 
         return result
