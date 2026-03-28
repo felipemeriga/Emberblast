@@ -109,9 +109,7 @@ class TextualRenderer(IRenderer):
 
             if active:
                 others = [p for p in all_alive if p != active]
-                self._app.update_map_from_event(
-                    active, others, game.game_map.graph.matrix, game.game_map.size
-                )
+                self._app.update_map_from_event(active, others, game.game_map.graph.matrix, game.game_map.size)
 
             # Always update HUD with the controlled player, not whoever's turn it is
             friendly_names = set(getattr(self._app, "_friendly_names", []))

@@ -10,14 +10,11 @@ from textual.widget import Widget
 
 from emberblast.tui.styles import (
     TEAM_COLORS,
-    TERRAIN_COLORS,
     get_player_token,
-    get_terrain_cell,
 )
 from emberblast.utils import convert_number_to_letter
 
 # Map matrix integer values to terrain type names.
-# 0 is always void; 1 defaults to plains.
 _VALUE_TO_TERRAIN: Dict[int, str] = {
     1: "plains",
     2: "wall",
@@ -26,7 +23,16 @@ _VALUE_TO_TERRAIN: Dict[int, str] = {
     5: "forest",
 }
 
-# Cell width: 4 chars per cell (symbol + padding) for better readability
+# Terrain rendering: (symbol, foreground, background)
+_TERRAIN_STYLE: Dict[str, tuple] = {
+    "plains": (" ∙∙ ", "#484f58", "#1a1e24"),
+    "wall": (" ██ ", "#6e7681", "#2d333b"),
+    "water": (" ~~ ", "#58a6ff", "#0c2d4a"),
+    "mountain": (" /\\ ", "#f0883e", "#2a1a0a"),
+    "forest": (" ♣♣ ", "#3fb950", "#0a2a0f"),
+}
+
+# Cell width must match symbol length
 CELL_WIDTH = 4
 
 
@@ -37,7 +43,7 @@ class MapWidget(Widget):
     MapWidget {
         background: #0d1117;
         padding: 1;
-        border: solid #30363d;
+        border: solid #f0883e;
     }
     """
 
@@ -76,7 +82,7 @@ class MapWidget(Widget):
         if not self._matrix or self._grid_size == 0:
             return Text("No map data")
 
-        # Index players by (row, col) for fast lookup
+        # Index players by (row, col)
         player_positions: Dict[tuple, list] = {}
         for p in self._players:
             if hasattr(p, "is_alive") and not p.is_alive():
@@ -94,29 +100,25 @@ class MapWidget(Widget):
 
         result = Text()
 
-        # Column headers — wider spacing to match cells
-        result.append("    ")  # row label padding
+        # Column headers
+        result.append("     ")
         for col in range(self._grid_size):
-            header = f"{col:^{CELL_WIDTH}}"
-            result.append(header, style=Style(bold=True, dim=True))
+            result.append(f" {col:^3}", style=Style(bold=True, color="#6e7681"))
         result.append("\n")
 
         # Top border
-        result.append("   ┌")
-        result.append("─" * (self._grid_size * CELL_WIDTH))
-        result.append("┐\n", style=Style(color="#30363d"))
+        result.append("   ┌─")
+        result.append("────" * self._grid_size)
+        result.append("┐\n", style=Style(color="#f0883e"))
 
-        # Rows
         for row in range(self._grid_size):
             row_label = convert_number_to_letter(row)
-            result.append(f" {row_label} │", style=Style(bold=True, dim=True))
+            result.append(f" {row_label} │ ", style=Style(bold=True, color="#6e7681"))
 
             for col in range(self._grid_size):
                 cell_value = self._matrix[row][col]
                 position_key = (row, col)
                 position_str = f"{row_label}{col}"
-
-                # Check for players at this position
                 players_here = player_positions.get(position_key, [])
 
                 if players_here:
@@ -133,38 +135,31 @@ class MapWidget(Widget):
                         bold=True,
                         blink=is_active,
                     )
-                    # Center token in cell
-                    cell = f" {token} "
-                    result.append(cell, style=style)
+                    result.append(f" {token} ", style=style)
                 elif cell_value == 0:
-                    # Void cell
-                    result.append(" " * CELL_WIDTH)
+                    result.append("    ")
                 else:
                     terrain_name = _VALUE_TO_TERRAIN.get(cell_value, "plains")
-                    symbol = get_terrain_cell(terrain_name)
-                    color = TERRAIN_COLORS.get(terrain_name, TERRAIN_COLORS["plains"])
+                    symbol, fg, bg = _TERRAIN_STYLE.get(terrain_name, _TERRAIN_STYLE["plains"])
 
-                    if position_str in self._highlight_cells:
-                        # Movement possibility: bright cyan background
-                        style = Style(color="#00ffff", bgcolor="#1a4040", bold=True)
-                    elif position_str in self._flash_cells:
-                        # Flash effect: inverted colors for the selected cell
+                    if position_str in self._flash_cells:
                         style = Style(color="#000000", bgcolor="#00ffff", bold=True)
+                    elif position_str in self._highlight_cells:
+                        style = Style(color="#00ffff", bgcolor="#1a4040", bold=True)
                     else:
-                        style = Style(color=color)
+                        style = Style(color=fg, bgcolor=bg)
 
-                    cell = f" {symbol} "
-                    result.append(cell, style=style)
+                    result.append(symbol, style=style)
 
-            result.append("│\n", style=Style(color="#30363d"))
+            result.append("│\n", style=Style(color="#f0883e"))
 
         # Bottom border
-        result.append("   └")
-        result.append("─" * (self._grid_size * CELL_WIDTH))
-        result.append("┘\n", style=Style(color="#30363d"))
+        result.append("   └─")
+        result.append("────" * self._grid_size)
+        result.append("┘\n", style=Style(color="#f0883e"))
 
         # Legend
-        result.append("\n")
+        result.append("\n ")
         for p in self._players:
             if hasattr(p, "is_alive") and not p.is_alive():
                 continue
@@ -173,8 +168,9 @@ class MapWidget(Widget):
             is_friendly = p.name in self._friendly_names
             team = "friendly" if is_friendly else "enemy"
             colors = TEAM_COLORS[team]
-            result.append(f" {token}", style=Style(color=colors["fg"], bold=True))
-            result.append(f"={p.name} ", style=Style(dim=True))
+            result.append(f" {token}", style=Style(color=colors["fg"], bgcolor=colors["bg"], bold=True))
+            result.append(f"={p.name}", style=Style(color="#8b949e"))
+            result.append("  ")
 
         return result
 
