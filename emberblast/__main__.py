@@ -68,6 +68,9 @@ def run_textual():
             # Store orchestrator ref so renderer can pull map/player data
             app._orchestrator = game_orchestrator
 
+            # Wait for the BattleScreen to mount before rendering initial data
+            await asyncio.sleep(0.3)
+
             # Render initial map
             from emberblast.events import MapInfoEvent
 
@@ -83,6 +86,8 @@ def run_textual():
                         size=game_orchestrator.game.game_map.size,
                     )
                 )
+                # Also update HUD with first player
+                app.update_hud(first_player)
 
             await game_orchestrator.execute_game()
         except Exception as err:

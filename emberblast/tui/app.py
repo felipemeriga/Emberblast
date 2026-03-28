@@ -68,7 +68,7 @@ class EmberblastApp(App):
     def post_combat_log(self, message: str, category: str = "system") -> None:
         """Forward a message to the CombatLogWidget."""
         try:
-            log = self.query_one("#combat-log", CombatLogWidget)
+            log = self.screen.query_one("#combat-log", CombatLogWidget)
             log.add_entry(message, category)
         except Exception:
             logger.debug("CombatLogWidget not available", exc_info=True)
@@ -76,7 +76,7 @@ class EmberblastApp(App):
     def refresh_map(self) -> None:
         """Refresh the map widget."""
         try:
-            map_w = self.query_one("#map-widget", MapWidget)
+            map_w = self.screen.query_one("#map-widget", MapWidget)
             map_w.refresh()
         except Exception:
             logger.debug("MapWidget not available", exc_info=True)
@@ -84,7 +84,7 @@ class EmberblastApp(App):
     def refresh_huds(self) -> None:
         """Refresh the player HUD widget."""
         try:
-            hud = self.query_one("#player-hud", PlayerHUDWidget)
+            hud = self.screen.query_one("#player-hud", PlayerHUDWidget)
             hud.refresh()
         except Exception:
             logger.debug("PlayerHUDWidget not available", exc_info=True)
@@ -92,7 +92,7 @@ class EmberblastApp(App):
     def update_hud(self, player) -> None:
         """Update the player HUD with actual player data."""
         try:
-            hud = self.query_one("#player-hud", PlayerHUDWidget)
+            hud = self.screen.query_one("#player-hud", PlayerHUDWidget)
             hud.update_player(player)
         except Exception:
             logger.debug("PlayerHUDWidget not available for update", exc_info=True)
@@ -101,7 +101,7 @@ class EmberblastApp(App):
         """Update the turn header."""
         self._current_turn = turn
         try:
-            header = self.query_one("#turn-header", TurnHeader)
+            header = self.screen.query_one("#turn-header", TurnHeader)
             header.set_turn(turn)
         except Exception:
             logger.debug("TurnHeader not available", exc_info=True)
@@ -119,7 +119,8 @@ class EmberblastApp(App):
     ) -> None:
         """Update the MapWidget with event data."""
         try:
-            map_w = self.query_one("#map-widget", MapWidget)
+            screen = self.screen
+            map_w = screen.query_one("#map-widget", MapWidget)
             all_players = [player] + list(enemies)
             map_w.update_map(
                 matrix=matrix,
@@ -140,7 +141,7 @@ class EmberblastApp(App):
     ) -> None:
         """Highlight possible movement cells on the map."""
         try:
-            map_w = self.query_one("#map-widget", MapWidget)
+            map_w = self.screen.query_one("#map-widget", MapWidget)
             map_w._highlight_cells = set(possibilities)
             map_w.refresh()
         except Exception:
@@ -156,6 +157,10 @@ class EmberblastApp(App):
     def switch_to_battle(self, friendly_names: List[str]) -> None:
         """Transition from setup to the battle screen."""
         self._friendly_names = list(friendly_names)
+        # Pop the TitleScreen (and any setup screens) so BattleScreen becomes
+        # the active screen and widget queries resolve correctly.
+        while len(self.screen_stack) > 1:
+            self.pop_screen()
         battle = BattleScreen(friendly_names=friendly_names)
         if self._questioner:
             battle.set_questioner(self._questioner)
