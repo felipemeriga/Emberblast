@@ -1,3 +1,3 @@
-from .game_orchestrator import GameOrchestrator, DeathMatchOrchestrator
+from .game_orchestrator import DeathMatchOrchestrator, GameOrchestrator
 
-__all__ = ['GameOrchestrator', 'DeathMatchOrchestrator']
+__all__ = ["GameOrchestrator", "DeathMatchOrchestrator"]

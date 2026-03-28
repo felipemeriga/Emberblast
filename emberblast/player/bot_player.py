@@ -1,8 +1,9 @@
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
 from emberblast.communicator import improve_attributes_automatically
+from emberblast.interface import IBag, IBotPlayer, IEquipment, IJob, IRace
+
 from .player import Player
-from emberblast.interface import IBag, IJob, IRace, IEquipment, IBotPlayer
 
 
 class BotPlayer(IBotPlayer, Player):

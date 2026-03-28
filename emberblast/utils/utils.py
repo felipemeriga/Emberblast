@@ -1,8 +1,7 @@
 import random
 from functools import reduce
-
 from pathlib import Path
-from typing import List, Dict, Any, Callable
+from typing import Any, Callable, Dict, List
 
 
 def singleton(class_) -> Callable:
@@ -114,4 +113,4 @@ def convert_number_to_letter(number: int) -> str:
     :param int number: The number to be converted.
     :rtype: str
     """
-    return chr(ord('@') + number + 1)
+    return chr(ord("@") + number + 1)

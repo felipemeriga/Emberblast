@@ -18,7 +18,7 @@ class MyLogger(object, metaclass=SingletonLogger):
     def __init__(self):
         self._logger = logging.getLogger()
         self._logger.setLevel(logging.NOTSET)
-        formatter = logging.Formatter('%(asctime)s \t [%(levelname)s | %(filename)s:%(lineno)s] > %(message)s')
+        formatter = logging.Formatter("%(asctime)s \t [%(levelname)s | %(filename)s:%(lineno)s] > %(message)s")
 
         now = datetime.datetime.now()
         dirname = "./log"

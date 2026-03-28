@@ -1,6 +1,7 @@
+from emberblast.bot import BotDecisioning
+
 from .test import BaseTestCase, manual_test
 from .test_game import mock_game
-from emberblast.bot import BotDecisioning
 
 
 @manual_test

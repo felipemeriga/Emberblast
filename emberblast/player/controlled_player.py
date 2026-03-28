@@ -1,7 +1,8 @@
-from typing import List, Union, Dict
+from typing import Dict, List, Union
+
+from emberblast.interface import IBag, IControlledPlayer, IEquipment, IJob, IRace
 
 from .player import Player
-from emberblast.interface import IBag, IEquipment, IJob, IRace, IControlledPlayer
 
 
 class ControlledPlayer(IControlledPlayer, Player):
@@ -26,7 +27,7 @@ class ControlledPlayer(IControlledPlayer, Player):
         :rtype: None.
         """
         for improvement in improvements:
-            attribute = improvement.get('attribute', 'health_points')
-            points = improvement.get('value', 0)
+            attribute = improvement.get("attribute", "health_points")
+            points = improvement.get("value", 0)
             self.__setattr__(attribute, points + self.__getattribute__(attribute))
         self.level = self.level + 1

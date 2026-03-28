@@ -1,15 +1,16 @@
 from functools import wraps
 from typing import List, cast
-from emberblast.interface import IBag, IItem, IEquipmentItem, IRecoveryItem, IHealingItem
+
+from emberblast.interface import IBag, IEquipmentItem, IHealingItem, IItem, IRecoveryItem
 
 
 def weight_compute(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         item: IItem = args[0]
-        if 'add_item' in repr(func):
+        if "add_item" in repr(func):
             self.weight = self.weight + item.weight
-        elif 'remove_item' in repr(func):
+        elif "remove_item" in repr(func):
             self.weight = self.weight - item.weight
         return func(self, *args, **kwargs)
 
@@ -51,8 +52,9 @@ class Bag(IBag):
 
         :rtype List[IEquipmentItem]
         """
-        return cast(List[IEquipmentItem], [x for x in filter(
-            lambda item: isinstance(item, IEquipmentItem), self.items)])
+        return cast(
+            List[IEquipmentItem], [x for x in filter(lambda item: isinstance(item, IEquipmentItem), self.items)]
+        )
 
     def get_usable_items(self) -> List[IItem]:
         """
@@ -60,8 +62,10 @@ class Bag(IBag):
 
         :rtype: List[IItem]
         """
-        return [x for x in filter(
-            lambda item: isinstance(item, IHealingItem) or isinstance(item, IRecoveryItem), self.items)]
+        return [
+            x
+            for x in filter(lambda item: isinstance(item, IHealingItem) or isinstance(item, IRecoveryItem), self.items)
+        ]
 
     def has_item_type(self, is_usable: bool = False, is_equipment: bool = False) -> bool:
         """

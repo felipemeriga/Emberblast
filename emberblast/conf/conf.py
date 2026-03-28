@@ -1,17 +1,33 @@
 import yaml
+from cerberus import SchemaError, Validator
 from yaml.scanner import ScannerError
-from cerberus import Validator, SchemaError
 
-from .schema import race_section_configuration_schema, game_section_configuration_schema, \
-    job_section_configuration_schema, level_up_attributes_configuration_schema, side_effects_configuration_schema, \
-    healing_item_validation_schema, recovery_item_validation_schema, equipment_item_validation_schema, \
-    items_probabilities_schema, skills_validation_schema, experience_earned_action_configuration_schema
-from .logger import get_logger
-from emberblast.utils import GAME_SECTION, JOBS_SECTION, RACES_SECTION, LEVEL_UP_INCREMENT, SIDE_EFFECTS_SECTION, \
-    ITEMS_SECTION, ITEMS_PROBABILITIES_SECTION, SKILLS_SECTION
-from emberblast.utils import get_project_root, deep_get
 from emberblast.exception import ConfigFileError
+from emberblast.utils import (
+    GAME_SECTION,
+    ITEMS_PROBABILITIES_SECTION,
+    JOBS_SECTION,
+    LEVEL_UP_INCREMENT,
+    RACES_SECTION,
+    deep_get,
+    get_project_root,
+)
+
 from ..utils.constants import EXPERIENCE_EARNED_ACTION
+from .logger import get_logger
+from .schema import (
+    equipment_item_validation_schema,
+    experience_earned_action_configuration_schema,
+    game_section_configuration_schema,
+    healing_item_validation_schema,
+    items_probabilities_schema,
+    job_section_configuration_schema,
+    level_up_attributes_configuration_schema,
+    race_section_configuration_schema,
+    recovery_item_validation_schema,
+    side_effects_configuration_schema,
+    skills_validation_schema,
+)
 
 
 class Configuration(object):
@@ -25,7 +41,7 @@ class Configuration(object):
         """
         self._arg = arg
         self._logger = get_logger()
-        self.project_module = __import__('emberblast')
+        self.project_module = __import__("emberblast")
         self.parsed_yaml_file = {}
         self.game = {}
         self.jobs = {}
@@ -42,13 +58,13 @@ class Configuration(object):
             self.parse_configuration_files()
         except OSError as err:
             self._logger.error(err)
-            raise SystemExit('Could not open the game configuration file')
+            raise SystemExit("Could not open the game configuration file")
         except ScannerError as err:
             self._logger.error(err)
-            raise SystemExit('Could not parse the configuration file')
+            raise SystemExit("Could not parse the configuration file")
 
     def __call__(self, section):
-        if section == '':
+        if section == "":
             return self
         return self.__getattribute__(section)
 
@@ -67,19 +83,19 @@ class Configuration(object):
         :rtype: None
         """
         project_root = str(get_project_root())
-        config_yaml_file = open(str(get_project_root()) + '/conf/conf.yaml')
+        config_yaml_file = open(str(get_project_root()) + "/conf/conf.yaml")
         self.parsed_yaml_file = yaml.load(config_yaml_file, Loader=yaml.FullLoader)
         self.validate_config_file()
 
-        side_effects_yaml_file = open(str(get_project_root()) + '/conf/side_effects.yaml')
+        side_effects_yaml_file = open(str(get_project_root()) + "/conf/side_effects.yaml")
         self.side_effects = yaml.load(side_effects_yaml_file, Loader=yaml.FullLoader)
         self.validate_side_effects()
 
-        items_yaml_file = open(str(get_project_root()) + '/conf/items.yaml')
+        items_yaml_file = open(str(get_project_root()) + "/conf/items.yaml")
         self.items = yaml.load(items_yaml_file, Loader=yaml.FullLoader)
         self.validate_items()
 
-        skills_yaml_file = open(str(get_project_root()) + '/conf/skills.yaml')
+        skills_yaml_file = open(str(get_project_root()) + "/conf/skills.yaml")
         self.skills = yaml.load(skills_yaml_file, Loader=yaml.FullLoader)
         self.validate_skills()
 
@@ -118,33 +134,34 @@ class Configuration(object):
             for key, value in self.items.items():
                 validator = None
                 schema = None
-                if value.get('type') == 'healing':
+                if value.get("type") == "healing":
                     validator = healing_validator
                     schema = healing_item_validation_schema
-                elif value.get('type') == 'recovery':
+                elif value.get("type") == "recovery":
                     validator = recovery_validator
                     schema = recovery_item_validation_schema
-                elif value.get('type') == 'equipment':
+                elif value.get("type") == "equipment":
                     validator = equipment_validator
                     schema = equipment_item_validation_schema
                 else:
                     self._logger.warn(
-                        'Item: {item} of unknown type, valid ones are healing, equipment and recovery'.format(item=key))
+                        "Item: {item} of unknown type, valid ones are healing, equipment and recovery".format(item=key)
+                    )
                     continue
 
                 if not validator.validate(value, schema):
                     self.error_handler(validator.errors, key)
 
-                if 'side_effects' in list(value.keys()):
-                    for element in value.get('side_effects', []):
+                if "side_effects" in list(value.keys()):
+                    for element in value.get("side_effects", []):
                         if element not in self.side_effects.keys():
                             self._logger.warn(
-                                'Item: {item} has an unknown side effect attached to that'.format(item=key))
+                                "Item: {item} has an unknown side effect attached to that".format(item=key)
+                            )
                             continue
-                if 'status' in list(value.keys()):
-                    if value.get('status') not in self.side_effects.keys():
-                        self._logger.warn(
-                            'Item: {item} has an unknown side effect attached to that'.format(item=key))
+                if "status" in list(value.keys()):
+                    if value.get("status") not in self.side_effects.keys():
+                        self._logger.warn("Item: {item} has an unknown side effect attached to that".format(item=key))
                         continue
                 validated_items[key] = value
         except ConfigFileError as err:
@@ -152,7 +169,7 @@ class Configuration(object):
         except SchemaError as err:
             raise SystemExit(str(err))
 
-    def error_handler(self, errors=None, section: str = '') -> None:
+    def error_handler(self, errors=None, section: str = "") -> None:
         """
         General error handler, to format the error message, when a field in the configuration file it's wrong.
 
@@ -164,13 +181,13 @@ class Configuration(object):
             errors = {}
 
         formatted_error_string = "There is an error in the configuration file section -> {section}: \n".format(
-            section=section)
+            section=section
+        )
 
         for error in errors:
             formatted_error_string = "{string} \n field: {field}, issue: {issue}".format(
-                string=formatted_error_string,
-                field=error,
-                issue=errors[error])
+                string=formatted_error_string, field=error, issue=errors[error]
+            )
 
         self._logger.error(formatted_error_string)
         raise ConfigFileError(formatted_error_string)
@@ -252,21 +269,23 @@ class Configuration(object):
         v = Validator(skills_validation_schema)
 
         for key, value in self.skills.items():
-
             if not v.validate(value, skills_validation_schema):
                 self.error_handler(v.errors, key)
 
             normalized_skill = v.normalized(value)
 
-            if not normalized_skill.get('job', None) in self.jobs:
-                error_string = 'The skill {skill} has an unknown job assigned to it.'.format(skill=normalized_skill.get('name'))
+            if normalized_skill.get("job", None) not in self.jobs:
+                error_string = "The skill {skill} has an unknown job assigned to it.".format(
+                    skill=normalized_skill.get("name")
+                )
                 self._logger.error(error_string)
                 raise ConfigFileError(error_string)
-            if 'side_effects' in list(normalized_skill.keys()):
-                for element in normalized_skill.get('side_effects', []):
+            if "side_effects" in list(normalized_skill.keys()):
+                for element in normalized_skill.get("side_effects", []):
                     if element not in self.side_effects.keys():
-                        error_string = 'The skill {skill} has an unknown side-effect assigned to it.'.format(
-                            skill=normalized_skill.get('name'))
+                        error_string = "The skill {skill} has an unknown side-effect assigned to it.".format(
+                            skill=normalized_skill.get("name")
+                        )
                         self._logger.error(error_string)
                         raise ConfigFileError(error_string)
             self.skills[key] = normalized_skill
@@ -284,7 +303,8 @@ class Configuration(object):
         sum_of_probabilities = sum([x for x in self.item_probabilities.values()])
         if sum_of_probabilities != 1:
             raise ConfigFileError(
-                'The sum of all the probabilities of the items_probabilities must be 1, which is 100%')
+                "The sum of all the probabilities of the items_probabilities must be 1, which is 100%"
+            )
 
 
 @Configuration

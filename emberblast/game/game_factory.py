@@ -1,18 +1,18 @@
 from random import randrange
 from typing import List
 
+from emberblast.communicator import communicator_injector
 from emberblast.conf import get_configuration
+from emberblast.events import NewCharacterEvent
 from emberblast.game import DeathMatch
+from emberblast.interface import IBotPlayer, IControlledPlayer, IGameFactory, IGameOrchestrator, IMap
+from emberblast.item import Bag, Equipment
 from emberblast.map import MapFactory
 from emberblast.orchestrator import DeathMatchOrchestrator
-from emberblast.player import ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes, BotPlayer
+from emberblast.player import BotPlayer, ControlledPlayer, dynamic_jobs_classes, dynamic_races_classes
 from emberblast.save import get_normalized_saved_files_dict, recover_saved_game_orchestrator
-from emberblast.item import Bag
 from emberblast.utils import JOBS_SECTION, RACES_SECTION
 from emberblast.utils.name_generator import generate_name
-from emberblast.item import Equipment
-from emberblast.interface import IMap, IControlledPlayer, IBotPlayer, IGameOrchestrator, IGameFactory
-from emberblast.communicator import communicator_injector
 
 
 @communicator_injector()
@@ -25,7 +25,8 @@ class GameFactory(IGameFactory):
 
     def pre_initial_settings(self) -> IGameOrchestrator:
         """
-        Executes the first game communicator, checking if the player wants to create a new game, or load an existing one.
+        Executes the first game communicator, checking if the player wants
+        to create a new game, or load an existing one.
 
         :rtype: IGameOrchestrator.
         """
@@ -34,9 +35,9 @@ class GameFactory(IGameFactory):
         # Checking first if there are any saved games
         if len(normalized_files) > 0:
             first_game_question = self.communicator.questioner.perform_first_question()
-            if first_game_question == 'new':
+            if first_game_question == "new":
                 return self.new_game()
-            elif first_game_question == 'continue':
+            elif first_game_question == "continue":
                 normalized_files = get_normalized_saved_files_dict()
                 selected_file = self.communicator.questioner.get_saved_game(normalized_files)
                 game_orchestrator = recover_saved_game_orchestrator(selected_file)
@@ -61,7 +62,7 @@ class GameFactory(IGameFactory):
 
         game_map = self.init_map(len(bots) + 4)
 
-        if self.begin_question_results.get('game') == 'Deathmatch':
+        if self.begin_question_results.get("game") == "Deathmatch":
             game = DeathMatch(players, game_map)
             game.calculate_turn_order()
             game.game_map.define_player_initial_position_random(game.get_all_players())
@@ -86,19 +87,20 @@ class GameFactory(IGameFactory):
         """
         controlled_players = []
 
-        for i in range(int(self.begin_question_results.get('controlled_players_number', 1))):
+        for i in range(int(self.begin_question_results.get("controlled_players_number", 1))):
             bag = Bag()
             equipment = Equipment()
-            self.communicator.informer.create_new_character(i)
+            self.communicator.informer.render(NewCharacterEvent(number=i))
             existing_names = [x for x in map(lambda player: player.name, controlled_players)]
 
-            new_character_responses = self.communicator.questioner.perform_character_creation_questions(
-                existing_names)
-            controlled_player = ControlledPlayer(new_character_responses.get('nickname'),
-                                                 dynamic_jobs_classes[new_character_responses.get('job')](),
-                                                 dynamic_races_classes[new_character_responses.get('race')](),
-                                                 bag,
-                                                 equipment)
+            new_character_responses = self.communicator.questioner.perform_character_creation_questions(existing_names)
+            controlled_player = ControlledPlayer(
+                new_character_responses.get("nickname"),
+                dynamic_jobs_classes[new_character_responses.get("job")](),
+                dynamic_races_classes[new_character_responses.get("race")](),
+                bag,
+                equipment,
+            )
             controlled_players.append(controlled_player)
 
         return controlled_players
@@ -110,7 +112,7 @@ class GameFactory(IGameFactory):
 
         :rtype: List[IBotPlayer].
         """
-        return bot_factory(self.begin_question_results.get('bots_number'))
+        return bot_factory(self.begin_question_results.get("bots_number"))
 
 
 def bot_factory(number_of_bots: int) -> List[IBotPlayer]:

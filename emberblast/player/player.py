@@ -1,9 +1,8 @@
 import math
-from typing import Union, List, Dict
+from typing import Dict, List, Union
 
 from emberblast.conf import get_logger
-from emberblast.effect import SideEffect
-from emberblast.interface import IPlayer, IItem, IHealingItem, IRecoveryItem, IBag, IJob, IRace, IEquipment, ISideEffect
+from emberblast.interface import IBag, IEquipment, IHealingItem, IItem, IJob, IPlayer, IRace, IRecoveryItem, ISideEffect
 from emberblast.skill import get_player_available_skills
 
 
@@ -36,7 +35,7 @@ class Player(IPlayer):
         self.side_effects = []
         self.skills = []
         self._alive = True
-        self.position = ''
+        self.position = ""
         self._hidden = False
         self._defense_mode = False
         self.bag = bag
@@ -70,7 +69,7 @@ class Player(IPlayer):
         self.will += attributes.will
 
     def level_up(self, improvements: Union[List, Dict]):
-        raise NotImplementedError('Player::to_string() should be implemented!')
+        raise NotImplementedError("Player::to_string() should be implemented!")
 
     def earn_xp(self, experience: int) -> None:
         """
@@ -111,11 +110,11 @@ class Player(IPlayer):
         :param int value: The life/mana to be healed.
         :rtype: None
         """
-        if attribute == 'health_points':
+        if attribute == "health_points":
             self.life = self.life + value
             if self.life > self.health_points:
                 self.life = self.health_points
-        elif attribute == 'magic_points':
+        elif attribute == "magic_points":
             self.mana = self.mana + value
             if self.mana > self.magic_points:
                 self.mana = self.magic_points
@@ -151,7 +150,7 @@ class Player(IPlayer):
 
         :rtype: int
         """
-        if self.job.attack_type == 'melee':
+        if self.job.attack_type == "melee":
             return 0
         return math.floor(1 + self.accuracy / 3)
 
@@ -208,18 +207,18 @@ class Player(IPlayer):
         :rtype: int
         """
         base_defense = 0
-        if kind == 'magic_resist':
+        if kind == "magic_resist":
             base_defense = self.magic_resist
-        elif kind == 'armour':
+        elif kind == "armour":
             base_defense = self.armour
 
         return base_defense * 2 if self.is_defending() else base_defense
 
     def add_side_effect(self, new_side_effect: ISideEffect) -> None:
         """
-       To add a new side effect in the player.
+        To add a new side effect in the player.
 
-        :rtype: None
+         :rtype: None
         """
         for i in range(len(self.side_effects)):
             existing_side_effect = self.side_effects[i]
@@ -230,10 +229,10 @@ class Player(IPlayer):
 
     def use_item(self, item: IItem) -> None:
         """
-       This function computes the usage of a healing or recover item.
+        This function computes the usage of a healing or recover item.
 
-        :param IItem item: The item to be used.
-        :rtype: None
+         :param IItem item: The item to be used.
+         :rtype: None
         """
         if isinstance(item, IHealingItem):
             self.heal(item.attribute, item.base)
@@ -243,7 +242,7 @@ class Player(IPlayer):
             if found_side_effect:
                 self.side_effects.remove(next(found_side_effect))
 
-    def get_attribute_real_value(self, attribute: str, usage: str = 'all') -> int:
+    def get_attribute_real_value(self, attribute: str, usage: str = "all") -> int:
         """
         This method it's used for getting the real value of an attribute
         computing and considering buffs/debuffs from side-effects, as well as
@@ -254,19 +253,19 @@ class Player(IPlayer):
         :rtype: int
         """
         try:
-            if attribute == 'armour' or attribute == 'magic_resist':
+            if attribute == "armour" or attribute == "magic_resist":
                 result = self.get_defense_value(attribute)
             else:
                 result = self.__getattribute__(attribute)
             for effect in self.side_effects:
-                if effect.attribute == attribute and effect.occurrence == 'constant':
+                if effect.attribute == attribute and effect.occurrence == "constant":
                     result = result + effect.base
 
             result = result + self.equipment.get_attribute_addition(attribute, usage)
             return result
         except:
             logger = get_logger()
-            logger.warn(f'Attribute: {attribute} does not exist, provide a valid one')
+            logger.warn(f"Attribute: {attribute} does not exist, provide a valid one")
             return 0
 
     def remove_side_effects(self, side_effects: List[ISideEffect]) -> None:
@@ -287,16 +286,15 @@ class Player(IPlayer):
 
         :rtype: None
         """
-        iterated_side_effects = [x for x in
-                                 filter(lambda effect: effect.occurrence == 'iterated', self.side_effects)]
+        iterated_side_effects = [x for x in filter(lambda effect: effect.occurrence == "iterated", self.side_effects)]
 
         for side_effect in iterated_side_effects:
-            if side_effect.effect_type == 'buff':
+            if side_effect.effect_type == "buff":
                 self.heal(side_effect.attribute, side_effect.base)
-            elif side_effect.effect_type == 'debuff':
-                if side_effect.attribute == 'health_points':
+            elif side_effect.effect_type == "debuff":
+                if side_effect.attribute == "health_points":
                     self.suffer_damage(side_effect.base)
-                elif side_effect.attribute == 'magic_points':
+                elif side_effect.attribute == "magic_points":
                     self.spend_mana(side_effect.base)
 
     def compute_side_effect_duration(self) -> List[ISideEffect]:

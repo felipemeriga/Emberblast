@@ -1,9 +1,9 @@
 from typing import Union
+
 from emberblast.interface import IEquipment, IEquipmentItem, IItem, ISideEffect
 
 
 class Equipment(IEquipment):
-
     def __init__(self) -> None:
         """
         Constructor of Equipment class
@@ -25,11 +25,11 @@ class Equipment(IEquipment):
         :rtype: None
         """
         # This if clause it's handling 2 handed weapons, in the case it's 2 handed, it will remove shields.
-        if equipment.category == 'weapon' and equipment.wielding == 2:
-            self.remove_equipment('shield')
+        if equipment.category == "weapon" and equipment.wielding == 2:
+            self.remove_equipment("shield")
         self.__setattr__(equipment.category, equipment)
 
-    def get_attribute_addition(self, attribute: str, usage: str = 'all') -> int:
+    def get_attribute_addition(self, attribute: str, usage: str = "all") -> int:
         """
         Each of the equipments, may change player's attributes, like HP, MP,
         intelligence, accuracy, this function receives one of that attributes as a string, and

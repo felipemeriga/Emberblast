@@ -1,12 +1,12 @@
+from emberblast.skill import Steal, get_instantiated_skill, get_player_available_skills
 from emberblast.test.test import BaseTestCase
-from .test_player import mock_player
-from emberblast.skill import get_player_available_skills, get_instantiated_skill, Steal
+
 from ..interface import ISkill
+from .test_player import mock_player
 
 
 @mock_player()
 class TestModuleSkill(BaseTestCase):
-
     def test_get_player_available_skills(self) -> None:
         result = get_player_available_skills(self.mock_player)
         if len(result) > 0:
@@ -26,7 +26,7 @@ class TestModuleSkill(BaseTestCase):
                 "job": "Rogue",
                 "side_effects": [],
                 "punishment_side_effects": [],
-                "base_attribute": "strength"
+                "base_attribute": "strength",
             }
         }
         skill = get_instantiated_skill(skill)
