@@ -132,14 +132,16 @@ class MapWidget(Widget):
                     symbol = get_terrain_cell(terrain_name)
                     color = TERRAIN_COLORS.get(terrain_name, TERRAIN_COLORS["plains"])
 
-                    style_kwargs: dict = {"color": color}
                     if position_str in self._highlight_cells:
-                        style_kwargs["underline"] = True
-                    if position_str in self._flash_cells:
-                        style_kwargs["bold"] = True
-                        style_kwargs["reverse"] = True
-
-                    result.append(f"{symbol} ", style=Style(**style_kwargs))
+                        # Movement possibility: bright cyan with reverse for high visibility
+                        style = Style(color="#00ffff", bgcolor="#1a4040", bold=True)
+                        result.append(f"{symbol} ", style=style)
+                    elif position_str in self._flash_cells:
+                        # Flash effect: inverted colors for damage/effects
+                        style = Style(color=color, bold=True, reverse=True)
+                        result.append(f"{symbol} ", style=style)
+                    else:
+                        result.append(f"{symbol} ", style=Style(color=color))
 
             result.append("\n")
 

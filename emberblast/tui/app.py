@@ -166,6 +166,27 @@ class EmberblastApp(App):
             battle.set_questioner(self._questioner)
         self.push_screen(battle)
 
+    # ── Highlight helpers ──
+
+    def _show_movement_highlights(self, possibilities: list) -> None:
+        """Highlight possible movement cells on the map."""
+        try:
+            map_w = self.screen.query_one("#map-widget", MapWidget)
+            map_w._highlight_cells = set(possibilities)
+            map_w.refresh()
+        except Exception:
+            logger.debug("MapWidget not available for movement highlights", exc_info=True)
+
+    def clear_highlights(self) -> None:
+        """Clear all highlight and flash cells on the map."""
+        try:
+            map_w = self.screen.query_one("#map-widget", MapWidget)
+            map_w._highlight_cells = set()
+            map_w._flash_cells = set()
+            map_w.refresh()
+        except Exception:
+            logger.debug("MapWidget not available for clearing highlights", exc_info=True)
+
     # ── Question routing ──
 
     def handle_question(self, method_name: str, **kwargs) -> None:
@@ -201,6 +222,8 @@ class EmberblastApp(App):
                 screen.show_actions(actions)
             elif method_name == "ask_where_to_move":
                 possibilities = kwargs.get("possibilities", [])
+                # Highlight movement cells on the map
+                self._show_movement_highlights(possibilities)
                 screen.show_choices(method_name, possibilities, possibilities)
             elif method_name in ("ask_enemy_to_attack", "ask_enemy_to_check"):
                 enemies = kwargs.get("enemies", [])

@@ -112,6 +112,13 @@ class TextualRenderer(IRenderer):
 
     def _render_turn_start(self, event: TurnStartEvent) -> None:
         self._app.set_turn(event.turn)
+        # Update combat log turn tracker so entries get [T#] prefix
+        try:
+            log = self._app.screen.query_one("#combat-log")
+            if hasattr(log, "set_turn"):
+                log.set_turn(event.turn)
+        except Exception:
+            pass
         self._app.post_combat_log(f"Turn {event.turn} — Embrace Yourselves!", "turn")
 
     def _render_player_turn(self, event: PlayerTurnEvent) -> None:

@@ -72,7 +72,7 @@ class BattleScreen(Screen):
     }
     BattleScreen > Horizontal > Vertical > PlayerHUDWidget {
         height: auto;
-        max-height: 8;
+        max-height: 14;
         border: solid #30363d;
     }
     BattleScreen > Horizontal > Vertical > CombatLogWidget {
@@ -152,6 +152,16 @@ class BattleScreen(Screen):
         except Exception:
             pass
 
+        # Flash the currently selected cell when navigating movement choices
+        if self._question_type == "ask_where_to_move" and self._choices:
+            try:
+                map_w = self.query_one("#map-widget", MapWidget)
+                selected_pos = self._choices[self._choice_index]
+                map_w._flash_cells = {str(selected_pos)}
+                map_w.refresh()
+            except Exception:
+                pass
+
     def on_key(self, event) -> None:
         """Handle all keyboard input based on current mode."""
         key = event.key.lower() if hasattr(event, "key") else ""
@@ -195,6 +205,9 @@ class BattleScreen(Screen):
                     bar.clear()
                 except Exception:
                     pass
+                # Clear movement highlights from the map
+                if hasattr(self.app, "clear_highlights"):
+                    self.app.clear_highlights()
                 if self._questioner:
                     self._questioner.resolve(selected)
         elif key == "escape":
@@ -204,6 +217,9 @@ class BattleScreen(Screen):
                 bar.clear()
             except Exception:
                 pass
+            # Clear movement highlights from the map
+            if hasattr(self.app, "clear_highlights"):
+                self.app.clear_highlights()
             if self._questioner:
                 self._questioner.resolve(False)
 

@@ -13,14 +13,18 @@ class TestCombatLogWidget(BaseTestCase):
     def test_add_entry_stores_message(self):
         self.widget.add_entry("Player attacked!", "damage")
         self.assertEqual(len(self.widget._entries), 1)
-        self.assertEqual(self.widget._entries[0], ("Player attacked!", "damage"))
+        msg, cat, turn = self.widget._entries[0]
+        self.assertEqual(msg, "Player attacked!")
+        self.assertEqual(cat, "damage")
 
     def test_max_entries_respected(self):
         for i in range(10):
             self.widget.add_entry(f"Message {i}", "system")
         self.assertEqual(len(self.widget._entries), 5)
         # Oldest entries should be gone, newest should remain
-        self.assertEqual(self.widget._entries[0], ("Message 5", "system"))
+        msg, cat, turn = self.widget._entries[0]
+        self.assertEqual(msg, "Message 5")
+        self.assertEqual(cat, "system")
 
     def test_clear_removes_all(self):
         self.widget.add_entry("test", "damage")
@@ -38,7 +42,7 @@ class TestCombatLogWidget(BaseTestCase):
 
     def test_empty_log_shows_placeholder(self):
         text = self.widget._build_log_text()
-        self.assertIn("No entries", text.plain)
+        self.assertIn("Awaiting battle", text.plain)
 
     def test_narration_entries_present(self):
         self.widget.add_entry("A dark wind blows...", "narration")

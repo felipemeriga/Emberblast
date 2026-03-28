@@ -43,7 +43,8 @@ class TestLogColors(BaseTestCase):
     """Tests for log color constants."""
 
     def test_all_log_categories_exist(self):
-        expected = {
+        # Must include all categories used by the renderer
+        required = {
             "damage",
             "heal",
             "narration",
@@ -53,8 +54,21 @@ class TestLogColors(BaseTestCase):
             "death",
             "xp",
             "item",
+            "turn",
+            "skill",
+            "dice",
+            "critical",
+            "victory",
+            "side_effect",
+            "trap",
+            "info",
+            "miss",
+            "warning",
+            "level_up",
+            "action",
+            "stats",
         }
-        self.assertEqual(set(LOG_COLORS.keys()), expected)
+        self.assertEqual(set(LOG_COLORS.keys()), required)
 
 
 class TestActionColors(BaseTestCase):

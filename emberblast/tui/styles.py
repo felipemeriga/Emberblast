@@ -31,6 +31,19 @@ LOG_COLORS: dict[str, str] = {
     "death": "#f85149",
     "xp": "#e3b341",
     "item": "#3fb950",
+    "turn": "#f0883e",
+    "skill": "#d2a8ff",
+    "dice": "#e3b341",
+    "critical": "#ff7b72",
+    "victory": "#3fb950",
+    "side_effect": "#d2a8ff",
+    "trap": "#f85149",
+    "info": "#8b949e",
+    "miss": "#6e7681",
+    "warning": "#e3b341",
+    "level_up": "#3fb950",
+    "action": "#58a6ff",
+    "stats": "#8b949e",
 }
 
 ACTION_COLORS: dict[str, str] = {
