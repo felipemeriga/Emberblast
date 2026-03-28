@@ -40,7 +40,7 @@ class MapWidget(Widget):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self._matrix: List[List[int]] = []
-        self._size: int = 0
+        self._grid_size: int = 0
         self._players: list = []
         self._active_player_name: str = ""
         self._friendly_names: Set[str] = set()
@@ -59,7 +59,7 @@ class MapWidget(Widget):
     ) -> None:
         """Update the map data and trigger a refresh."""
         self._matrix = matrix
-        self._size = size
+        self._grid_size = size
         self._players = players
         self._active_player_name = active_player_name
         self._friendly_names = friendly_names
@@ -69,7 +69,7 @@ class MapWidget(Widget):
 
     def _build_grid_text(self) -> Text:
         """Build a Rich Text object representing the full grid."""
-        if not self._matrix or self._size == 0:
+        if not self._matrix or self._grid_size == 0:
             return Text("No map data")
 
         # Index players by (row, col) for fast lookup
@@ -92,17 +92,17 @@ class MapWidget(Widget):
 
         # Column headers
         result.append("   ")
-        for col in range(self._size):
+        for col in range(self._grid_size):
             header = f"{col:>2} "
             result.append(header, style=Style(bold=True, dim=True))
         result.append("\n")
 
         # Rows
-        for row in range(self._size):
+        for row in range(self._grid_size):
             row_label = convert_number_to_letter(row)
             result.append(f"{row_label}  ", style=Style(bold=True, dim=True))
 
-            for col in range(self._size):
+            for col in range(self._grid_size):
                 cell_value = self._matrix[row][col]
                 position_key = (row, col)
                 position_str = f"{row_label}{col}"

@@ -71,5 +71,5 @@ class TestMapWidget(BaseTestCase):
     def test_update_map_stores_data(self):
         self.widget.update_map(self.matrix, self.size, self.players, "Gandalf", self.friendly_names)
         self.assertEqual(self.widget._matrix, self.matrix)
-        self.assertEqual(self.widget._size, self.size)
+        self.assertEqual(self.widget._grid_size, self.size)
         self.assertEqual(self.widget._active_player_name, "Gandalf")
