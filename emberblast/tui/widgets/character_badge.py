@@ -73,13 +73,11 @@ class CharacterBadgeWidget(Widget):
         result.append(f"{p.name}", style=Style(bold=True, color="#58a6ff"))
         result.append(f"  the {race_name} {job_name}\n", style=Style(color="#8b949e"))
 
-        # Level + XP
+        # Level + XP + Position
         result.append("  Lv.", style=Style(color="#8b949e"))
         result.append(f"{p.level}", style=Style(bold=True, color="#f0883e"))
         xp = getattr(p, "experience", 0)
         result.append(f"  XP: {xp}/100", style=Style(color="#e3b341"))
-
-        # Position
         if hasattr(p, "position") and p.position:
             pos = p.position
             if isinstance(pos, list) and len(pos) == 2:
@@ -102,32 +100,37 @@ class CharacterBadgeWidget(Widget):
         result.append_text(mp_bar)
         result.append("\n")
 
-        # XP bar
         xp_bar = _build_bar(xp, 100, "XP", color_override="#e3b341")
         result.append_text(xp_bar)
         result.append("\n")
 
-        # ── Stats ──
+        # ── Stats — 2 rows, well-spaced ──
         result.append(" \u2500" * 15 + "\n", style=Style(color="#21262d"))
 
-        stats = [
+        # Row 1: STR  INT  ACC  ARM
+        row1 = [
             ("STR", p.strength, "#f85149"),
             ("INT", p.intelligence, "#d2a8ff"),
             ("ACC", p.accuracy, "#e3b341"),
             ("ARM", p.armour, "#58a6ff"),
+        ]
+        result.append("  ")
+        for name, val, color in row1:
+            result.append(f"{name} ", style=Style(color="#6e7681"))
+            result.append(f"{val:<4}", style=Style(bold=True, color=color))
+        result.append("\n")
+
+        # Row 2: RES  SPD  WIL
+        row2 = [
             ("RES", p.magic_resist, "#d2a8ff"),
             ("SPD", p.move_speed, "#3fb950"),
             ("WIL", p.will, "#f0883e"),
         ]
-        for i, (name, val, color) in enumerate(stats):
-            if i % 4 == 0:
-                result.append("  ")
-            result.append(f"{name}", style=Style(color="#6e7681"))
-            result.append(f"{val:<3} ", style=Style(bold=True, color=color))
-            if i % 4 == 3:
-                result.append("\n")
-        if len(stats) % 4 != 0:
-            result.append("\n")
+        result.append("  ")
+        for name, val, color in row2:
+            result.append(f"{name} ", style=Style(color="#6e7681"))
+            result.append(f"{val:<4}", style=Style(bold=True, color=color))
+        result.append("\n")
 
         # ── Equipment summary ──
         if hasattr(p, "equipment") and p.equipment:

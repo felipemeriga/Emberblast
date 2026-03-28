@@ -66,9 +66,9 @@ class TestEnemyPanelWidget(BaseTestCase):
         self.widget.update_enemies([_make_enemy(strength=12, intelligence=8, armour=5)])
         text = self.widget._build_panel_text()
         plain = text.plain
-        self.assertIn("STR:12", plain)
-        self.assertIn("INT:8", plain)
-        self.assertIn("ARM:5", plain)
+        self.assertIn("STR 12", plain)
+        self.assertIn("INT 8", plain)
+        self.assertIn("ARM 5", plain)
 
     def test_dead_enemy_shows_dead_label(self):
         self.widget.update_enemies([_make_enemy(name="Skeleton", alive=False)])
@@ -91,3 +91,12 @@ class TestEnemyPanelWidget(BaseTestCase):
         text = self.widget._build_panel_text()
         self.assertIn("Dragon", text.plain)
         self.assertIn("Boss", text.plain)
+
+    def test_cycle_enemy_changes_selection(self):
+        enemies = [_make_enemy(name="Orc"), _make_enemy(name="Troll")]
+        self.widget.update_enemies(enemies)
+        self.assertEqual(self.widget._selected_idx, 0)
+        self.widget.cycle_enemy(1)
+        self.assertEqual(self.widget._selected_idx, 1)
+        self.widget.cycle_enemy(1)
+        self.assertEqual(self.widget._selected_idx, 0)  # wraps around

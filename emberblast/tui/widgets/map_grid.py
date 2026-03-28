@@ -162,17 +162,6 @@ class MapWidget(Widget):
 
             result.append("\u2551\n", style=border_style)
 
-            # Spacing row between grid rows (half-height visual separator)
-            if row < self._grid_size - 1:
-                result.append("     \u2551", style=border_style)
-                for col in range(self._grid_size):
-                    cell_value = self._matrix[row][col]
-                    terrain_name = _VALUE_TO_TERRAIN.get(cell_value, "plains")
-                    _, _, bg = _TERRAIN_STYLE.get(terrain_name, _TERRAIN_STYLE["plains"])
-                    # Subtle row separator
-                    result.append("\u2500" * CELL_WIDTH, style=Style(color="#21262d"))
-                result.append("\u2551\n", style=border_style)
-
         # Bottom border
         result.append("     \u255a", style=border_style)
         result.append("\u2550" * (CELL_WIDTH * self._grid_size + 1), style=border_style)

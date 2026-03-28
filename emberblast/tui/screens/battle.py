@@ -130,6 +130,12 @@ class BattleScreen(Screen):
         self._choices = list(choices)
         self._choice_labels = list(labels) if labels else [str(c) for c in choices]
         self._choice_index = 0
+        # Pause combat log scrolling while navigating choices
+        try:
+            log = self.query_one("#combat-log", CombatLogWidget)
+            log.pause_scroll()
+        except Exception:
+            pass
         self._update_choice_display()
 
     def show_confirm(self, question_type: str, message: str) -> None:
@@ -171,6 +177,15 @@ class BattleScreen(Screen):
         """Handle all keyboard input based on current mode."""
         key = event.key.lower() if hasattr(event, "key") else ""
 
+        # Tab cycles enemy panel selection regardless of mode
+        if key == "tab":
+            try:
+                panel = self.query_one("#enemy-panel", EnemyPanelWidget)
+                panel.cycle_enemy(1)
+            except Exception:
+                pass
+            return
+
         if self._mode == "actions":
             self._handle_action_key(key)
         elif self._mode == "choices":
@@ -210,6 +225,11 @@ class BattleScreen(Screen):
                     bar.clear()
                 except Exception:
                     pass
+                try:
+                    log = self.query_one("#combat-log", CombatLogWidget)
+                    log.resume_scroll()
+                except Exception:
+                    pass
                 # Clear movement highlights from the map
                 if hasattr(self.app, "clear_highlights"):
                     self.app.clear_highlights()
@@ -220,6 +240,11 @@ class BattleScreen(Screen):
             try:
                 bar = self.query_one("#action-bar", ActionBarWidget)
                 bar.clear()
+            except Exception:
+                pass
+            try:
+                log = self.query_one("#combat-log", CombatLogWidget)
+                log.resume_scroll()
             except Exception:
                 pass
             # Clear movement highlights from the map

@@ -100,6 +100,14 @@ class CombatLogWidget(RichLog):
 
         self.write(line)
 
+    def pause_scroll(self) -> None:
+        """Temporarily disable auto-scroll (e.g. during movement selection)."""
+        self.auto_scroll = False
+
+    def resume_scroll(self) -> None:
+        """Re-enable auto-scroll."""
+        self.auto_scroll = True
+
     def clear_log(self) -> None:
         """Remove all log entries."""
         self.clear()
