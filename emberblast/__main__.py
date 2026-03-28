@@ -65,6 +65,25 @@ def run_textual():
             game_orchestrator.communicator = textual_comm
             game_orchestrator.bot_controller.communicator = textual_comm
 
+            # Store orchestrator ref so renderer can pull map/player data
+            app._orchestrator = game_orchestrator
+
+            # Render initial map
+            from emberblast.events import MapInfoEvent
+
+            all_players = game_orchestrator.game.get_all_players()
+            first_player = all_players[0] if all_players else None
+            if first_player:
+                enemies = [p for p in all_players if p != first_player]
+                textual_comm.informer.render(
+                    MapInfoEvent(
+                        current_player=first_player,
+                        enemies=enemies,
+                        matrix=game_orchestrator.game.game_map.graph.matrix,
+                        size=game_orchestrator.game.game_map.size,
+                    )
+                )
+
             await game_orchestrator.execute_game()
         except Exception as err:
             app.post_combat_log(f"Error: {err}", "damage")

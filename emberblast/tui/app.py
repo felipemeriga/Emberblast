@@ -89,6 +89,14 @@ class EmberblastApp(App):
         except Exception:
             logger.debug("PlayerHUDWidget not available", exc_info=True)
 
+    def update_hud(self, player) -> None:
+        """Update the player HUD with actual player data."""
+        try:
+            hud = self.query_one("#player-hud", PlayerHUDWidget)
+            hud.update_player(player)
+        except Exception:
+            logger.debug("PlayerHUDWidget not available for update", exc_info=True)
+
     def set_turn(self, turn: int) -> None:
         """Update the turn header."""
         self._current_turn = turn

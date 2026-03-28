@@ -87,6 +87,26 @@ class TextualRenderer(IRenderer):
         if handler:
             handler(event)
 
+    def _refresh_game_state(self, player_name: str) -> None:
+        """Pull current map/player data from the orchestrator and update widgets."""
+        orch = getattr(self._app, "_orchestrator", None)
+        if not orch:
+            return
+        try:
+            game = orch.game
+            # Find the active player
+            active = None
+            for p in game.get_all_alive_players():
+                if p.name == player_name:
+                    active = p
+                    break
+            if active:
+                enemies = [p for p in game.get_all_alive_players() if p != active]
+                self._app.update_map_from_event(active, enemies, game.game_map.graph.matrix, game.game_map.size)
+                self._app.update_hud(active)
+        except Exception:
+            pass
+
     def _render_greetings(self, event: GreetingsEvent) -> None:
         self._app.post_combat_log("Welcome to EMBERBLAST!", "system")
 
@@ -97,6 +117,8 @@ class TextualRenderer(IRenderer):
     def _render_player_turn(self, event: PlayerTurnEvent) -> None:
         self._app.set_active_player(event.player_name)
         self._app.post_combat_log(f"{event.player_name}'s turn!", "turn")
+        # Refresh map and HUD at each player turn
+        self._refresh_game_state(event.player_name)
 
     def _render_line_separator(self, event: LineSeparatorEvent) -> None:
         self._app.post_combat_log("---", "system")
@@ -120,37 +142,27 @@ class TextualRenderer(IRenderer):
 
     def _render_heal(self, event: HealEvent) -> None:
         target = "itself" if event.healer_name == event.target_name else event.target_name
-        self._app.post_combat_log(
-            f"{event.healer_name} healed {target} for {event.amount} HP!", "heal"
-        )
+        self._app.post_combat_log(f"{event.healer_name} healed {target} for {event.amount} HP!", "heal")
         self._app.post_combat_log(f"{event.target_name} now has {event.target_life} HP", "heal")
         self._app.refresh_huds()
 
     def _render_skill(self, event: SkillEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.caster_name} casts {event.skill_name} (cost: {event.mana_cost} MP)", "skill"
-        )
+        self._app.post_combat_log(f"{event.caster_name} casts {event.skill_name} (cost: {event.mana_cost} MP)", "skill")
 
     def _render_spent_mana(self, event: SpentManaEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.player_name} casted {event.skill_name} for {event.amount} mana.", "skill"
-        )
+        self._app.post_combat_log(f"{event.player_name} casted {event.skill_name} for {event.amount} mana.", "skill")
         self._app.refresh_huds()
 
     def _render_item(self, event: ItemEvent) -> None:
         target = "himself" if event.target_name == event.player_name else event.target_name
-        self._app.post_combat_log(
-            f"{event.player_name} uses {event.item_name} on {target}", "item"
-        )
+        self._app.post_combat_log(f"{event.player_name} uses {event.item_name} on {target}", "item")
 
     def _render_use_item(self, event: UseItemEvent) -> None:
         target = "himself" if event.target_name == event.player_name else event.target_name
         self._app.post_combat_log(f"{event.player_name} used {event.item_name} on {target}", "item")
 
     def _render_dice_roll(self, event: DiceRollEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.player_name} rolled the dice and got {event.result}!", "dice"
-        )
+        self._app.post_combat_log(f"{event.player_name} rolled the dice and got {event.result}!", "dice")
         if event.is_critical:
             self._app.post_combat_log(f"Critical {event.kind}! Massive damage!", "critical")
 
@@ -173,14 +185,10 @@ class TextualRenderer(IRenderer):
             status = "inflicted"
         else:
             status = "buffed"
-        self._app.post_combat_log(
-            f"{event.player_name} has been {status} with {event.effect_name}.", "side_effect"
-        )
+        self._app.post_combat_log(f"{event.player_name} has been {status} with {event.effect_name}.", "side_effect")
 
     def _render_side_effect_ended(self, event: SideEffectEndedEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.effect_name} has ended for {event.player_name}", "side_effect"
-        )
+        self._app.post_combat_log(f"{event.effect_name} has ended for {event.player_name}", "side_effect")
 
     def _render_iterated_side_effect(self, event: IteratedSideEffectEvent) -> None:
         status = "increase" if event.effect_type == "buff" else "decrease"
@@ -198,25 +206,17 @@ class TextualRenderer(IRenderer):
 
     def _render_item_found(self, event: ItemFoundEvent) -> None:
         if event.found:
-            self._app.post_combat_log(
-                f"{event.player_name} found a {event.item_tier} item! {event.item_name}", "item"
-            )
+            self._app.post_combat_log(f"{event.player_name} found a {event.item_tier} item! {event.item_name}", "item")
         else:
-            self._app.post_combat_log(
-                f"{event.player_name} tried to find an item, but nothing was found!", "item"
-            )
+            self._app.post_combat_log(f"{event.player_name} tried to find an item, but nothing was found!", "item")
 
     def _render_level_up(self, event: LevelUpEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.player_name} leveled up to {event.new_level}!", "level_up"
-        )
+        self._app.post_combat_log(f"{event.player_name} leveled up to {event.new_level}!", "level_up")
         self._app.refresh_huds()
 
     def _render_xp_earned(self, event: XPEarnedEvent) -> None:
         if event.kill_target:
-            self._app.post_combat_log(
-                f"{event.player_name} earned {event.xp} XP by killing {event.kill_target}!", "xp"
-            )
+            self._app.post_combat_log(f"{event.player_name} earned {event.xp} XP by killing {event.kill_target}!", "xp")
         else:
             self._app.post_combat_log(f"{event.player_name} earned {event.xp} XP!", "xp")
 
@@ -225,14 +225,10 @@ class TextualRenderer(IRenderer):
         self._app.post_combat_log(f"{label}:", "action")
 
     def _render_low_mana(self, event: LowManaEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.player_name} has {event.mana} mana, consider healing it.", "warning"
-        )
+        self._app.post_combat_log(f"{event.player_name} has {event.mana} mana, consider healing it.", "warning")
 
     def _render_missed_attack(self, event: MissedAttackEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.attacker_name} tried to attack {event.target_name} but missed.", "miss"
-        )
+        self._app.post_combat_log(f"{event.attacker_name} tried to attack {event.target_name} but missed.", "miss")
 
     def _render_trap_activated(self, event: TrapActivatedEvent) -> None:
         self._app.post_combat_log(f"{event.player_name} has fallen into a trap!", "trap")
@@ -243,9 +239,7 @@ class TextualRenderer(IRenderer):
         self._app.post_combat_log(event.message, "info")
 
     def _render_area_damage(self, event: AreaDamageEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.skill_name} is an area {event.skill_kind} skill, hitting:", "skill"
-        )
+        self._app.post_combat_log(f"{event.skill_name} is an area {event.skill_kind} skill, hitting:", "skill")
         for player in event.affected_players:
             self._app.post_combat_log(
                 f"  {player.name}({player.job.get_name()}) at {player.position} with {player.life} HP",
@@ -260,24 +254,16 @@ class TextualRenderer(IRenderer):
         )
 
     def _render_player_fail_stole_item(self, event: PlayerFailStoleItemEvent) -> None:
-        self._app.post_combat_log(
-            f"{event.player_name} failed to steal from {event.foe_name}", "item"
-        )
+        self._app.post_combat_log(f"{event.player_name} failed to steal from {event.foe_name}", "item")
 
     def _render_new_character(self, event: NewCharacterEvent) -> None:
-        self._app.post_combat_log(
-            f"Creating controlled character number: {event.number}...", "system"
-        )
+        self._app.post_combat_log(f"Creating controlled character number: {event.number}...", "system")
 
     def _render_map_info(self, event: MapInfoEvent) -> None:
-        self._app.update_map_from_event(
-            event.current_player, event.enemies, event.matrix, event.size
-        )
+        self._app.update_map_from_event(event.current_player, event.enemies, event.matrix, event.size)
 
     def _render_moving_possibilities(self, event: MovingPossibilitiesEvent) -> None:
-        self._app.show_move_highlights(
-            event.player_position, event.possibilities, event.matrix, event.size
-        )
+        self._app.show_move_highlights(event.player_position, event.possibilities, event.matrix, event.size)
 
     def _render_player_stats(self, event: PlayerStatsEvent) -> None:
         p = event.player
