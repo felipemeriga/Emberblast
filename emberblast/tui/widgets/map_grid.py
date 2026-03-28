@@ -30,6 +30,13 @@ _VALUE_TO_TERRAIN: Dict[int, str] = {
 class MapWidget(Widget):
     """Renders a grid map with terrain, players, and highlights."""
 
+    DEFAULT_CSS = """
+    MapWidget {
+        background: #0d1117;
+        padding: 1;
+    }
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self._matrix: List[List[int]] = []

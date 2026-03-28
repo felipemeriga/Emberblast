@@ -28,6 +28,16 @@ ACTION_KEYS: Dict[str, str] = {
 class ActionBarWidget(Widget):
     """Displays available actions as keybinding buttons."""
 
+    DEFAULT_CSS = """
+    ActionBarWidget {
+        dock: bottom;
+        height: 3;
+        background: #161b22;
+        border-top: solid #30363d;
+        content-align: center middle;
+    }
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self._actions: List[str] = []

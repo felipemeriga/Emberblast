@@ -40,6 +40,13 @@ def _build_bar(current: int, maximum: int, label: str) -> Text:
 class PlayerHUDWidget(Widget):
     """Displays player name, job, race, HP bar, MP bar, and stats."""
 
+    DEFAULT_CSS = """
+    PlayerHUDWidget {
+        background: #161b22;
+        padding: 1;
+    }
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self._player: Optional[object] = None

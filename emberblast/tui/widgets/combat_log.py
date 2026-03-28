@@ -17,6 +17,14 @@ DEFAULT_MAX_ENTRIES = 100
 class CombatLogWidget(Widget):
     """Scrollable, color-coded combat log."""
 
+    DEFAULT_CSS = """
+    CombatLogWidget {
+        background: #161b22;
+        padding: 1;
+        overflow-y: auto;
+    }
+    """
+
     def __init__(self, max_entries: int = DEFAULT_MAX_ENTRIES, **kwargs) -> None:
         super().__init__(**kwargs)
         self._entries: deque[Tuple[str, str]] = deque(maxlen=max_entries)

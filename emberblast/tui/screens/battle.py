@@ -21,6 +21,17 @@ _KEY_TO_ACTION = {v.lower(): k for k, v in ACTION_KEYS.items()}
 class TurnHeader(Static):
     """Displays current turn number and map name."""
 
+    DEFAULT_CSS = """
+    TurnHeader {
+        dock: top;
+        height: 1;
+        background: #161b22;
+        color: #f0883e;
+        text-style: bold;
+        content-align: center middle;
+    }
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__("", **kwargs)
         self._turn: int = 0
@@ -43,6 +54,32 @@ class TurnHeader(Static):
 
 class BattleScreen(Screen):
     """Main battle screen with classic RPG layout."""
+
+    DEFAULT_CSS = """
+    BattleScreen {
+        background: #0d1117;
+    }
+    BattleScreen > Horizontal {
+        height: 1fr;
+    }
+    BattleScreen > Horizontal > MapWidget {
+        width: 2fr;
+        min-width: 30;
+    }
+    BattleScreen > Horizontal > Vertical {
+        width: 1fr;
+        min-width: 20;
+    }
+    BattleScreen > Horizontal > Vertical > PlayerHUDWidget {
+        height: auto;
+        max-height: 8;
+        border: solid #30363d;
+    }
+    BattleScreen > Horizontal > Vertical > CombatLogWidget {
+        height: 1fr;
+        border: solid #30363d;
+    }
+    """
 
     def __init__(self, friendly_names: Optional[list] = None, **kwargs) -> None:
         super().__init__(**kwargs)
