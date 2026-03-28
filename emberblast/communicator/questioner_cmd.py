@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from typing import Dict, List, Union
 
@@ -14,7 +15,7 @@ class QuestionerCMD(IQuestioningSystem):
     def __init__(self) -> None:
         super().__init__()
 
-    def ask_check_action(self, show_items: bool = False) -> Union[str, bool, list, str]:
+    async def ask_check_action(self, show_items: bool = False) -> Union[str, bool, list, str]:
         """
         Ask which kind of information player wants to check.
 
@@ -42,10 +43,10 @@ class QuestionerCMD(IQuestioningSystem):
                 "max_height": "100",
             }
         ]
-        result = prompt(questions=questions)
+        result = await asyncio.to_thread(prompt, questions=questions)
         return result[0]
 
-    def ask_actions_questions(self, actions_available: List[str]) -> Union[str, bool, list, str]:
+    async def ask_actions_questions(self, actions_available: List[str]) -> Union[str, bool, list, str]:
         base_actions = {
             "move": {"name": "Move \U0001f3c3", "value": "move"},
             "attack": {"name": "Attack \u2694\ufe0f", "value": "attack"},
@@ -74,11 +75,11 @@ class QuestionerCMD(IQuestioningSystem):
                 "max_height": "100",
             }
         ]
-        result = prompt(questions=actions_questions)
+        result = await asyncio.to_thread(prompt, questions=actions_questions)
         print("\033[A" + 100 * " " + "\033[A")  # ansi escape arrow up then overwrite the line
         return result[0]
 
-    def ask_enemy_to_check(self, enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
+    async def ask_enemy_to_check(self, enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
         choices = []
         for enemy in enemies:
             choices.append(
@@ -95,11 +96,13 @@ class QuestionerCMD(IQuestioningSystem):
             }
         ]
 
-        result = prompt(questions=enemies_questions)
+        result = await asyncio.to_thread(prompt, questions=enemies_questions)
         selected_enemy = result[0]
         return selected_enemy
 
-    def ask_enemy_to_attack(self, enemies: List[IPlayer], skill_type: str = "") -> Union[str, bool, list, IPlayer]:
+    async def ask_enemy_to_attack(
+        self, enemies: List[IPlayer], skill_type: str = ""
+    ) -> Union[str, bool, list, IPlayer]:
         choices = []
         action_type = "attack \U0001f44a"
 
@@ -130,11 +133,11 @@ class QuestionerCMD(IQuestioningSystem):
                 "max_height": "100",
             }
         ]
-        result = prompt(questions=enemies_questions)
+        result = await asyncio.to_thread(prompt, questions=enemies_questions)
         selected_enemy = result[0]
         return selected_enemy
 
-    def select_item(self, items: List[IItem]) -> Union[str, bool, list, IItem]:
+    async def select_item(self, items: List[IItem]) -> Union[str, bool, list, IItem]:
         choices = []
         for item in items:
             choices.append({"name": ("{item} - {tier}".format(item=item.name, tier=item.tier)), "value": item})
@@ -151,27 +154,27 @@ class QuestionerCMD(IQuestioningSystem):
             }
         ]
 
-        result = prompt(questions=items_questions)
+        result = await asyncio.to_thread(prompt, questions=items_questions)
         selected_item = result[0]
         return selected_item
 
-    def confirm_item_selection(self) -> Union[str, bool, list, bool]:
+    async def confirm_item_selection(self) -> Union[str, bool, list, bool]:
         questions = [
             {"type": "confirm", "message": "Are you sure?", "name": "confirm", "default": False},
         ]
-        result = prompt(questions)
+        result = await asyncio.to_thread(prompt, questions)
         confirm = result["confirm"]
         return confirm
 
-    def confirm_use_item_on_you(self) -> Union[str, bool, list, bool]:
+    async def confirm_use_item_on_you(self) -> Union[str, bool, list, bool]:
         questions = [
             {"type": "confirm", "message": "Are you using the item on yourself?", "name": "confirm", "default": False},
         ]
-        result = prompt(questions)
+        result = await asyncio.to_thread(prompt, questions)
         confirm = result["confirm"]
         return confirm
 
-    def display_equipment_choices(self, player: IPlayer) -> Union[str, bool, list, IEquipmentItem]:
+    async def display_equipment_choices(self, player: IPlayer) -> Union[str, bool, list, IEquipmentItem]:
         equipments = player.bag.get_equipments()
         choices = []
 
@@ -202,11 +205,11 @@ class QuestionerCMD(IQuestioningSystem):
             }
         ]
 
-        result = prompt(questions=equipment_questions)
+        result = await asyncio.to_thread(prompt, questions=equipment_questions)
         selected_equipment = result[0]
         return selected_equipment
 
-    def ask_attributes_to_improve(self) -> Union[str, bool, list, List]:
+    async def ask_attributes_to_improve(self) -> Union[str, bool, list, List]:
         level_up_increment_attributes = get_configuration(LEVEL_UP_INCREMENT)
         health_points = level_up_increment_attributes.get("health_points", 5)
         magic_points = level_up_increment_attributes.get("magic_points", 5)
@@ -269,10 +272,10 @@ class QuestionerCMD(IQuestioningSystem):
             },
         ]
 
-        result = prompt(questions=level_up_questions)
+        result = await asyncio.to_thread(prompt, questions=level_up_questions)
         return result[0]
 
-    def ask_where_to_move(self, possibilities: List[str]) -> Union[str, bool, list, str]:
+    async def ask_where_to_move(self, possibilities: List[str]) -> Union[str, bool, list, str]:
         questions = [
             {
                 "type": "list",
@@ -283,10 +286,10 @@ class QuestionerCMD(IQuestioningSystem):
                 "max_height": "100",
             }
         ]
-        result = prompt(questions=questions)
+        result = await asyncio.to_thread(prompt, questions=questions)
         return result[0]
 
-    def perform_first_question(self) -> Union[str, bool, list, str]:
+    async def perform_first_question(self) -> Union[str, bool, list, str]:
         choices = [
             {"name": "New Game \U0001f195", "value": "new"},
             {"name": "Continue \U0001f501", "value": "continue"},
@@ -302,10 +305,10 @@ class QuestionerCMD(IQuestioningSystem):
                 "max_height": "100",
             }
         ]
-        result = prompt(questions=first_game_questions)
+        result = await asyncio.to_thread(prompt, questions=first_game_questions)
         return result[0]
 
-    def perform_game_create_questions(self) -> Union[str, bool, list, dict]:
+    async def perform_game_create_questions(self) -> Union[str, bool, list, dict]:
         begin_game_questions = [
             {
                 "type": "list",
@@ -337,9 +340,9 @@ class QuestionerCMD(IQuestioningSystem):
             },
         ]
 
-        return prompt(begin_game_questions)
+        return await asyncio.to_thread(prompt, begin_game_questions)
 
-    def perform_character_creation_questions(self, existing_names: List[str]) -> Union[str, bool, list, dict]:
+    async def perform_character_creation_questions(self, existing_names: List[str]) -> Union[str, bool, list, dict]:
         questions = [
             {
                 "type": "input",
@@ -362,9 +365,9 @@ class QuestionerCMD(IQuestioningSystem):
             },
         ]
 
-        return prompt(questions)
+        return await asyncio.to_thread(prompt, questions)
 
-    def get_saved_game(self, normalized_files: List[Dict]) -> Union[str, bool, list, Path]:
+    async def get_saved_game(self, normalized_files: List[Dict]) -> Union[str, bool, list, Path]:
         choices = []
 
         for file_dict in normalized_files:
@@ -382,10 +385,10 @@ class QuestionerCMD(IQuestioningSystem):
                 "max_height": "100",
             }
         ]
-        result = prompt(questions=select_saved_game_questions)
+        result = await asyncio.to_thread(prompt, questions=select_saved_game_questions)
         return result[0]
 
-    def select_skill(self, available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
+    async def select_skill(self, available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
         choices = []
         for skill in available_skills:
             area_range_string = ""
@@ -420,7 +423,7 @@ class QuestionerCMD(IQuestioningSystem):
             }
         ]
 
-        result = prompt(questions=skill_questions)
+        result = await asyncio.to_thread(prompt, questions=skill_questions)
         selected_skill = result[0]
         return selected_skill
 

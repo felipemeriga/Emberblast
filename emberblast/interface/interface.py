@@ -494,7 +494,7 @@ class IPlayingMode(Enum):
 
 class IQuestioningSystem(ABC):
     @abstractmethod
-    def ask_check_action(self, show_items: bool = False) -> Union[str, bool, list, str]:
+    async def ask_check_action(self, show_items: bool = False) -> Union[str, bool, list, str]:
         """
         Ask which kind of information player wants to check.
 
@@ -505,7 +505,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def ask_actions_questions(self, actions_available: List[str]) -> Union[str, bool, list, str]:
+    async def ask_actions_questions(self, actions_available: List[str]) -> Union[str, bool, list, str]:
         """
         Ask which action the player is going to execute.
 
@@ -515,7 +515,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def ask_enemy_to_check(self, enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
+    async def ask_enemy_to_check(self, enemies: List[IPlayer]) -> Union[str, bool, list, IPlayer]:
         """
         Ask which enemy the player wants to know more info.
 
@@ -525,7 +525,9 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def ask_enemy_to_attack(self, enemies: List[IPlayer], skill_type: str = "") -> Union[str, bool, list, IPlayer]:
+    async def ask_enemy_to_attack(
+        self, enemies: List[IPlayer], skill_type: str = ""
+    ) -> Union[str, bool, list, IPlayer]:
         """
         Ask which enemy to attack.
 
@@ -536,7 +538,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def select_item(self, items: List[IItem]) -> Union[str, bool, list, IItem]:
+    async def select_item(self, items: List[IItem]) -> Union[str, bool, list, IItem]:
         """
         Select an item to use, or even get more information about it.
 
@@ -546,7 +548,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def confirm_item_selection(self) -> Union[str, bool, list, bool]:
+    async def confirm_item_selection(self) -> Union[str, bool, list, bool]:
         """
         Confirm question, to ensure that player really wants to use the selected item.
 
@@ -555,7 +557,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def confirm_use_item_on_you(self) -> Union[str, bool, list, bool]:
+    async def confirm_use_item_on_you(self) -> Union[str, bool, list, bool]:
         """
         Confirm question, to ensure that player really wants to use the selected item on himself.
 
@@ -564,7 +566,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def display_equipment_choices(self, player: IPlayer) -> Union[str, bool, list, IEquipmentItem]:
+    async def display_equipment_choices(self, player: IPlayer) -> Union[str, bool, list, IEquipmentItem]:
         """
         Will display all the equipments that player has, for equipping one of them.
 
@@ -574,7 +576,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def ask_attributes_to_improve(self) -> Union[str, bool, list, List]:
+    async def ask_attributes_to_improve(self) -> Union[str, bool, list, List]:
         """
         This function is used by human controlled players to chose which attribute they want to upgrade
 
@@ -583,7 +585,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def ask_where_to_move(self, possibilities: List[str]) -> Union[str, bool, list, str]:
+    async def ask_where_to_move(self, possibilities: List[str]) -> Union[str, bool, list, str]:
         """
         This function is used by asking the player where he wants to move.
 
@@ -593,7 +595,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def perform_first_question(self) -> Union[str, bool, list, str]:
+    async def perform_first_question(self) -> Union[str, bool, list, str]:
         """
         This function is used by asking a new game communicator.
 
@@ -602,7 +604,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def perform_game_create_questions(self) -> Union[str, bool, list, dict]:
+    async def perform_game_create_questions(self) -> Union[str, bool, list, dict]:
         """
         This function is used by asking a new game communicator.
 
@@ -611,7 +613,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def select_skill(self, available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
+    async def select_skill(self, available_skills: List[ISkill]) -> Union[str, bool, list, ISkill]:
         """
         Question function, to query user for available skills to use.
 
@@ -621,7 +623,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def get_saved_game(self, normalized_files: List[Dict]) -> Union[str, bool, list, Path]:
+    async def get_saved_game(self, normalized_files: List[Dict]) -> Union[str, bool, list, Path]:
         """
         Ask the players, which load file he wants to continue playing, the saved games comes in the normalized_files
         parameter, that it's a list of dictionaries that has the file itself, and also a normalized user friendly
@@ -633,7 +635,7 @@ class IQuestioningSystem(ABC):
         pass
 
     @abstractmethod
-    def perform_character_creation_questions(self, existing_names: List[str]) -> Union[str, bool, list, dict]:
+    async def perform_character_creation_questions(self, existing_names: List[str]) -> Union[str, bool, list, dict]:
         """
         This function is used when creating a new character.
 
@@ -673,7 +675,7 @@ class IGameOrchestrator:
         pass
 
     @abstractmethod
-    def execute_game(self) -> None:
+    async def execute_game(self) -> None:
         pass
 
     @abstractmethod
@@ -694,11 +696,11 @@ class IGameFactory:
     communicator: ICommunicator
 
     @abstractmethod
-    def pre_initial_settings(self) -> IGameOrchestrator:
+    async def pre_initial_settings(self) -> IGameOrchestrator:
         pass
 
     @abstractmethod
-    def new_game(self) -> IGameOrchestrator:
+    async def new_game(self) -> IGameOrchestrator:
         pass
 
     @abstractmethod
@@ -706,7 +708,7 @@ class IGameFactory:
         pass
 
     @abstractmethod
-    def init_players(self) -> IControlledPlayer:
+    async def init_players(self) -> IControlledPlayer:
         pass
 
     @abstractmethod
@@ -718,5 +720,5 @@ class IEmberblast(ABC):
     communicator: ICommunicator
 
     @abstractmethod
-    def run(self) -> None:
+    async def run(self) -> None:
         pass

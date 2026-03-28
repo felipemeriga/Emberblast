@@ -23,7 +23,7 @@ class GameFactory(IGameFactory):
         """
         self.begin_question_results = None
 
-    def pre_initial_settings(self) -> IGameOrchestrator:
+    async def pre_initial_settings(self) -> IGameOrchestrator:
         """
         Executes the first game communicator, checking if the player wants
         to create a new game, or load an existing one.
@@ -34,18 +34,18 @@ class GameFactory(IGameFactory):
 
         # Checking first if there are any saved games
         if len(normalized_files) > 0:
-            first_game_question = self.communicator.questioner.perform_first_question()
+            first_game_question = await self.communicator.questioner.perform_first_question()
             if first_game_question == "new":
-                return self.new_game()
+                return await self.new_game()
             elif first_game_question == "continue":
                 normalized_files = get_normalized_saved_files_dict()
-                selected_file = self.communicator.questioner.get_saved_game(normalized_files)
+                selected_file = await self.communicator.questioner.get_saved_game(normalized_files)
                 game_orchestrator = recover_saved_game_orchestrator(selected_file)
                 return game_orchestrator
         else:
-            return self.new_game()
+            return await self.new_game()
 
-    def new_game(self) -> IGameOrchestrator:
+    async def new_game(self) -> IGameOrchestrator:
         """
         Creates a new game, prompting the user the necessary communicator of how the game will be, and
         instantiate the proper objects, according to what was requested.
@@ -53,8 +53,8 @@ class GameFactory(IGameFactory):
         :rtype: IGameOrchestrator.
         """
         players = []
-        self.begin_question_results = self.communicator.questioner.perform_game_create_questions()
-        controlled_players = self.init_players()
+        self.begin_question_results = await self.communicator.questioner.perform_game_create_questions()
+        controlled_players = await self.init_players()
         players.extend(controlled_players)
 
         bots = self.init_bots()
@@ -79,7 +79,7 @@ class GameFactory(IGameFactory):
         """
         return MapFactory().create_map(map_size)
 
-    def init_players(self) -> List[IControlledPlayer]:
+    async def init_players(self) -> List[IControlledPlayer]:
         """
         Method used for generating the controlled players.
 
@@ -93,7 +93,9 @@ class GameFactory(IGameFactory):
             self.communicator.informer.render(NewCharacterEvent(number=i))
             existing_names = [x for x in map(lambda player: player.name, controlled_players)]
 
-            new_character_responses = self.communicator.questioner.perform_character_creation_questions(existing_names)
+            new_character_responses = await self.communicator.questioner.perform_character_creation_questions(
+                existing_names
+            )
             controlled_player = ControlledPlayer(
                 new_character_responses.get("nickname"),
                 dynamic_jobs_classes[new_character_responses.get("job")](),

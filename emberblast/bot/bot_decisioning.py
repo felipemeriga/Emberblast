@@ -1,3 +1,4 @@
+import asyncio
 import collections
 import functools
 import json
@@ -5,7 +6,6 @@ import logging
 import math
 import os
 import random
-import time
 from typing import Dict, List, Optional
 
 from emberblast.bot.llm_client import (
@@ -468,9 +468,9 @@ class BotDecisioning(IBotDecisioning):
         else:
             self.current_play_style = IPlayingMode.DEFENSIVE
 
-    def decide(self, player: IPlayer) -> None:
+    async def decide(self, player: IPlayer) -> None:
         if not self._llm_enabled:
-            self._decide_deterministic(player)
+            await self._decide_deterministic(player)
             return
 
         self.reset_attributes()
@@ -484,23 +484,23 @@ class BotDecisioning(IBotDecisioning):
         game_state = serialize_game_state(player, enemies, self.game, memory.get_entries(), available_actions)
         user_prompt = json.dumps(game_state, indent=2)
 
-        raw_response = call_openai(system_prompt, user_prompt)
+        raw_response = await asyncio.to_thread(call_openai, system_prompt, user_prompt)
         if raw_response is None:
             logger.warning("LLM call failed for %s, falling back to deterministic", player.name)
-            self._decide_deterministic(player)
+            await self._decide_deterministic(player)
             return
 
         parsed = parse_llm_response(raw_response)
         if parsed is None:
             logger.warning("Failed to parse LLM response for %s, falling back", player.name)
-            self._decide_deterministic(player)
+            await self._decide_deterministic(player)
             return
 
         success = self._execute_llm_action(player, parsed, enemies)
         if not success:
             # Retry once with error feedback
             error_msg = f"Previous action was invalid. Game state: {user_prompt}\nChoose a valid action."
-            raw_response = call_openai(system_prompt, error_msg)
+            raw_response = await asyncio.to_thread(call_openai, system_prompt, error_msg)
             if raw_response:
                 parsed = parse_llm_response(raw_response)
                 if parsed:
@@ -508,7 +508,7 @@ class BotDecisioning(IBotDecisioning):
 
             if not success:
                 logger.warning("LLM retry failed for %s, falling back to deterministic", player.name)
-                self._decide_deterministic(player)
+                await self._decide_deterministic(player)
                 return
 
         # Display narration if present
@@ -616,7 +616,7 @@ class BotDecisioning(IBotDecisioning):
                 return enemy
         return None
 
-    def _decide_deterministic(self, player: IPlayer) -> None:
+    async def _decide_deterministic(self, player: IPlayer) -> None:
         self.reset_attributes()
         self.current_bot = player
         self.sort_foes_by_priority()
@@ -626,22 +626,22 @@ class BotDecisioning(IBotDecisioning):
 
         if self.current_play_style == IPlayingMode.AGGRESSIVE and self.possible_foe is not None:
             self.attack()
-            time.sleep(1)
+            await asyncio.sleep(1)
             self.current_play_style = IPlayingMode.NEUTRAL
             self.move()
-            time.sleep(1)
+            await asyncio.sleep(1)
         elif self.current_play_style == IPlayingMode.AGGRESSIVE and self.possible_foe is None:
             self.move()
-            time.sleep(1)
+            await asyncio.sleep(1)
             self.attack()
-            time.sleep(1)
+            await asyncio.sleep(1)
         else:
             self.move()
-            time.sleep(1)
+            await asyncio.sleep(1)
         if self.current_play_style == IPlayingMode.DEFENSIVE:
             self.decide_best_defensive_action()
-            time.sleep(1)
+            await asyncio.sleep(1)
         self.communicator.informer.render(EventAction(event="search"))
         self.search_on_map()
-        time.sleep(1)
+        await asyncio.sleep(1)
         self.equip_item()
