@@ -71,7 +71,11 @@ def run_textual():
             # Wait for the BattleScreen to mount before rendering initial data
             await asyncio.sleep(0.3)
 
-            # Render initial map
+            # Set the map name in the turn header
+            map_name = game_orchestrator.game.game_map.name if hasattr(game_orchestrator.game.game_map, "name") else ""
+            app.set_map_name(map_name)
+
+            # Render initial map and HUD
             from emberblast.events import MapInfoEvent
 
             all_players = game_orchestrator.game.get_all_players()
@@ -86,8 +90,14 @@ def run_textual():
                         size=game_orchestrator.game.game_map.size,
                     )
                 )
-                # Also update HUD with first player
-                app.update_hud(first_player)
+
+            # Update HUD with controlled player (not just first player)
+            for p in all_players:
+                if isinstance(p, IControlledPlayer):
+                    app.update_hud(p)
+                    non_controlled = [e for e in all_players if e != p and hasattr(e, "is_alive") and e.is_alive()]
+                    app.update_enemies(non_controlled)
+                    break
 
             await game_orchestrator.execute_game()
         except Exception as err:

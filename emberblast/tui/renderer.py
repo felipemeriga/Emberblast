@@ -88,22 +88,44 @@ class TextualRenderer(IRenderer):
             handler(event)
 
     def _refresh_game_state(self, player_name: str) -> None:
-        """Pull current map/player data from the orchestrator and update widgets."""
+        """Pull current map/player data from the orchestrator and update widgets.
+
+        Always shows the controlled player in the HUD, regardless of whose turn it is.
+        The map shows all alive players with the active player highlighted.
+        """
         orch = getattr(self._app, "_orchestrator", None)
         if not orch:
             return
         try:
             game = orch.game
-            # Find the active player
+            all_alive = game.get_all_alive_players()
+
+            # Find the active player (whose turn it is) for map highlighting
             active = None
-            for p in game.get_all_alive_players():
+            for p in all_alive:
                 if p.name == player_name:
                     active = p
                     break
+
             if active:
-                enemies = [p for p in game.get_all_alive_players() if p != active]
-                self._app.update_map_from_event(active, enemies, game.game_map.graph.matrix, game.game_map.size)
-                self._app.update_hud(active)
+                others = [p for p in all_alive if p != active]
+                self._app.update_map_from_event(
+                    active, others, game.game_map.graph.matrix, game.game_map.size
+                )
+
+            # Always update HUD with the controlled player, not whoever's turn it is
+            friendly_names = set(getattr(self._app, "_friendly_names", []))
+            controlled = None
+            enemies_for_hud = []
+            for p in all_alive:
+                if p.name in friendly_names:
+                    controlled = p
+                else:
+                    enemies_for_hud.append(p)
+
+            if controlled:
+                self._app.update_hud(controlled)
+                self._app.update_enemies(enemies_for_hud)
         except Exception:
             pass
 

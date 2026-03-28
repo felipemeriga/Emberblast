@@ -26,6 +26,9 @@ _VALUE_TO_TERRAIN: Dict[int, str] = {
     5: "forest",
 }
 
+# Cell width: 4 chars per cell (symbol + padding) for better readability
+CELL_WIDTH = 4
+
 
 class MapWidget(Widget):
     """Renders a grid map with terrain, players, and highlights."""
@@ -34,6 +37,7 @@ class MapWidget(Widget):
     MapWidget {
         background: #0d1117;
         padding: 1;
+        border: solid #30363d;
     }
     """
 
@@ -90,17 +94,22 @@ class MapWidget(Widget):
 
         result = Text()
 
-        # Column headers
-        result.append("   ")
+        # Column headers — wider spacing to match cells
+        result.append("    ")  # row label padding
         for col in range(self._grid_size):
-            header = f"{col:>2} "
+            header = f"{col:^{CELL_WIDTH}}"
             result.append(header, style=Style(bold=True, dim=True))
         result.append("\n")
+
+        # Top border
+        result.append("   ┌")
+        result.append("─" * (self._grid_size * CELL_WIDTH))
+        result.append("┐\n", style=Style(color="#30363d"))
 
         # Rows
         for row in range(self._grid_size):
             row_label = convert_number_to_letter(row)
-            result.append(f"{row_label}  ", style=Style(bold=True, dim=True))
+            result.append(f" {row_label} │", style=Style(bold=True, dim=True))
 
             for col in range(self._grid_size):
                 cell_value = self._matrix[row][col]
@@ -117,33 +126,55 @@ class MapWidget(Widget):
                     is_friendly = player.name in self._friendly_names
                     team = "friendly" if is_friendly else "enemy"
                     colors = TEAM_COLORS[team]
+                    is_active = player.name == self._active_player_name
                     style = Style(
                         color=colors["fg"],
                         bgcolor=colors["bg"],
                         bold=True,
-                        blink=player.name == self._active_player_name,
+                        blink=is_active,
                     )
-                    result.append(f"{token} ", style=style)
+                    # Center token in cell
+                    cell = f" {token} "
+                    result.append(cell, style=style)
                 elif cell_value == 0:
                     # Void cell
-                    result.append("   ")
+                    result.append(" " * CELL_WIDTH)
                 else:
                     terrain_name = _VALUE_TO_TERRAIN.get(cell_value, "plains")
                     symbol = get_terrain_cell(terrain_name)
                     color = TERRAIN_COLORS.get(terrain_name, TERRAIN_COLORS["plains"])
 
                     if position_str in self._highlight_cells:
-                        # Movement possibility: bright cyan with reverse for high visibility
+                        # Movement possibility: bright cyan background
                         style = Style(color="#00ffff", bgcolor="#1a4040", bold=True)
-                        result.append(f"{symbol} ", style=style)
                     elif position_str in self._flash_cells:
-                        # Flash effect: inverted colors for damage/effects
-                        style = Style(color=color, bold=True, reverse=True)
-                        result.append(f"{symbol} ", style=style)
+                        # Flash effect: inverted colors for the selected cell
+                        style = Style(color="#000000", bgcolor="#00ffff", bold=True)
                     else:
-                        result.append(f"{symbol} ", style=Style(color=color))
+                        style = Style(color=color)
 
-            result.append("\n")
+                    cell = f" {symbol} "
+                    result.append(cell, style=style)
+
+            result.append("│\n", style=Style(color="#30363d"))
+
+        # Bottom border
+        result.append("   └")
+        result.append("─" * (self._grid_size * CELL_WIDTH))
+        result.append("┘\n", style=Style(color="#30363d"))
+
+        # Legend
+        result.append("\n")
+        for p in self._players:
+            if hasattr(p, "is_alive") and not p.is_alive():
+                continue
+            job_name = p.job.name if hasattr(p.job, "name") else str(p.job)
+            token = get_player_token(p.name, job_name)
+            is_friendly = p.name in self._friendly_names
+            team = "friendly" if is_friendly else "enemy"
+            colors = TEAM_COLORS[team]
+            result.append(f" {token}", style=Style(color=colors["fg"], bold=True))
+            result.append(f"={p.name} ", style=Style(dim=True))
 
         return result
 

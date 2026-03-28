@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import List, Optional
 
 from rich.style import Style
 from rich.text import Text
@@ -22,11 +22,11 @@ def _bar_color(ratio: float) -> str:
     return "#f85149"  # red
 
 
-def _build_bar(current: int, maximum: int, label: str) -> Text:
+def _build_bar(current: int, maximum: int, label: str, bar_width: int = BAR_WIDTH) -> Text:
     """Build a colored bar with label and numeric values."""
     ratio = current / maximum if maximum > 0 else 0
-    filled_count = round(ratio * BAR_WIDTH)
-    empty_count = BAR_WIDTH - filled_count
+    filled_count = round(ratio * bar_width)
+    empty_count = bar_width - filled_count
     color = _bar_color(ratio)
 
     bar = Text()
@@ -38,37 +38,48 @@ def _build_bar(current: int, maximum: int, label: str) -> Text:
 
 
 class PlayerHUDWidget(Widget):
-    """Displays player name, job, race, HP bar, MP bar, and stats."""
+    """Displays controlled player stats and a compact enemy list."""
 
     DEFAULT_CSS = """
     PlayerHUDWidget {
         background: #161b22;
         padding: 1;
+        border: solid #30363d;
     }
     """
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self._player: Optional[object] = None
+        self._enemies: List[object] = []
 
     def update_player(self, player: object) -> None:
         """Update the displayed player and refresh."""
         self._player = player
         self.refresh()
 
+    def update_enemies(self, enemies: List[object]) -> None:
+        """Update the enemy list and refresh."""
+        self._enemies = list(enemies)
+        self.refresh()
+
     def _build_hud_text(self) -> Text:
         """Build a Rich Text object for the HUD display."""
-        if self._player is None:
-            return Text("No player data")
-
-        p = self._player
         result = Text()
 
-        # Name / Job / Race / Level
+        if self._player is None:
+            result.append("No player data", style=Style(dim=True))
+            return result
+
+        p = self._player
+
+        # ── Your character ──
         job_name = p.job.name if hasattr(p.job, "name") else str(p.job)
         race_name = p.race.name if hasattr(p.race, "name") else str(p.race)
-        result.append(f"{p.name}", style=Style(bold=True, color="#58a6ff"))
-        result.append(f"  Lv.{p.level} {job_name} ({race_name})\n", style=Style(dim=True))
+        result.append(f"⚔ {p.name}", style=Style(bold=True, color="#58a6ff"))
+        result.append(f"  {race_name}\n", style=Style(color="#8b949e"))
+        result.append(f"  {job_name}", style=Style(color="#8b949e"))
+        result.append(f"  Lv.{p.level}\n", style=Style(color="#f0883e", bold=True))
 
         # HP bar
         hp_bar = _build_bar(p.life, p.health_points, "HP")
@@ -80,12 +91,32 @@ class PlayerHUDWidget(Widget):
         result.append_text(mp_bar)
         result.append("\n")
 
-        # Stats line
-        stats = (
-            f"STR:{p.strength}  INT:{p.intelligence}  ACC:{p.accuracy}  "
-            f"ARM:{p.armour}  RES:{p.magic_resist}  SPD:{p.move_speed}  WILL:{p.will}"
+        # Stats
+        result.append(
+            f"STR:{p.strength} INT:{p.intelligence} ACC:{p.accuracy} "
+            f"ARM:{p.armour} RES:{p.magic_resist} SPD:{p.move_speed} WILL:{p.will}\n",
+            style=Style(dim=True),
         )
-        result.append(stats, style=Style(dim=True))
+
+        # ── Enemy list ──
+        alive_enemies = [e for e in self._enemies if hasattr(e, "is_alive") and e.is_alive()]
+        if alive_enemies:
+            result.append("─" * 30 + "\n", style=Style(color="#30363d"))
+            result.append("ENEMIES\n", style=Style(bold=True, color="#f85149"))
+            for e in alive_enemies:
+                ej = e.job.name if hasattr(e.job, "name") else str(e.job)
+                hp_ratio = e.life / e.health_points if e.health_points > 0 else 0
+                hp_color = _bar_color(hp_ratio)
+                mini_bar_w = 10
+                filled = round(hp_ratio * mini_bar_w)
+                empty = mini_bar_w - filled
+
+                result.append(f"  {e.name}", style=Style(color="#f85149"))
+                result.append(f" {ej}", style=Style(dim=True))
+                result.append(f" Lv.{e.level} ", style=Style(dim=True))
+                result.append(FILLED * filled, style=Style(color=hp_color))
+                result.append(EMPTY * empty, style=Style(color="#30363d"))
+                result.append(f" {e.life}/{e.health_points}\n", style=Style(dim=True))
 
         return result
 

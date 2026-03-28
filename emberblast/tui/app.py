@@ -97,6 +97,14 @@ class EmberblastApp(App):
         except Exception:
             logger.debug("PlayerHUDWidget not available for update", exc_info=True)
 
+    def update_enemies(self, enemies: list) -> None:
+        """Update the enemy list in the HUD."""
+        try:
+            hud = self.screen.query_one("#player-hud", PlayerHUDWidget)
+            hud.update_enemies(enemies)
+        except Exception:
+            logger.debug("PlayerHUDWidget not available for enemy update", exc_info=True)
+
     def set_turn(self, turn: int) -> None:
         """Update the turn header."""
         self._current_turn = turn
@@ -105,6 +113,14 @@ class EmberblastApp(App):
             header.set_turn(turn)
         except Exception:
             logger.debug("TurnHeader not available", exc_info=True)
+
+    def set_map_name(self, name: str) -> None:
+        """Set the map name in the turn header."""
+        try:
+            header = self.screen.query_one("#turn-header", TurnHeader)
+            header.set_map_name(name)
+        except Exception:
+            logger.debug("TurnHeader not available for map name", exc_info=True)
 
     def set_active_player(self, player_name: str) -> None:
         """Store the currently active player name."""

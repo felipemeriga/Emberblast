@@ -24,11 +24,12 @@ class TurnHeader(Static):
     DEFAULT_CSS = """
     TurnHeader {
         dock: top;
-        height: 1;
+        height: 3;
         background: #161b22;
         color: #f0883e;
         text-style: bold;
         content-align: center middle;
+        border: solid #f0883e;
     }
     """
 
@@ -63,17 +64,16 @@ class BattleScreen(Screen):
         height: 1fr;
     }
     BattleScreen > Horizontal > MapWidget {
+        width: 3fr;
+        min-width: 40;
+    }
+    BattleScreen > Horizontal > Vertical {
         width: 2fr;
         min-width: 30;
     }
-    BattleScreen > Horizontal > Vertical {
-        width: 1fr;
-        min-width: 20;
-    }
     BattleScreen > Horizontal > Vertical > PlayerHUDWidget {
         height: auto;
-        max-height: 14;
-        border: solid #30363d;
+        max-height: 50%;
     }
     BattleScreen > Horizontal > Vertical > CombatLogWidget {
         height: 1fr;
