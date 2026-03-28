@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import Any, Callable, Coroutine, List, Optional
 
 from textual.app import App
@@ -14,6 +15,8 @@ from emberblast.tui.screens.title import TitleScreen
 from emberblast.tui.widgets.combat_log import CombatLogWidget
 from emberblast.tui.widgets.map_grid import MapWidget
 from emberblast.tui.widgets.player_hud import PlayerHUDWidget
+
+logger = logging.getLogger(__name__)
 
 # Question method names that route to battle screen
 _BATTLE_QUESTIONS = {
@@ -69,7 +72,7 @@ class EmberblastApp(App):
             log = self.query_one("#combat-log", CombatLogWidget)
             log.add_entry(message, category)
         except Exception:
-            pass
+            logger.debug("CombatLogWidget not available", exc_info=True)
 
     def refresh_map(self) -> None:
         """Refresh the map widget."""
@@ -77,7 +80,7 @@ class EmberblastApp(App):
             map_w = self.query_one("#map-widget", MapWidget)
             map_w.refresh()
         except Exception:
-            pass
+            logger.debug("MapWidget not available", exc_info=True)
 
     def refresh_huds(self) -> None:
         """Refresh the player HUD widget."""
@@ -85,7 +88,7 @@ class EmberblastApp(App):
             hud = self.query_one("#player-hud", PlayerHUDWidget)
             hud.refresh()
         except Exception:
-            pass
+            logger.debug("PlayerHUDWidget not available", exc_info=True)
 
     def set_turn(self, turn: int) -> None:
         """Update the turn header."""
@@ -94,7 +97,7 @@ class EmberblastApp(App):
             header = self.query_one("#turn-header", TurnHeader)
             header.set_turn(turn)
         except Exception:
-            pass
+            logger.debug("TurnHeader not available", exc_info=True)
 
     def set_active_player(self, player_name: str) -> None:
         """Store the currently active player name."""
@@ -119,7 +122,7 @@ class EmberblastApp(App):
                 friendly_names=set(self._friendly_names),
             )
         except Exception:
-            pass
+            logger.debug("MapWidget not available for event update", exc_info=True)
 
     def show_move_highlights(
         self,
@@ -134,7 +137,7 @@ class EmberblastApp(App):
             map_w._highlight_cells = set(possibilities)
             map_w.refresh()
         except Exception:
-            pass
+            logger.debug("MapWidget not available for highlights", exc_info=True)
 
     def show_game_over(self, winner_name: str) -> None:
         """Push the game over screen."""
@@ -169,7 +172,7 @@ class EmberblastApp(App):
             if isinstance(screen, TitleScreen) and self._questioner:
                 screen.set_questioner(self._questioner)
         except Exception:
-            pass
+            logger.debug("TitleScreen not available", exc_info=True)
 
     def _handle_setup_question(self, method_name: str, **kwargs) -> None:
         """Push a SetupScreen for the given question type."""
@@ -207,19 +210,24 @@ class EmberblastApp(App):
                 screen.show_confirm(method_name, "Are you sure?")
             elif method_name == "display_equipment_choices":
                 player = kwargs.get("player")
-                if player and hasattr(player, "equipments"):
-                    equips = player.equipments
+                if player and hasattr(player, "bag"):
+                    equips = player.bag.get_equipments()
                     labels = [f"{e.name}" if hasattr(e, "name") else str(e) for e in equips]
-                    screen.show_choices(method_name, equips, labels)
+                    equips_with_cancel = list(equips) + [None]
+                    labels_with_cancel = labels + ["Cancel"]
+                    screen.show_choices(method_name, equips_with_cancel, labels_with_cancel)
             elif method_name == "ask_check_action":
                 show_items = kwargs.get("show_items", False)
-                choices = ["stats", "enemies"]
+                choices = ["map", "status", "enemy"]
+                labels = ["Map and Enemies", "My Status", "Single Enemy"]
                 if show_items:
-                    choices.append("items")
-                choices.append("back")
-                screen.show_choices(method_name, choices, choices)
+                    choices.append("item")
+                    labels.append("My Items")
+                choices.append("cancel")
+                labels.append("Cancel")
+                screen.show_choices(method_name, choices, labels)
             elif method_name == "ask_attributes_to_improve":
                 attrs = ["strength", "intelligence", "accuracy", "armour", "magic_resist", "will"]
                 screen.show_choices(method_name, attrs, attrs)
         except Exception:
-            pass
+            logger.debug("Battle question handling failed", exc_info=True)
