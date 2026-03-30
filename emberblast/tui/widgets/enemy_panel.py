@@ -37,6 +37,7 @@ class EnemyPanelWidget(RichLog):
         super().__init__(highlight=False, markup=False, wrap=True, auto_scroll=False, **kwargs)
         self._enemies: List[object] = []
         self._selected_idx: int = 0
+        self._rebuilding: bool = False
 
     def update_enemies(self, enemies: List[object]) -> None:
         self._enemies = list(enemies)
@@ -54,11 +55,21 @@ class EnemyPanelWidget(RichLog):
         self._selected_idx = (self._selected_idx + direction) % len(alive)
         self._rebuild()
 
+    def refresh(self, *args, **kwargs) -> None:
+        """Override refresh to rebuild content from stored enemy data."""
+        if self._enemies and not self._rebuilding:
+            self._rebuild()
+        return super().refresh(*args, **kwargs)
+
     def _rebuild(self) -> None:
         """Clear and rewrite all content."""
-        self.clear()
-        for line in self._build_lines():
-            self.write(line)
+        self._rebuilding = True
+        try:
+            self.clear()
+            for line in self._build_lines():
+                self.write(line)
+        finally:
+            self._rebuilding = False
 
     def _build_panel_text(self) -> Text:
         """Build full panel as single Text (for tests)."""

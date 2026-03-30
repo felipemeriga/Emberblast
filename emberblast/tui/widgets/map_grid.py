@@ -23,22 +23,23 @@ _VALUE_TO_TERRAIN: Dict[int, str] = {
     5: "forest",
 }
 
-# Terrain rendering: (top_symbol, bottom_symbol, foreground, background) — 8-char wide cells
+# Terrain rendering: (top_symbol, bottom_symbol, foreground, background) — 10-char wide cells
+# All symbols MUST be exactly CELL_WIDTH ASCII/single-width chars for alignment.
 _TERRAIN_STYLE: Dict[str, tuple] = {
-    "plains": ("   \u00b7\u00b7   ", "        ", "#484f58", "#131820"),
-    "wall": ("  \u2588\u2588\u2588\u2588  ", "  \u2588\u2588\u2588\u2588  ", "#6e7681", "#2d333b"),
-    "water": ("  \u2248\u2248\u2248\u2248  ", "  \u223c\u223c\u223c\u223c  ", "#58a6ff", "#0a2240"),
-    "mountain": ("  /\u25b2\\   ", "  \\__/  ", "#f0883e", "#2a1a0a"),
-    "forest": ("  \u2663\u2663\u2663\u2663  ", "  \u2502\u2502\u2502\u2502  ", "#3fb950", "#0a2a0f"),
+    "plains": ("    ..    ", "          ", "#484f58", "#131820"),
+    "wall": ("  ######  ", "  ######  ", "#6e7681", "#2d333b"),
+    "water": ("   ~~~~   ", "   ~~~~   ", "#58a6ff", "#0a2240"),
+    "mountain": ("   /^^\\   ", "   /  \\   ", "#f0883e", "#2a1a0a"),
+    "forest": ("   YYYY   ", "   ||||   ", "#3fb950", "#0a2a0f"),
 }
 
 # Highlight terrain symbols
-_HIGHLIGHT_TOP = "  \u25aa\u25aa\u25aa\u25aa  "
-_HIGHLIGHT_BOT = "  \u25aa\u25aa\u25aa\u25aa  "
-_FLASH_TOP = "  \u25c6\u25c6\u25c6\u25c6  "
-_FLASH_BOT = "  \u25c6\u25c6\u25c6\u25c6  "
+_HIGHLIGHT_TOP = "   ****   "
+_HIGHLIGHT_BOT = "   ****   "
+_FLASH_TOP = "   <><<>  "
+_FLASH_BOT = "   <><<>  "
 
-CELL_WIDTH = 8
+CELL_WIDTH = 10
 
 
 class MapWidget(Widget):
@@ -108,15 +109,11 @@ class MapWidget(Widget):
         header_style = Style(bold=True, color="#6e7681")
         inner_width = CELL_WIDTH * self._grid_size + 1
 
-        # Column headers
+        # Column headers — aligned with grid interior
         result.append("\n")
-        result.append("       ")
+        result.append("      ")
         for col in range(self._grid_size):
-            label = str(col)
-            pad = CELL_WIDTH - len(label)
-            left_pad = pad // 2
-            right_pad = pad - left_pad
-            result.append(" " * left_pad + label + " " * right_pad, style=header_style)
+            result.append(str(col).center(CELL_WIDTH), style=header_style)
         result.append("\n")
 
         # Top border — heavy double-line
@@ -150,7 +147,7 @@ class MapWidget(Widget):
                         bold=True,
                         blink=is_active,
                     )
-                    result.append(f"  [{token}]  ", style=style)
+                    result.append(f"   [{token}]   ", style=style)
                 elif cell_value == 0:
                     result.append(" " * CELL_WIDTH)
                 else:

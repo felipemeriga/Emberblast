@@ -213,9 +213,11 @@ class TextualRenderer(IRenderer):
         else:
             status = "buffed"
         self._app.post_combat_log(f"{event.player_name} has been {status} with {event.effect_name}.", "side_effect")
+        self._app.refresh_huds()
 
     def _render_side_effect_ended(self, event: SideEffectEndedEvent) -> None:
         self._app.post_combat_log(f"{event.effect_name} has ended for {event.player_name}", "side_effect")
+        self._app.refresh_huds()
 
     def _render_iterated_side_effect(self, event: IteratedSideEffectEvent) -> None:
         status = "increase" if event.effect_type == "buff" else "decrease"
@@ -230,6 +232,7 @@ class TextualRenderer(IRenderer):
             f"{event.turns_remaining} turns left.",
             "side_effect",
         )
+        self._app.refresh_huds()
 
     def _render_item_found(self, event: ItemFoundEvent) -> None:
         if event.found:
@@ -261,6 +264,7 @@ class TextualRenderer(IRenderer):
         self._app.post_combat_log(f"{event.player_name} has fallen into a trap!", "trap")
         for name in event.side_effect_names:
             self._app.post_combat_log(f"  - {name}", "trap")
+        self._app.refresh_huds()
 
     def _render_no_foes(self, event: NoFoesEvent) -> None:
         self._app.post_combat_log(event.message, "info")
