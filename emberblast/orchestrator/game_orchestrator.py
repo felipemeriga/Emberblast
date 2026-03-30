@@ -1,6 +1,6 @@
+import asyncio
 import math
 import random
-import time
 from os import system
 from typing import List, Optional
 
@@ -85,7 +85,7 @@ class GameOrchestrator(IGameOrchestrator):
         self.actions["check"]: IAction = {"independent": True, "repeatable": True, "function": self.check}
         self.actions["pass"]: IAction = {"independent": True, "repeatable": False, "function": self.pass_turn}
 
-    def execute_game(self) -> None:
+    async def execute_game(self) -> None:
         """
         This method should be implement by Styles of Games that Inherits from this superclass.
 
@@ -104,47 +104,47 @@ class GameOrchestrator(IGameOrchestrator):
         for player in self.game.get_all_players():
             player.refresh_skills_list()
 
-    def check_player_level_up(self, player: IPlayer) -> None:
+    async def check_player_level_up(self, player: IPlayer) -> None:
         if player.experience >= 100:
             player.experience = player.experience - 100
             if isinstance(player, IControlledPlayer):
-                attributes = self.communicator.questioner.ask_attributes_to_improve()
+                attributes = await self.communicator.questioner.ask_attributes_to_improve()
             else:
                 attributes = improve_attributes_automatically(player.job.get_name(), player.race.get_name())
             player.level_up(attributes)
             self.communicator.informer.render(LevelUpEvent(player_name=player.name, new_level=player.level))
 
-    def move(self, player: IPlayer) -> Optional[bool]:
+    async def move(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def defend(self, player: IPlayer) -> Optional[bool]:
+    async def defend(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def hide(self, player: IPlayer) -> Optional[bool]:
+    async def hide(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def search(self, player: IPlayer) -> Optional[bool]:
+    async def search(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def attack(self, player: IPlayer) -> Optional[bool]:
+    async def attack(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def skill(self, player: IPlayer) -> Optional[bool]:
+    async def skill(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def item(self, player: IPlayer) -> Optional[bool]:
+    async def item(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def drop(self, player: IPlayer) -> Optional[bool]:
+    async def drop(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def equip(self, player: IPlayer) -> Optional[bool]:
+    async def equip(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def check(self, player: IPlayer) -> Optional[bool]:
+    async def check(self, player: IPlayer) -> Optional[bool]:
         pass
 
-    def pass_turn(self, player: IPlayer) -> Optional[bool]:
+    async def pass_turn(self, player: IPlayer) -> Optional[bool]:
         pass
 
     def check_iterated_side_effects(self, player: IPlayer) -> None:
@@ -207,7 +207,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         memory = self.bot_controller._get_memory(player_name)
         memory.add(turn, description)
 
-    def execute_game(self) -> None:
+    async def execute_game(self) -> None:
         """
         The implementation of the superclass method,which is the one for executing each of the calculated turns of
         the game. It's the same method to start a newly created game or a continue.
@@ -222,7 +222,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
             turn_list = [list(self.game.turns.copy().keys())[-1]]
             self.clear()
             self.communicator.informer.render(LineSeparatorEvent())
-            time.sleep(3)
+            await asyncio.sleep(3)
 
             for turn in turn_list:
                 self.clear()
@@ -246,10 +246,10 @@ class DeathMatchOrchestrator(GameOrchestrator):
                     # Resetting player's last action, If he was defending or hidden, this will be reset for a new turn
                     player.reset_last_action()
                     if isinstance(player, IControlledPlayer):
-                        self.controlled_decisioning(player)
+                        await self.controlled_decisioning(player)
                     else:
-                        time.sleep(random.randint(2, 4))
-                        self.bot_decisioning(player)
+                        await asyncio.sleep(random.randint(2, 4))
+                        await self.bot_decisioning(player)
                     self.turn_remaining_players.remove(player)
 
                 alive_players = self.game.get_all_alive_players()
@@ -263,7 +263,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         except Exception as err:
             print(err)
 
-    def bot_decisioning(self, player: IPlayer) -> None:
+    async def bot_decisioning(self, player: IPlayer) -> None:
         """
         Function that controls bot decisions over a IA.
 
@@ -272,14 +272,14 @@ class DeathMatchOrchestrator(GameOrchestrator):
         """
         self.check_iterated_side_effects(player)
         try:
-            self.bot_controller.decide(player)
+            await self.bot_controller.decide(player)
 
         except Exception as err:
             print(err)
             print("System shutdown with unexpected error")
 
         self.check_side_effect_duration(player)
-        self.check_player_level_up(player)
+        await self.check_player_level_up(player)
 
         turn = self.bot_controller._current_turn
         self._record_bot_memory(
@@ -311,7 +311,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
         return valid_actions
 
-    def controlled_decisioning(self, player: IControlledPlayer) -> None:
+    async def controlled_decisioning(self, player: IControlledPlayer) -> None:
         """
         The function for controlled players to decide which actions they are going to execute each turn.
 
@@ -322,14 +322,16 @@ class DeathMatchOrchestrator(GameOrchestrator):
         self.check_iterated_side_effects(player)
 
         while len(self.actions_left) > 2:
-            chosen_action_string = self.communicator.questioner.ask_actions_questions(self.hide_invalid_actions(player))
+            chosen_action_string = await self.communicator.questioner.ask_actions_questions(
+                self.hide_invalid_actions(player)
+            )
             action = self.actions[chosen_action_string]
             action_function = action["function"]
-            if action_function(player) is None:
+            if await action_function(player) is None:
                 self.compute_player_decisions(action, chosen_action_string)
         else:
             self.check_side_effect_duration(player)
-            self.check_player_level_up(player)
+            await self.check_player_level_up(player)
 
     def compute_player_decisions(self, action: IAction, action_string: str) -> None:
         """
@@ -350,7 +352,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 if not value["independent"]:
                     self.actions_left.remove(key)
 
-    def move(self, player: IPlayer) -> Optional[bool]:
+    async def move(self, player: IPlayer) -> Optional[bool]:
         move_speed = player.get_attribute_real_value("move_speed")
         possibilities = self.game.game_map.graph.get_available_nodes_in_range(player.position, move_speed)
         self.communicator.informer.render(
@@ -361,17 +363,17 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 size=self.game.game_map.size,
             )
         )
-        selected_place = self.communicator.questioner.ask_where_to_move(possibilities)
+        selected_place = await self.communicator.questioner.ask_where_to_move(possibilities)
         self.game.game_map.move_player(player, selected_place)
         self.communicator.informer.render(EventAction(event="move"))
         self.communicator.informer.render(MoveEvent(player_name=player.name))
         return
 
-    def defend(self, player: IPlayer) -> Optional[bool]:
+    async def defend(self, player: IPlayer) -> Optional[bool]:
         player.set_defense_mode(True)
         return
 
-    def hide(self, player: IPlayer) -> Optional[bool]:
+    async def hide(self, player: IPlayer) -> Optional[bool]:
         current_accuracy = player.get_attribute_real_value("accuracy")
         additional = (current_accuracy / 5 * 10) / 100
 
@@ -379,10 +381,10 @@ class DeathMatchOrchestrator(GameOrchestrator):
         player.set_hidden(result)
         return
 
-    def search(self, player: IPlayer) -> Optional[bool]:
+    async def search(self, player: IPlayer) -> Optional[bool]:
         self.communicator.informer.render(EventAction(event="search"))
         items = self.game.game_map.check_item_in_position(player.position)
-        time.sleep(2)
+        await asyncio.sleep(2)
         if items is not None:
             for item in items:
                 player.bag.add_item(item)
@@ -444,7 +446,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
         return possible_foes
 
-    def attack(self, player: IPlayer) -> Optional[bool]:
+    async def attack(self, player: IPlayer) -> Optional[bool]:
         players = self.game.get_remaining_players(player)
         attack_range = player.get_ranged_attack_area()
         possible_foes = self.get_attack_possibilities(attack_range, player, players)
@@ -456,10 +458,10 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 )
             )
             return False
-        enemy_to_attack = self.communicator.questioner.ask_enemy_to_attack(possible_foes)
+        enemy_to_attack = await self.communicator.questioner.ask_enemy_to_attack(possible_foes)
         if enemy_to_attack is None:
             return False
-        time.sleep(2)
+        await asyncio.sleep(2)
         self.communicator.informer.render(EventAction(event="attack"))
         dice_result = self.game.roll_the_dice()
         self.communicator.informer.render(
@@ -472,7 +474,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
         )
 
         damage = self.calculate_damage(player, enemy_to_attack, dice_result)
-        self.check_player_level_up(player)
+        await self.check_player_level_up(player)
         turn = self.bot_controller._current_turn
         if damage > 0:
             enemy_to_attack.suffer_damage(damage)
@@ -526,7 +528,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
 
         return area_foes
 
-    def skill(self, player: IPlayer) -> Optional[bool]:
+    async def skill(self, player: IPlayer) -> Optional[bool]:
         foes = []
         possible_foes = []
 
@@ -535,7 +537,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
             self.communicator.informer.render(LowManaEvent(player_name=player.name, mana=player.mana))
 
         available_skills = get_player_available_skills(player)
-        selected_skill = self.communicator.questioner.select_skill(available_skills)
+        selected_skill = await self.communicator.questioner.select_skill(available_skills)
         remaining_players = self.game.get_remaining_players(player)
         if selected_skill is None:
             return False
@@ -556,7 +558,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 )
             )
             return False
-        enemy_to_attack = self.communicator.questioner.ask_enemy_to_attack(possible_foes, selected_skill.kind)
+        enemy_to_attack = await self.communicator.questioner.ask_enemy_to_attack(possible_foes, selected_skill.kind)
         if enemy_to_attack is None:
             return False
         if selected_skill.area > 0:
@@ -569,7 +571,7 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 )
         else:
             foes.append(enemy_to_attack)
-        time.sleep(2)
+        await asyncio.sleep(2)
         self.communicator.informer.render(EventAction(event="skill"))
         dice_result = self.game.roll_the_dice()
         self.communicator.informer.render(
@@ -599,18 +601,18 @@ class DeathMatchOrchestrator(GameOrchestrator):
                 )
         return
 
-    def item(self, player: IPlayer) -> Optional[bool]:
+    async def item(self, player: IPlayer) -> Optional[bool]:
         using_player = player.name
         usable_items = player.bag.get_usable_items()
-        selected_item = self.communicator.questioner.select_item(usable_items)
+        selected_item = await self.communicator.questioner.select_item(usable_items)
         if selected_item is None:
             return False
         another_players_in_position = self.game.check_another_players_in_position(player)
         if len(another_players_in_position) > 0:
-            if not self.communicator.questioner.confirm_use_item_on_you():
-                player = self.communicator.questioner.ask_enemy_to_attack(another_players_in_position)
-        if self.communicator.questioner.confirm_item_selection():
-            time.sleep(2)
+            if not await self.communicator.questioner.confirm_use_item_on_you():
+                player = await self.communicator.questioner.ask_enemy_to_attack(another_players_in_position)
+        if await self.communicator.questioner.confirm_item_selection():
+            await asyncio.sleep(2)
             self.communicator.informer.render(EventAction(event="item"))
             target_player = player.name
             player.use_item(selected_item)
@@ -627,11 +629,11 @@ class DeathMatchOrchestrator(GameOrchestrator):
         else:
             return True
 
-    def drop(self, player: IPlayer) -> Optional[bool]:
-        selected_item = self.communicator.questioner.select_item(player.bag.items)
+    async def drop(self, player: IPlayer) -> Optional[bool]:
+        selected_item = await self.communicator.questioner.select_item(player.bag.items)
         if selected_item is None:
             return False
-        confirm = self.communicator.questioner.confirm_item_selection()
+        confirm = await self.communicator.questioner.confirm_item_selection()
         if confirm:
             if isinstance(selected_item, IEquipmentItem):
                 player.remove_side_effects(selected_item.side_effects)
@@ -640,8 +642,8 @@ class DeathMatchOrchestrator(GameOrchestrator):
             self.game.game_map.add_item_to_map(player.position, selected_item)
         return
 
-    def equip(self, player: IPlayer) -> Optional[bool]:
-        equipment_item = self.communicator.questioner.display_equipment_choices(player)
+    async def equip(self, player: IPlayer) -> Optional[bool]:
+        equipment_item = await self.communicator.questioner.display_equipment_choices(player)
         if equipment_item is None:
             return False
         if player.equipment.is_equipped(equipment_item):
@@ -653,8 +655,8 @@ class DeathMatchOrchestrator(GameOrchestrator):
         player.side_effects.extend(equipment_item.side_effects)
         return
 
-    def check(self, player: IPlayer) -> Optional[bool]:
-        check_option = self.communicator.questioner.ask_check_action(
+    async def check(self, player: IPlayer) -> Optional[bool]:
+        check_option = await self.communicator.questioner.ask_check_action(
             show_items=True if len(player.bag.items) > 0 else False
         )
         if check_option == "status":
@@ -671,10 +673,10 @@ class DeathMatchOrchestrator(GameOrchestrator):
             )
         elif check_option == "enemy":
             enemies = self.game.get_remaining_players(player, include_hidden=False)
-            enemy = self.communicator.questioner.ask_enemy_to_check(enemies)
+            enemy = await self.communicator.questioner.ask_enemy_to_check(enemies)
             self.communicator.informer.render(EnemyStatusEvent(enemy=enemy))
         elif check_option == "item":
-            item = self.communicator.questioner.select_item(player.bag.items)
+            item = await self.communicator.questioner.select_item(player.bag.items)
             self.communicator.informer.render(CheckItemEvent(item=item))
         else:
             return
