@@ -66,17 +66,18 @@ class BattleScreen(Screen):
     }
     #map-column {
         width: 3fr;
-        min-width: 50;
+        min-width: 60;
     }
     #info-column {
         width: 2fr;
-        min-width: 32;
+        min-width: 34;
     }
     #info-column > CharacterBadgeWidget {
         height: auto;
     }
     #info-column > EnemyPanelWidget {
-        height: auto;
+        height: 1fr;
+        min-height: 10;
     }
     #info-column > CombatLogWidget {
         height: 1fr;
